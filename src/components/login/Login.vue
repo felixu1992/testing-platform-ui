@@ -73,7 +73,7 @@ export default {
           if (response.code === 0) {
             localStorage.setItem('testing-platform-token', response.data.token)
             this.$Message.success('登录成功！')
-            this.$router.push('/platform/home')
+            this.$router.push('/home')
           } else {
             this.$Message.error(response.message)
           }

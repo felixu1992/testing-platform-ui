@@ -8,27 +8,26 @@
 </template>
 
 <script>
-import Layout from "./layout/Layout";
+import Layout from './layout/Layout'
 
 export default {
   components: {
     Layout
   },
   name: 'App',
-  data(){
-    return{
-      path:''
+  data () {
+    return {
+      path: ''
     }
   },
-  mounted() {
-    this.path = this.$route.path;
+  mounted () {
+    this.path = this.$route.path
   },
-  watch:{
-    $route(to,from){
+  watch: {
+    $route (to, from) {
       this.path = to.path
     }
   }
-
 }
 
 </script>
