@@ -1,12 +1,12 @@
 <template>
-<div>
-  HELLO WORLD
-</div>
+  <div>
+<!--    <h1>wowoowowowo</h1>-->
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'index'
+  name: 'Index'
 }
 </script>
 

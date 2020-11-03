@@ -9,7 +9,7 @@
             </FormItem>
             <FormItem prop="email">
               <Input type="text" v-model="formInline.email" placeholder="请输入您的邮箱帐号" @input="validation('formInline')">
-                <Icon type="ios-person-outline" slot="prepend"></Icon>
+                <Icon type="ios-mail-outline" slot="prepend"></Icon>
               </Input>
             </FormItem>
             <FormItem prop="password">
@@ -73,7 +73,7 @@ export default {
           if (response.code === 0) {
             localStorage.setItem('testing-platform-token', response.data.token)
             this.$Message.success('登录成功！')
-            this.$router.push('/view/index')
+            this.$router.push('/platform/home')
           } else {
             this.$Message.error(response.message)
           }
