@@ -44,13 +44,13 @@ _axios.interceptors.response.use(
 
 const request = {
     get: async function (url, data) {
-        return await _axios.get(url, {params: data})
+        return await _axios.get(url, data)
             .then((resolve) => resolve.data)
             .catch(errorHandler)
 
     },
     post: async function (url, data) {
-        return await _axios.post(url, {params: data})
+        return await _axios.post(url, data)
             .then((resolve) => resolve.data)
             .catch(errorHandler)
 
@@ -61,7 +61,7 @@ const request = {
             .catch(errorHandler)
     },
     delete: async function (url, data) {
-        return await _axios.delete(url, {params: data})
+        return await _axios.delete(url, data)
             .then((resolve) => resolve.data)
             .catch(errorHandler)
 
