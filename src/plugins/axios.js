@@ -28,11 +28,20 @@ _axios.interceptors.request.use(
 // Add a response interceptor
 _axios.interceptors.response.use(
     function(response) {
-        const responseData = response.data
-        console.log(responseData)
-        //todo -----
-        if (data.code !== 200){
-            notification.error("操作失败")
+        let httpCode = response.status
+        if (httpCode >= 200 && httpCode < 300) {
+            //normal case:200 ~ 299
+            const responseData = response.data
+            if (responseData.code !== 200){
+                //businuss logic error
+                notification.error(responseData.message)
+            }
+        }else if (httpCode >= 400){
+            // larger than 400
+            message.error(response.statusText)
+        }else{
+            //300 ~ 399 currently do nothing
+            // message.warn("redirect response")
         }
         return response
     },
@@ -45,27 +54,31 @@ _axios.interceptors.response.use(
 const request = {
     get: async function (url, data) {
         return await _axios.get(url, data)
-            .then((resolve) => resolve.data)
+            .then(responseHandler)
             .catch(errorHandler)
 
     },
     post: async function (url, data) {
-        return await _axios.post(url, data)
-            .then((resolve) => resolve.data)
+        return _axios.post(url, data)
+            .then(responseHandler)
             .catch(errorHandler)
 
     },
     put: async function (url, data) {
         return await _axios.put(url, data)
-            .then((resolve) => resolve.data)
+            .then(responseHandler)
             .catch(errorHandler)
     },
     delete: async function (url, data) {
         return await _axios.delete(url, data)
-            .then((resolve) => resolve.data)
+            .then(responseHandler)
             .catch(errorHandler)
 
     }
+}
+
+let responseHandler = (response)=>{
+    return response.data
 }
 
 let errorHandler = (error) => {

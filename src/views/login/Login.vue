@@ -31,6 +31,7 @@ export default {
         username: username,
         password: pswd
       })
+      console.log("======")
       console.log(response)
     }
     // toRegPage: function () {
