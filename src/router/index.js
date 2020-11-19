@@ -9,6 +9,7 @@ import Files from '../views/files/Files'
 import FilesGroup from '../views/files-group/FilesGroup'
 import Projects from '../views/projects/Projects'
 import TestRecs from '../views/test-recs/TestRecs'
+import ErrorsPage from "../views/common/errors-page/ErrorsPage";
 
 Vue.use(VueRouter)
 
@@ -59,6 +60,12 @@ const routes = [
     path: '/test-recs',
     name: 'TestRecs',
     component: TestRecs
+  }
+  ,
+  {
+    path: '/errors',
+    name: 'ErrorsPage',
+    component: ErrorsPage
   }
 
 ]
