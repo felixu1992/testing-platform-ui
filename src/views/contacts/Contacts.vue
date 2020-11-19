@@ -1,13 +1,13 @@
 <template>
-  <div class="menu1">
-    Menu1 content hahaha
+  <div class="contacts">
+    <h1>contacts page</h1>
   </div>
 </template>
 
 <script>
 
 export default {
-  name: 'Menu1',
+  name: 'Contacts',
   components: {}
 }
 </script>

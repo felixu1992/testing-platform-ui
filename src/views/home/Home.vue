@@ -1,22 +1,8 @@
 <template>
   <div class="home">
-    <div id="test-platform-side-opts" class="float-to-left">
-      <div class="side-opts-item" @click="toMenu1">
-        menu1
-      </div>
-      <div class="side-opts-item">
-        menu2{
-      </div>
-      <div class="side-opts-item">
-        menu3
-      </div>
-      <div class="side-opts-item">
-        menu4
-      </div>
-    </div>
-    <div class="float-to-left">
-      <router-view/>
-    </div>
+    <h1>Welcome to testting platform</h1>
+    <h1>A beautiful Picture</h1>
+    <h1>This is a very beautiful Home page</h1>
   </div>
 </template>
 
@@ -28,14 +14,12 @@ export default {
   name: 'Home',
   components: {TopNav},
   methods:{
-    toMenu1: function(){
-      this.$router.push('/menu1')
-    }
+
   }
 }
 </script>
 <style scoped>
-  .float-to-left{
-    float: left;
-  }
+ .home{
+
+ }
 </style>
