@@ -1,7 +1,8 @@
 <template>
   <div class="info-area">
     <div class="logged-in-user-info" v-if="loggedIn">
-      当前用户：{{loggedInUserInfo.username.length > 10 ? loggedInUserInfo.username.substr(0,10) + '...' : loggedInUserInfo.username}}
+      当前用户：{{infoText}}
+      <span class="logoff"> <a @click="logoff()">注销</a></span>
     </div>
     <div class="two-btns" v-else>
       <a-button @click="()=>this.routeTo('/login')">登陆</a-button>
@@ -11,23 +12,25 @@
   </div>
 </template>
 <script>
-  let tempUserInfoForTest = {
-    username:'ChasonLuis'
-  }
   export default{
     name:'InfoArea',
     data:function(){
-      return {
-        loggedInUserInfo : tempUserInfoForTest
-      }
+      return {}
     },
     computed:{
       loggedIn: function () {
-        // return this.$store.getters.loggedIn
-        return tempUserInfoForTest
+        return this.$store.getters.loggedIn
+      },
+      infoText: function () {
+        let userInfo = this.$store.state.loggedInUserInfo;
+        return userInfo.username.length > 10 ? userInfo.username.substr(0,10) + '...' : userInfo.username;
       }
     },
     methods: {
+      logoff: function () {
+        this.$store.commit("doLogoff");
+        this.routeTo("/login");
+      }
     }
   }
 </script>

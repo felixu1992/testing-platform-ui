@@ -1,6 +1,8 @@
 <template>
   <div class="register">
     register
+    <br/>
+    不让你注册 滚犊子
   </div>
 </template>
 

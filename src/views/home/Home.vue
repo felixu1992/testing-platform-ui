@@ -3,6 +3,7 @@
     <h1>Welcome to testting platform</h1>
     <h1>A beautiful Picture</h1>
     <h1>This is a very beautiful Home page</h1>
+    <a-button @click="req">ohihi</a-button>
   </div>
 </template>
 
@@ -14,7 +15,10 @@ export default {
   name: 'Home',
   components: {TopNav},
   methods:{
-
+    req: function () {
+      let foo = this.request.get('/user',{})
+      console.log(foo)
+    }
   }
 }
 </script>

@@ -3,19 +3,6 @@
     <a-menu v-model="current" mode="horizontal">
       <a-sub-menu>
         <span slot="title" class="submenu-title-wrapper">
-          <a-icon type="contacts"/>联系人管理
-        </span>
-          <a-menu-item-group>
-          <a-menu-item key="contact-grp" @click="()=>this.routeTo('contacts-group')">
-            联系人分组
-          </a-menu-item>
-          <a-menu-item key="contact-itm" @click="()=>this.routeTo('contacts')">
-            联系人
-          </a-menu-item>
-        </a-menu-item-group>
-      </a-sub-menu>
-      <a-sub-menu>
-        <span slot="title" class="submenu-title-wrapper">
           <a-icon type="file" />文件管理
         </span>
         <a-menu-item-group>
@@ -47,6 +34,19 @@
           </a-menu-item>
         </a-menu-item-group>
       </a-sub-menu>
+      <a-sub-menu v-if="roleAdmin">
+        <span slot="title" class="submenu-title-wrapper">
+          <a-icon type="contacts"/>联系人管理
+        </span>
+        <a-menu-item-group>
+          <a-menu-item key="contact-grp" @click="()=>this.routeTo('contacts-group')">
+            联系人分组
+          </a-menu-item>
+          <a-menu-item key="contact-itm" @click="()=>this.routeTo('contacts')">
+            联系人
+          </a-menu-item>
+        </a-menu-item-group>
+      </a-sub-menu>
     </a-menu>
   </div>
 </template>
@@ -61,6 +61,12 @@
       };
     },
     methods:{
+    },
+    computed:{
+      roleAdmin : function () {
+        let userinfo = this.$store.state.loggedInUserInfo;
+        return this.$store.getters.loggedIn && userinfo.role === "ROLE_ADMIN";
+      }
     }
   }
 </script>

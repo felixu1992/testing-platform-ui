@@ -2,7 +2,7 @@
   <div class="login">
     login page<br>
 
-    username: <input v-model="username"/>
+    email: <input v-model="email"/>
     <br>
     password: <input type="password" v-model="password"/>
     <br>
@@ -19,24 +19,25 @@ export default {
   components: {},
   data: function () {
     return {
-      username:'',
+      email:'',
       password:''
     }
   },
   methods:{
     doLogin: async function () {
-      let username = this.username
-      let pswd = this.password
-      let response = await this.request.post('/foo', {
-        username: username,
+      let email = this.email;
+      let pswd = this.password;
+      let response = await this.request.post('/user/signin', {
+        email: email,
         password: pswd
-      })
-      console.log("======")
-      console.log(response)
+      });
+      // console.log(response)
+      this.$message.info("登陆成功");
+      let userInfo = response.data;
+      this.$store.commit('doLogin',userInfo);
+      this.routeTo('/');
     }
-    // toRegPage: function () {
-    //   this.$router.push('/register')
-    // }
+
   }
 }
 </script>

@@ -1,6 +1,8 @@
-import {message,notification} from "ant-design-vue"
+import {message} from "ant-design-vue"
 import axios from "axios"
 import Vue from "vue"
+import Consts from "../consts/consts.js"
+import router from "../router/index.js"
 
 let config = {
     baseURL: process.env.VUE_APP_AXIOS_BAESE,
@@ -15,8 +17,11 @@ _axios.interceptors.request.use(
         // Do something before request is sent
         // console.log("config.data",config.data)
         //登录之后的每一次请求都要带着token
-
-        //设置调用版本
+        let loggedInUserStr = localStorage.getItem(Consts.USER_INFO_LOCAL_STORAGE_KEY);
+        if (loggedInUserStr){
+            let loggedInUser = JSON.parse(loggedInUserStr);
+            config.headers["Authorization"] = loggedInUser.token;
+        }
         return config
     },
     function(error) {
@@ -32,9 +37,14 @@ _axios.interceptors.response.use(
         if (httpCode >= 200 && httpCode < 300) {
             //normal case:200 ~ 299
             const responseData = response.data
-            if (responseData.code !== 200){
+            if (responseData.code !== 0){
+                if (responseData.code === 106){
+                    //106 离线状态
+                    router.push("/login")
+                }
                 //businuss logic error
-                notification.error(responseData.message)
+                message.error(responseData.message)
+
             }
         }else if (httpCode >= 400){
             // larger than 400

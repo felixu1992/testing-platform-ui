@@ -3,7 +3,7 @@ module.exports = {
     devServer: {
         proxy: {
             '/api': {
-                target: 'http://127.0.0.1:8081',
+                target: 'http://platform.felixu.top:7600',
                 changeOrigin: true,
                 pathRewrite: {
                     '^/api': '/'
