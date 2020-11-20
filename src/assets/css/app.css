@@ -1,0 +1,16 @@
+@media screen and (max-width: 860px){
+    #test-platform-nav{
+        min-height: 40px;
+    }
+}
+@media screen and (min-width: 860px){
+    #test-platform-nav{
+        min-height: 40px;
+    }
+    .float-to-left{
+        float: left;
+    }
+    #test-platform-info-area{
+        float: right;
+    }
+}

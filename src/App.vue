@@ -21,13 +21,7 @@
   export default {
     components:{TopNav,InfoArea}
   }
-
 </script>
 <style scoped>
-  #test-platform-nav{
-    min-height: 40px;
-  }
-  .float-to-left{
-    float: left;
-  }
+ @import "assets/css/app.css";
 </style>
