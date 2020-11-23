@@ -1,8 +1,9 @@
 <template>
-  <div class="register">
-    register
+  <div class="register test-platform-common-background">
     <br/>
-    不让你注册 滚犊子
+    <div class="fuck-you">
+      <h1>不让你注册 滚犊子</h1>
+    </div>
   </div>
 </template>
 
@@ -15,5 +16,11 @@ export default {
 }
 </script>
 <style scoped>
+  @import "../../assets/css/common.css";
+  .register{
+    text-align: center;
+  }
+  .fuck-you{
 
+  }
 </style>

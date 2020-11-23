@@ -1,13 +1,32 @@
 <template>
-  <div class="login">
-    login page<br>
+  <div class="login test-platform-common-background">
+    <div class="login-tile">
+      <span>
+        <h1>登陆</h1>
+      </span>
+    </div>
+    <br>
 
-    email: <input v-model="email"/>
-    <br>
-    password: <input type="password" v-model="password"/>
-    <br>
-    <a-button @click="doLogin">login</a-button>
-    <a-button @click="()=>{this.$router.push('/register')}">register</a-button>
+    <div class="login-form-item">
+      <div class="login-form-item-lable">
+        <span>email: </span>
+      </div>
+      <div>
+        <input v-model="email"/>
+      </div>
+    </div>
+    <div class="login-form-item">
+      <div class="login-form-item-lable">
+        <span>password:</span>
+      </div>
+      <div>
+        <input type="password" v-model="password"/>
+      </div>
+    </div>
+    <br/>
+    <a-button @click="doLogin">登陆</a-button>
+    <span>《--》</span>
+    <a-button @click="()=>{this.$router.push('/register')}">注册</a-button>
   </div>
 </template>
 
@@ -40,5 +59,6 @@ export default {
 }
 </script>
 <style scoped>
-
+  @import "../../assets/css/common.css";
+  @import "./login.css";
 </style>

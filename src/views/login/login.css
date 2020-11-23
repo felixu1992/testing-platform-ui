@@ -1,0 +1,14 @@
+.login{
+    text-align: center;
+}
+.login-form-item{
+    text-align: center;
+}
+.login-form-item .login-form-item-lable{
+    margin-top: 35px;
+}
+.login-form-item div input{
+    width: 300px;
+    text-align: center;
+}
+

@@ -2,6 +2,9 @@
     #test-platform-nav{
         min-height: 40px;
     }
+    .test-platform-nav-title{
+        color: #1d84f7;
+    }
 }
 @media screen and (min-width: 860px){
     #test-platform-nav{
@@ -12,5 +15,8 @@
     }
     #test-platform-info-area{
         float: right;
+    }
+    .test-platform-nav-title{
+        color: #1d84f7;
     }
 }

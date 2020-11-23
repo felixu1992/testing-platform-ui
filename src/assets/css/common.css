@@ -1,0 +1,14 @@
+@media screen and (max-width: 860px){
+    .test-platform-common-background{
+        background-image: linear-gradient(#ffffff,#81b3f6);
+        width: 100%;
+        height: 100vh;
+    }
+}
+@media screen and (min-width: 860px){
+    .test-platform-common-background{
+        background-image: linear-gradient(#ffffff,#81b3f6);
+        width: 100%;
+        height: 100vh;
+    }
+}
