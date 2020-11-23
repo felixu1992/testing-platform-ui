@@ -20,7 +20,7 @@ _axios.interceptors.request.use(
         let loggedInUserStr = localStorage.getItem(Consts.USER_INFO_LOCAL_STORAGE_KEY);
         if (loggedInUserStr){
             let loggedInUser = JSON.parse(loggedInUserStr);
-            config.headers["Authorization"] = loggedInUser.token;
+            config.headers["Authorization"] = "token " + loggedInUser.token;
         }
         return config
     },
@@ -35,25 +35,16 @@ _axios.interceptors.response.use(
     function(response) {
         let httpCode = response.status
         if (httpCode >= 200 && httpCode < 300) {
-            //normal case:200 ~ 299
-            const responseData = response.data
-            if (responseData.code !== 0){
-                if (responseData.code === 106){
-                    //106 离线状态
-                    router.push("/login")
-                }
-                //businuss logic error
-                message.error(responseData.message)
-
-            }
+            return response
         }else if (httpCode >= 400){
             // larger than 400
-            message.error(response.statusText)
+            return Promise.reject(new Error(response.statusText))
         }else{
             //300 ~ 399 currently do nothing
             // message.warn("redirect response")
+            let msg = "httpCode:"+ httpCode
+            return Promise.reject(new Error(msg))
         }
-        return response
     },
     function(error) {
         // Do something with response error
@@ -88,11 +79,23 @@ const request = {
 }
 
 let responseHandler = (response)=>{
-    return response.data
+    //normal case:200 ~ 299
+    const responseData = response.data
+    if (responseData.code !== 0){
+        if (responseData.code === 106){
+            //106 离线状态
+            router.push("/login")
+        }
+        //businuss logic error
+        return Promise.reject(new Error(responseData.message))
+    }else {
+        // normal case: BS code is 0
+        return responseData.data
+    }
 }
 
 let errorHandler = (error) => {
-    message.error("操作失败",error)
+    message.error("操作失败: "+error.message)
 }
 
 Plugin.install = function(Vue) {

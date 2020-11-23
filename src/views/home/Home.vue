@@ -15,11 +15,16 @@ export default {
   name: 'Home',
   components: {TopNav},
   methods:{
-    req: function () {
-      let foo = this.request.get('/user',{})
-      console.log(foo)
+    req: async function () {
+      let foo = await this.request.get('/contactor/group/page?page=1',{});
+      if (foo){
+        console.log(foo)
+      }
     }
+
   }
+
+
 }
 </script>
 <style scoped>

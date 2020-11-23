@@ -27,17 +27,17 @@ export default {
     doLogin: async function () {
       let email = this.email;
       let pswd = this.password;
-      let response = await this.request.post('/user/signin', {
+      let userData = await this.request.post('/user/signin', {
         email: email,
         password: pswd
       });
       // console.log(response)
-      this.$message.info("登陆成功");
-      let userInfo = response.data;
-      this.$store.commit('doLogin',userInfo);
-      this.routeTo('/');
+      if (userData){
+        this.$message.info("登陆成功");
+        this.$store.commit('doLogin',userData);
+        this.routeTo('/');
+      }
     }
-
   }
 }
 </script>
