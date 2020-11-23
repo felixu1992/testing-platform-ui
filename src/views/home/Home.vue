@@ -15,15 +15,14 @@ export default {
   name: 'Home',
   components: {TopNav},
   methods:{
-    req: async function () {
-      let foo = await this.request.get('/contactor/group/page?page=1',{});
-      if (foo){
-        console.log(foo)
-      }
+    req: function () {
+      this.request.get('/contactor/group/page',(data)=>{
+        console.log(data)
+      });
+
     }
 
   }
-
 
 }
 </script>

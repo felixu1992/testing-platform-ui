@@ -3,6 +3,7 @@ import axios from "axios"
 import Vue from "vue"
 import Consts from "../consts/consts.js"
 import router from "../router/index.js"
+import store from "../store/index.js"
 
 let config = {
     baseURL: process.env.VUE_APP_AXIOS_BAESE,
@@ -53,49 +54,62 @@ _axios.interceptors.response.use(
 )
 
 const request = {
-    get: async function (url, data) {
-        return await _axios.get(url, data)
-            .then(responseHandler)
+    get: function (url, dataHandler) {
+        return _axios.get(url)
+            .then((response) => {
+                responseHandler(response,dataHandler)
+            })
             .catch(errorHandler)
 
     },
-    post: async function (url, data) {
+    post: function (url, data,dataHandler) {
         return _axios.post(url, data)
-            .then(responseHandler)
+            .then((response) => {
+                responseHandler(response,dataHandler)
+            })
             .catch(errorHandler)
 
     },
-    put: async function (url, data) {
-        return await _axios.put(url, data)
-            .then(responseHandler)
+    put: function (url, data,dataHandler) {
+        return _axios.put(url, data)
+            .then((response) => {
+                responseHandler(response,dataHandler)
+            })
             .catch(errorHandler)
     },
-    delete: async function (url, data) {
-        return await _axios.delete(url, data)
-            .then(responseHandler)
+    delete: function (url, data,dataHandler) {
+        return _axios.delete(url, data)
+            .then((response) => {
+                responseHandler(response,dataHandler)
+            })
             .catch(errorHandler)
 
     }
 }
 
-let responseHandler = (response)=>{
+let responseHandler = (response,dataHandler)=>{
     //normal case:200 ~ 299
     const responseData = response.data
-    if (responseData.code !== 0){
-        if (responseData.code === 106){
-            //106 离线状态
-            router.push("/login")
-        }
-        //businuss logic error
-        return Promise.reject(new Error(responseData.message))
+    let respCode = responseData.code
+    if (responseData.code === 106){
+        //106 离线状态
+        message.error(responseData.message)
+        //登出操作
+        store.commit("doLogoff");
+        //跳转到登陆页
+        router.push("/login")
+    } else if (respCode !== 0) {
+        message.warn(responseData.message)
     }else {
         // normal case: BS code is 0
-        return responseData.data
+        if (dataHandler) {
+            dataHandler(responseData.data)
+        }
     }
 }
 
 let errorHandler = (error) => {
-    message.error("操作失败: "+error.message)
+    message.error("操作失败: " + error.message)
 }
 
 Plugin.install = function(Vue) {
