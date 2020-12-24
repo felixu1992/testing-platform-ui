@@ -23,6 +23,12 @@ _axios.interceptors.request.use(
             let loggedInUser = JSON.parse(loggedInUserStr);
             config.headers["Authorization"] = "token " + loggedInUser.token;
         }
+        // 如果最后没有 ‘/’ 结尾 则添加 ‘/’.
+        let reqUrl = config.url;
+        let lastCharOfUrl = reqUrl[reqUrl.length - 1];
+        if(lastCharOfUrl !== '/'){
+            config.url += '/';
+        }
         return config
     },
     function(error) {
