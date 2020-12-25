@@ -6,10 +6,10 @@
           <a-icon type="file" />文件管理
         </span>
         <a-menu-item-group>
-          <a-menu-item key="file-grp" @click="()=>this.routeTo('files-group')">
+          <a-menu-item key="file-grp" @click="()=>this.routeTo('/files-group')">
             文件分组
           </a-menu-item>
-          <a-menu-item key="file-itm" @click="()=>this.routeTo('files')">
+          <a-menu-item key="file-itm" @click="()=>this.routeTo('/files')">
             文件
           </a-menu-item>
         </a-menu-item-group>
@@ -19,7 +19,7 @@
           <a-icon type="project" />项目管理
         </span>
         <a-menu-item-group>
-          <a-menu-item key="projects" @click="()=>this.routeTo('projects')">
+          <a-menu-item key="projects" @click="()=>this.routeTo('/projects')">
             项目列表
           </a-menu-item>
         </a-menu-item-group>
@@ -29,7 +29,7 @@
           <a-icon type="dashboard" />测试管理
         </span>
         <a-menu-item-group>
-          <a-menu-item key="test-recs" @click="()=>this.routeTo('test-recs')">
+          <a-menu-item key="test-recs" @click="()=>this.routeTo('/test-recs')">
             测试记录
           </a-menu-item>
         </a-menu-item-group>
@@ -39,10 +39,10 @@
           <a-icon type="contacts"/>联系人管理
         </span>
         <a-menu-item-group>
-          <a-menu-item key="contact-grp" @click="()=>this.routeTo('contacts-group')">
+          <a-menu-item key="contact-grp" @click="()=>this.routeTo('/contacts-group')">
             联系人分组
           </a-menu-item>
-          <a-menu-item key="contact-itm" @click="()=>this.routeTo('contacts')">
+          <a-menu-item key="contact-itm" @click="()=>this.routeTo('/contacts')">
             联系人
           </a-menu-item>
         </a-menu-item-group>

@@ -10,6 +10,7 @@ import FilesGroup from '../views/files-group/FilesGroup'
 import Projects from '../views/projects/Projects'
 import TestRecs from '../views/test-recs/TestRecs'
 import ErrorsPage from "../views/common/errors-page/ErrorsPage";
+import Foo from '../views/files/Foo'
 
 Vue.use(VueRouter)
 
@@ -22,43 +23,50 @@ const routes = [
   },
   {
     path: '/login',
-    name: 'Login',
+    name: '登陆',
     component: Login
   }
   ,
   {
     path: '/register',
-    name: 'Register',
+    name: '注册',
     component: Register
   },
   {
     path: '/contacts',
-    name: 'Contacts',
+    name: '联系人',
     component: Contacts
   },
   {
     path: '/contacts-group',
-    name: 'ContactsGroup',
+    name: '联系人分组',
     component: ContactsGroup
   },
   {
     path: '/files',
-    name: 'Files',
-    component: Files
+    name: '文件',
+    component: Files,
+    children:[
+      {
+        path: 'foo',
+        name: '乱七叭昭',
+        component: Foo
+      }
+    ]
   },
   {
     path: '/files-group',
-    name: 'FilesGroup',
+    name: '文件分组',
     component: FilesGroup
   },
   {
     path: '/projects',
-    name: 'Projects',
+    name: '项目列表',
     component: Projects
   },
   {
     path: '/test-recs',
-    name: 'TestRecs',
+    name: '测试记录',
     component: TestRecs
   }
   ,

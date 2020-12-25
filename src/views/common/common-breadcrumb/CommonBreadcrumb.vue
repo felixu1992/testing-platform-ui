@@ -17,8 +17,25 @@
             getPathsObjects(paths){
                 let result = [];
                 let routes = this.$router.options.routes;
-                //todo
+                //paths的第一个元素肯定是 空字符串 所以从 index=1 的位置开始迭代
+                let currRoute = null;
+                for(let i = 1; i < paths.length ; i++){
+                    let singleLevelPath = paths[i];
+                    let bingo = this.findFromCurrentRoute(singleLevelPath,routes);
+                    if(bingo){
+                        result.push(bingo);
+                        routes = bingo.children;
+                    }
+                }
                 return result;
+            },
+            findFromCurrentRoute(path,routes){
+                for(let i = 0; i < routes.length; i++){
+                    let route = routes[i];
+                    if(route.path == '/' + path){
+                        return route;
+                    }
+                }
             }
         },
         computed:{
