@@ -8,8 +8,6 @@
 <script>
     export default{
         name:'CommonBreadcrumb',
-        //此fullPath变量只为了刺激本组建进行渲染
-        props:['fullPath'],
         data(){
             return {}
         },
@@ -32,7 +30,7 @@
             findFromCurrentRoute(path,routes){
                 for(let i = 0; i < routes.length; i++){
                     let route = routes[i];
-                    if(route.path == '/' + path){
+                    if(route.path == path || route.path == '/' + path){
                         return route;
                     }
                 }
@@ -40,7 +38,7 @@
         },
         computed:{
             paths : function(){
-                let currentPath = this.fullPath;
+                let currentPath = this.$store.state.currentRoute;
                 if(currentPath == '/'){
                     return [{path:'/' , name:'Home'}]
                 }else {

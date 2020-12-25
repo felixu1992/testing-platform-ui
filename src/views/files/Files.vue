@@ -14,7 +14,7 @@ export default {
   },
   methods:{
     toFoo(){
-      this.$router.push('/files/foo');
+      this.routeTo('/files/foo');
     }
   }
 }

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import store from '../store/index.js'
 import Home from '../views/home/Home.vue'
 import Login from '../views/login/Login'
 import Register from '../views/register/Register'
@@ -85,6 +86,7 @@ const router = new VueRouter({
 })
 
 Vue.prototype.routeTo = function (path) {
+  store.commit('routeTo',path);
   router.push(path)
 }
 export default router

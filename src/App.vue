@@ -13,7 +13,7 @@
     </div>
     <br/>
     <div>
-      <common-breadcrumb v-bind:fullPath='currentRoute'/>
+      <common-breadcrumb/>
     </div>
     <router-view/>
   </div>
@@ -27,12 +27,7 @@
     data(){
       return {}
     },
-    computed:{
-      currentRoute(){
-        console.log(this.$route.fullPath);
-        return this.$route.fullPath;
-      }
-    }
+    computed:{}
   }
 </script>
 <style scoped>

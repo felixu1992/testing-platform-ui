@@ -7,7 +7,8 @@ let USER_INFO_KEY = Consts.USER_INFO_LOCAL_STORAGE_KEY;
 export default new Vuex.Store({
   state: {
     //从localStorage中获取用户信息 如果有 则处于登录状态
-    loggedInUserInfo: localStorage.getItem(USER_INFO_KEY) ? JSON.parse(localStorage.getItem(USER_INFO_KEY)) : null
+    loggedInUserInfo: localStorage.getItem(USER_INFO_KEY) ? JSON.parse(localStorage.getItem(USER_INFO_KEY)) : null,
+    currentRoute: sessionStorage.getItem(Consts.CURRENT_ROUTE)
   },
   mutations: {
     //登录操作
@@ -20,6 +21,10 @@ export default new Vuex.Store({
     doLogoff(state){
       state.loggedInUserInfo = null;
       localStorage.removeItem(USER_INFO_KEY);
+    },
+    routeTo(state,route){
+      state.currentRoute = route;
+      sessionStorage.setItem(Consts.CURRENT_ROUTE,route)
     }
   },
   getters:{

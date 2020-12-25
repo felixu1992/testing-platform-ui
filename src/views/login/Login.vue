@@ -26,7 +26,7 @@
     <br/>
     <a-button @click="doLogin">登陆</a-button>
     <span>《--》</span>
-    <a-button @click="()=>{this.$router.push('/register')}">注册</a-button>
+    <a-button @click="()=>{this.routeTo('/register')}">注册</a-button>
   </div>
 </template>
 
@@ -43,7 +43,7 @@ export default {
     }
   },
   methods:{
-    doLogin: async function () {
+    doLogin: function () {
       let email = this.email;
       let pswd = this.password;
       this.request.post('/user/signin', {
