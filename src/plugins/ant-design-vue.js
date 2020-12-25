@@ -2,7 +2,8 @@
 import Vue from 'vue'
 import 'ant-design-vue/dist/antd.css';
 import { Button,Layout,Row,Col,Menu,Icon,Tabs,Input,Select,Dropdown,List,Avatar,
-    Form,Divider,BackTop,Modal,Upload,message,notification,Spin,Badge,LocaleProvider,Comment,Affix} from 'ant-design-vue';
+    Form,Divider,BackTop,Modal,Upload,message,notification,Spin,Badge,LocaleProvider,
+    Comment,Affix,Table,Breadcrumb,Tag} from 'ant-design-vue';
 //按需加载 减少资源使用量
 Vue.use(Button);
 Vue.use(Layout);
@@ -26,5 +27,8 @@ Vue.use(Badge);
 Vue.use(LocaleProvider);
 Vue.use(Comment);
 Vue.use(Affix);
+Vue.use(Table);
+Vue.use(Breadcrumb);
+Vue.use(Tag);
 Vue.prototype.$message = message;
 Vue.prototype.$notification = notification;

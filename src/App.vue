@@ -12,14 +12,27 @@
       </div>
     </div>
     <br/>
+    <div>
+      <common-breadcrumb v-bind:fullPath='currentRoute'/>
+    </div>
     <router-view/>
   </div>
 </template>
 <script>
   import TopNav from './views/common/top-nav/TopNav'
   import InfoArea from './views/common/info-area/InfoArea'
+  import CommonBreadcrumb from './views/common/common-breadcrumb/CommonBreadcrumb'
   export default {
-    components:{TopNav,InfoArea}
+    components:{TopNav,InfoArea,CommonBreadcrumb},
+    data(){
+      return {}
+    },
+    computed:{
+      currentRoute(){
+        console.log(this.$route.fullPath);
+        return this.$route.fullPath;
+      }
+    }
   }
 </script>
 <style scoped>
