@@ -1,8 +1,8 @@
 <template>
   <div class="contacts">
-    <a-table :columns="columns" :data-source="data">
+    <a-table :columns="columns" :data-source="data" :pagination="pagination">
     <a slot="name" slot-scope="text">{{ text }}</a>
-    <span slot="customTitle"><a-icon type="smile-o" /> Name</span>
+    <span slot="customTitle"><a-icon type="smile-o" /> 名称</span>
     <span slot="tags" slot-scope="tags">
       <a-tag
         v-for="tag in tags"
@@ -19,8 +19,15 @@
       <a-divider type="vertical" />
       <a class="ant-dropdown-link"> More actions <a-icon type="down" /> </a>
     </span>
-  </a-table>
+   </a-table>
+  <a-pagination
+      show-size-changer
+      :default-current="3"
+      :total="500"
+      @showSizeChange="onShowSizeChange"
+  />
   </div>
+
 </template>
 
 <script>
@@ -33,26 +40,33 @@ const columns = [
     scopedSlots: { customRender: 'name' },
   },
   {
-    title: 'Age',
-    dataIndex: 'age',
-    key: 'age',
+    title: '邮箱',
+    dataIndex: 'email',
+    key: 'email',
   },
   {
-    title: 'Address',
-    dataIndex: 'address',
-    key: 'address',
+    title: '手机号',
+    dataIndex: 'phone',
+    key: 'phone',
   },
   {
-    title: 'Tags',
-    key: 'tags',
-    dataIndex: 'tags',
-    scopedSlots: { customRender: 'tags' },
+    title: '所属分组',
+    key: 'group_name',
+    dataIndex: 'group_name'
   },
   {
-    title: 'Action',
+    title: '创建时间',
+    key: 'created_at'
+  },
+  {
+    title: '更新时间',
+    key: 'updated_at'
+  },
+  {
+    title: '操作',
     key: 'action',
     scopedSlots: { customRender: 'action' },
-  },
+  }
 ];
 
 const data = [
@@ -77,16 +91,132 @@ const data = [
     address: 'Sidney No. 1 Lake Park',
     tags: ['cool', 'teacher'],
   },
+  {
+    key: '3',
+    name: 'Joe Black',
+    age: 32,
+    address: 'Sidney No. 1 Lake Park',
+    tags: ['cool', 'teacher'],
+  },
+  {
+    key: '3',
+    name: 'Joe Black',
+    age: 32,
+    address: 'Sidney No. 1 Lake Park',
+    tags: ['cool', 'teacher'],
+  },
+  {
+    key: '3',
+    name: 'Joe Black',
+    age: 32,
+    address: 'Sidney No. 1 Lake Park',
+    tags: ['cool', 'teacher'],
+  },
+  {
+    key: '3',
+    name: 'Joe Black',
+    age: 32,
+    address: 'Sidney No. 1 Lake Park',
+    tags: ['cool', 'teacher'],
+  },
+  {
+    key: '3',
+    name: 'Joe Black',
+    age: 32,
+    address: 'Sidney No. 1 Lake Park',
+    tags: ['cool', 'teacher'],
+  },
+  {
+    key: '3',
+    name: 'Joe Black',
+    age: 32,
+    address: 'Sidney No. 1 Lake Park',
+    tags: ['cool', 'teacher'],
+  },
+  {
+    key: '3',
+    name: 'Joe Black',
+    age: 32,
+    address: 'Sidney No. 1 Lake Park',
+    tags: ['cool', 'teacher'],
+  },
+  {
+    key: '3',
+    name: 'Joe Black',
+    age: 32,
+    address: 'Sidney No. 1 Lake Park',
+    tags: ['cool', 'teacher'],
+  },
+  {
+    key: '3',
+    name: 'Joe Black',
+    age: 32,
+    address: 'Sidney No. 1 Lake Park',
+    tags: ['cool', 'teacher'],
+  },
+  {
+    key: '3',
+    name: 'Joe Black',
+    age: 32,
+    address: 'Sidney No. 1 Lake Park',
+    tags: ['cool', 'teacher'],
+  },
+  {
+    key: '3',
+    name: 'Joe Black',
+    age: 32,
+    address: 'Sidney No. 1 Lake Park',
+    tags: ['cool', 'teacher'],
+  },
+  {
+    key: '3',
+    name: 'Joe Black',
+    age: 32,
+    address: 'Sidney No. 1 Lake Park',
+    tags: ['cool', 'teacher'],
+  },
 ];
 
 export default {
   name: 'Contacts',
   components: {},
   data() {
+    // let page;
+    let pageSize;
     return {
       data,
       columns,
+      // page,
+      pageSize,
+      pagination:{
+        defaultPageSize: 10,
+        showTotal: total => `共 ${total} 条数据`,
+        showSizeChanger: true,
+        pageSizeOptions: ['10', '20', '30', '40', '50'],
+        onShowSizeChange: (current, pageSize) => this.pageSize = pageSize
+      }
+
     };
+  },
+  watch: {
+    pageSize(val) {
+      console.log('pageSize', val);
+    },
+    current(val) {
+      console.log('current', val);
+    },
+  },
+  methods:{
+    getPage: function () {
+      // let page = 1;
+      // let pswd = this.password;
+      this.request.post('/contactor/', {
+        page: 1,
+        page_size: 10
+      },(data =>{
+        this.data = data.data.records
+      }));
+    }
   }
 }
 </script>
