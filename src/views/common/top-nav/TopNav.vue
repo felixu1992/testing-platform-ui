@@ -1,6 +1,20 @@
 <template>
   <div id="top-nav">
     <a-menu v-model="current" mode="horizontal">
+      <a-menu-item @click="()=>this.routeTo('/')"><a-icon type="home" />首页</a-menu-item>
+      <a-sub-menu v-if="roleAdmin">
+        <span slot="title" class="submenu-title-wrapper">
+          <a-icon type="contacts"/>联系人管理
+        </span>
+        <a-menu-item-group>
+          <a-menu-item key="contact-grp" @click="()=>this.routeTo('/contacts-group')">
+            联系人分组
+          </a-menu-item>
+          <a-menu-item key="contact-itm" @click="()=>this.routeTo('/contacts')">
+            联系人
+          </a-menu-item>
+        </a-menu-item-group>
+      </a-sub-menu>
       <a-sub-menu>
         <span slot="title" class="submenu-title-wrapper">
           <a-icon type="file" />文件管理
@@ -26,24 +40,11 @@
       </a-sub-menu>
       <a-sub-menu>
         <span slot="title" class="submenu-title-wrapper">
-          <a-icon type="dashboard" />测试管理
+          <a-icon type="dashboard" />测试记录
         </span>
         <a-menu-item-group>
           <a-menu-item key="test-recs" @click="()=>this.routeTo('/test-recs')">
             测试记录
-          </a-menu-item>
-        </a-menu-item-group>
-      </a-sub-menu>
-      <a-sub-menu v-if="roleAdmin">
-        <span slot="title" class="submenu-title-wrapper">
-          <a-icon type="contacts"/>联系人管理
-        </span>
-        <a-menu-item-group>
-          <a-menu-item key="contact-grp" @click="()=>this.routeTo('/contacts-group')">
-            联系人分组
-          </a-menu-item>
-          <a-menu-item key="contact-itm" @click="()=>this.routeTo('/contacts')">
-            联系人
           </a-menu-item>
         </a-menu-item-group>
       </a-sub-menu>

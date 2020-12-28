@@ -1,9 +1,10 @@
 <template>
   <div class="home">
-    <h1>Welcome to testting platform</h1>
-    <h1>A beautiful Picture</h1>
-    <h1>This is a very beautiful Home page</h1>
-    <a-button @click="req">ohihi</a-button>
+<!--    <h1>Welcome to testting platform</h1>-->
+<!--    <h1>A beautiful Picture</h1>-->
+<!--    <h1>This is a very beautiful Home page</h1>-->
+<!--    <a-button @click="req">ohihi</a-button>-->
+    <iframe src="https://blogs.felixu.top/testing-platform/" width="100%" height="100%"></iframe>
   </div>
 </template>
 
