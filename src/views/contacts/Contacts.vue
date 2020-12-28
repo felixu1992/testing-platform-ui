@@ -180,6 +180,12 @@ const data = [
 export default {
   name: 'Contacts',
   components: {},
+  beforeMount(){
+    this.request.get('/contacts/', responseData => {
+      // 处理接口返回值
+      this.data = responseData;
+    })
+  },
   data() {
     // let page;
     let pageSize;
