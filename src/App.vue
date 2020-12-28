@@ -1,4 +1,5 @@
 <template>
+  <a-locale-provider :locale="locale">
   <div id="app">
     <div id="test-platform-nav">
       <div id="test-platform-nav-logo" class="float-to-left" @click="()=>this.routeTo('/')">
@@ -17,15 +18,19 @@
     </div>
     <router-view/>
   </div>
+  </a-locale-provider>
 </template>
 <script>
   import TopNav from './views/common/top-nav/TopNav'
   import InfoArea from './views/common/info-area/InfoArea'
   import CommonBreadcrumb from './views/common/common-breadcrumb/CommonBreadcrumb'
+  import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN'
   export default {
     components:{TopNav,InfoArea,CommonBreadcrumb},
     data(){
-      return {}
+      return {
+        locale: zhCN
+      }
     },
     computed:{}
   }

@@ -1,31 +1,12 @@
 <template>
   <div class="contacts">
     <a-table :columns="columns" :data-source="data" :pagination="pagination">
-    <a slot="name" slot-scope="text">{{ text }}</a>
-    <span slot="customTitle"><a-icon type="smile-o" /> 名称</span>
-    <span slot="tags" slot-scope="tags">
-      <a-tag
-        v-for="tag in tags"
-        :key="tag"
-        :color="tag === 'loser' ? 'volcano' : tag.length > 5 ? 'geekblue' : 'green'"
-      >
-        {{ tag.toUpperCase() }}
-      </a-tag>
-    </span>
     <span slot="action" slot-scope="text, record">
-      <a>Invite 一 {{ record.name }}</a>
-      <a-divider type="vertical" />
-      <a>Delete</a>
-      <a-divider type="vertical" />
-      <a class="ant-dropdown-link"> More actions <a-icon type="down" /> </a>
+      <a>编辑</a>
+      <a-divider type="vertical"/>
+      <a>删除</a>
     </span>
-   </a-table>
-  <a-pagination
-      show-size-changer
-      :default-current="3"
-      :total="500"
-      @showSizeChange="onShowSizeChange"
-  />
+    </a-table>
   </div>
 
 </template>
@@ -34,10 +15,9 @@
 
 const columns = [
   {
+    title: '名称',
     dataIndex: 'name',
     key: 'name',
-    slots: { title: 'customTitle' },
-    scopedSlots: { customRender: 'name' },
   },
   {
     title: '邮箱',
@@ -56,16 +36,18 @@ const columns = [
   },
   {
     title: '创建时间',
-    key: 'created_at'
+    key: 'created_at',
+    dataIndex: 'created_at'
   },
   {
     title: '更新时间',
-    key: 'updated_at'
+    key: 'updated_at',
+    dataIndex: 'updated_at'
   },
   {
     title: '操作',
     key: 'action',
-    scopedSlots: { customRender: 'action' },
+    scopedSlots: {customRender: 'action'},
   }
 ];
 
@@ -74,49 +56,41 @@ const data = [];
 export default {
   name: 'Contacts',
   components: {},
-  beforeMount(){
-    this.getPage();
+  beforeMount() {
+    this.getList();
   },
   data() {
-    // let page;
-    let pageSize;
     return {
       data,
       columns,
-      // page,
-      pageSize,
-      pagination:{
-        defaultPageSize: 10,
-        showTotal: total => `共 ${total} 条数据`,
+      current: 1,
+      pageSize: 1,
+      pagination: {
+        total: 0,
+        defaultCurrent: 1,
+        defaultPageSize: 1,
+        onShowSizeChange: (current, pageSize) => {
+          this.pageSize = pageSize;
+          this.pagination.defaultPageSize = pageSize
+          this.pagination.defaultCurrent = current
+          this.getList()
+        },
+        showTotal: total => {
+          return `共 ${total} 条数据`
+        },
         showSizeChanger: true,
-        pageSizeOptions: ['10', '20', '30', '40', '50'],
-        onShowSizeChange: (current, pageSize) => this.pageSize = pageSize
+        pageSizeOptions: ['1', '2', '30', '40', '50'],
       }
-
     };
   },
-  computed:{
-    computedData(){
-      return this.data;
-    }
-  },
-  watch: {
-    pageSize(val) {
-      console.log('pageSize', val);
-    },
-    current(val) {
-      console.log('current', val);
-    },
-  },
-  methods:{
-    getPage: function () {
-      // let page = 1;
-      // let pswd = this.password;
+  methods: {
+    getList: function () {
       this.request.get('/contactor/', {
-        page: 1,
-        page_size: 10
-      },(data =>{
+        page: this.current,
+        page_size: this.pageSize
+      }, (data => {
         this.data = data.records
+         this.pagination.total =  data.count
       }));
     }
   }
