@@ -11,7 +11,7 @@ import FilesGroup from '../views/files-group/FilesGroup'
 import Projects from '../views/projects/Projects'
 import TestRecs from '../views/test-recs/TestRecs'
 import ErrorsPage from "../views/common/errors-page/ErrorsPage";
-import Foo from '../views/files/Foo'
+import Foo from '../views/files/foo/Foo'
 
 Vue.use(VueRouter)
 
