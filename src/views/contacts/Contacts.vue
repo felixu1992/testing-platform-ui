@@ -57,23 +57,24 @@ export default {
   name: 'Contacts',
   components: {},
   beforeMount() {
-    this.getList();
+    this.getListPage(1,1);
   },
+
   data() {
     return {
       data,
       columns,
-      current: 1,
-      pageSize: 1,
+      // current: 1,
+      // pageSize: 1,
       pagination: {
         total: 0,
         defaultCurrent: 1,
         defaultPageSize: 1,
         onShowSizeChange: (current, pageSize) => {
           this.pageSize = pageSize;
-          this.pagination.defaultPageSize = pageSize
-          this.pagination.defaultCurrent = current
-          this.getList()
+          // this.pagination.defaultPageSize = pageSize
+          // this.pagination.defaultCurrent = current;
+          this.getListPage(current,pageSize);
         },
         showTotal: total => {
           return `共 ${total} 条数据`
@@ -84,13 +85,24 @@ export default {
     };
   },
   methods: {
-    getList: function () {
+    // getList: function () {
+    //   this.request.get('/contactor/', {
+    //     page: this.current ? this.current: 1,
+    //     page_size: this.pageSize ? this.pageSize:1,
+    //   }, (data => {
+    //      this.data = data.records
+    //      this.pagination.total =  data.count
+    //   }));
+    // },
+    getListPage: function (current, pageSize) {
       this.request.get('/contactor/', {
-        page: this.current,
-        page_size: this.pageSize
+        page: current ? current: "1",
+        page_size: pageSize ? pageSize:"1",
       }, (data => {
-        this.data = data.records
-         this.pagination.total =  data.count
+         this.data = data.records;
+         this.pagination.pageSize = pageSize;
+         this.pagination.current = current;
+         this.pagination.total =  data.total;
       }));
     }
   }
