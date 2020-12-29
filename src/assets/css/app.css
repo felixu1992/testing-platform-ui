@@ -9,6 +9,8 @@
 @media screen and (min-width: 860px){
     #test-platform-nav{
         min-height: 40px;
+        margin-left: 10px;
+        margin-right: 10px;
     }
     .float-to-left{
         float: left;
@@ -25,5 +27,13 @@
     }
     .test-platform-breadcrumb{
         margin-top: 10px;
+        margin-left: 10px;
+    }
+}
+
+@media screen and (min-width: 860px){
+    #test-platform-area {
+        margin-left: 10px;
+        margin-right: 10px;
     }
 }

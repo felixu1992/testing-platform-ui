@@ -1,5 +1,5 @@
 <template>
-  <div class="contacts">
+  <div class="contacts" v-if='isRoot'>
     <div>
       <a-button type="primary" @click="() => this.routeTo('/contacts/add')">
         新增
@@ -15,26 +15,9 @@
         </span>
       </a-table>
     </div>
-
-    <a-modal
-        v-model="modal2Visible"
-        title="新增联系人"
-        centered
-        @ok="() => (modal2Visible = false)"
-    >
-      <div>
-        联系人名称：<a-input placeholder="请输入联系人名称" v-model="name"/>
-      </div>
-      <div>
-        联系人邮箱：<a-input placeholder="请输入联系人邮箱" v-model="email"/>
-      </div>
-      <div>
-        联系人手机：<a-input placeholder="请输入联系人手机" v-model="phone"/>
-      </div>
-      <div>
-        联系人分组：<a-input placeholder="请输入联系人分组" v-model="groupId"/>
-      </div>
-    </a-modal>
+  </div>
+  <div class="contacts" v-else>
+    <router-view/>
   </div>
 </template>
 
@@ -91,7 +74,6 @@ export default {
     return {
       data,
       columns,
-      modal2Visible: false,
       name: '',
       email: '',
       phone: '',
@@ -129,6 +111,11 @@ export default {
         this.pagination.current = current;
         this.pagination.total = data.total;
       }));
+    }
+  },
+  computed: {
+    isRoot: function () {
+      return this.$store.state.currentRoute === "/contacts"
     }
   }
 }
