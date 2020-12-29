@@ -11,7 +11,6 @@ import FilesGroup from '../views/files-group/FilesGroup'
 import Projects from '../views/projects/Projects'
 import TestRecs from '../views/test-recs/TestRecs'
 import ErrorsPage from "../views/common/errors-page/ErrorsPage";
-import Foo from '../views/files/Foo'
 
 Vue.use(VueRouter)
 
@@ -47,13 +46,7 @@ const routes = [
     path: '/files',
     name: '文件',
     component: Files,
-    children:[
-      {
-        path: 'foo',
-        name: '乱七叭昭',
-        component: Foo
-      }
-    ]
+    children:[]
   },
   {
     path: '/files-group',
