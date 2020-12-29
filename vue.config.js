@@ -15,6 +15,20 @@ module.exports = {
                 }
             }
         }
-    }
+    },
+    css: {
+        loaderOptions: {
+          less: {
+            lessOptions: {
+              modifyVars: {
+                'primary-color': '#287999',
+                'link-color': '#287999',
+                'border-radius-base': '2px',
+              },
+              javascriptEnabled: true,
+            },
+          },
+        },
+      },
 
 }

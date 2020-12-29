@@ -2,7 +2,7 @@
   <div id="app">
     <div id="test-platform-nav">
       <div id="test-platform-nav-logo" class="float-to-left" @click="()=>this.routeTo('/')">
-        <h1 class="test-platform-nav-title">logo</h1>
+        <h1 class="test-platform-nav-title">logo Of TP</h1>
       </div>
       <div id="test-platform-nav-content" class="float-to-left">
         <top-nav/>
@@ -11,8 +11,7 @@
         <info-area/>
       </div>
     </div>
-    <br/>
-    <div>
+    <div class="test-platform-breadcrumb">
       <common-breadcrumb/>
     </div>
     <router-view/>

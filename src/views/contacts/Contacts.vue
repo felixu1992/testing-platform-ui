@@ -75,6 +75,7 @@ export default {
   name: 'Contacts',
   components: {},
   beforeMount(){
+
     this.getPage();
   },
   data() {
