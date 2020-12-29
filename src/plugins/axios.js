@@ -24,11 +24,11 @@ _axios.interceptors.request.use(
             config.headers["Authorization"] = "token " + loggedInUser.token;
         }
         // 如果最后没有 ‘/’ 结尾 则添加 ‘/’.
-        let reqUrl = config.url;
-        let lastCharOfUrl = reqUrl[reqUrl.length - 1];
-        if(lastCharOfUrl !== '/'){
-            config.url += '/';
-        }
+        // let reqUrl = config.url;
+        // let lastCharOfUrl = reqUrl[reqUrl.length - 1];
+        // if(lastCharOfUrl !== '/'){
+        //     config.url += '/';
+        // }
         return config
     },
     function(error) {
@@ -60,7 +60,20 @@ _axios.interceptors.response.use(
 )
 
 const request = {
-    get: function (url, dataHandler) {
+    get: function (url, params, dataHandler) {
+        let paramEntries = Object.entries(params);
+        if(paramEntries.length > 0) {
+            url += '?';
+        }
+        for (let i = 0; i < paramEntries.length; i++) {
+            const element = paramEntries[i];
+            url +=  element[0] + '=' + element[1] + '&';
+        }
+
+        if(url[url.length -1] == '&'){
+            url = url.substr(0,url.length - 1);
+        }
+
         return _axios.get(url)
             .then((response) => {
                 responseHandler(response,dataHandler)
