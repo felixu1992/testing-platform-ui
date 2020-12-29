@@ -3,7 +3,7 @@
         min-height: 40px;
     }
     .test-platform-nav-title{
-        color: #1d84f7;
+        color: #00717c;
     }
 }
 @media screen and (min-width: 860px){
@@ -17,6 +17,13 @@
         float: right;
     }
     .test-platform-nav-title{
-        color: #1d84f7;
+        color: #00717c;
+        height: 40px;
+    }
+    #test-platform-nav-logo {
+        height: 40px;
+    }
+    .test-platform-breadcrumb{
+        margin-top: 10px;
     }
 }
