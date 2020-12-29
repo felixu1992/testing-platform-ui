@@ -40,7 +40,7 @@ const routes = [
     component: Contacts,
     children: [
       {
-        path: '/add',
+        path: 'add',
         name: '新增联系人',
         component: AddContacts
       }

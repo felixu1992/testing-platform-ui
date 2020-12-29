@@ -15,7 +15,9 @@
     <div class="test-platform-breadcrumb">
       <common-breadcrumb/>
     </div>
-    <router-view/>
+    <div id="test-platform-area">
+      <router-view/>
+    </div>
   </div>
   </a-locale-provider>
 </template>
