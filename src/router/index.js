@@ -12,6 +12,7 @@ import Projects from '../views/projects/Projects'
 import TestRecs from '../views/test-recs/TestRecs'
 import ErrorsPage from "../views/common/errors-page/ErrorsPage";
 import Foo from '../views/files/Foo'
+import AddContacts from "@/views/contacts/AddContacts";
 
 Vue.use(VueRouter)
 
@@ -36,7 +37,14 @@ const routes = [
   {
     path: '/contacts',
     name: '联系人',
-    component: Contacts
+    component: Contacts,
+    children: [
+      {
+        path: '/add',
+        name: '新增联系人',
+        component: AddContacts
+      }
+    ]
   },
   {
     path: '/contacts-group',
