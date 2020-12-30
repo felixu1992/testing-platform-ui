@@ -25,19 +25,19 @@
                     let singleLevelPath = paths[i];
                     let bingo = this.findFromCurrentRoute(singleLevelPath,routes);
                     if(bingo){
-                        currRoute += bingo.path[0] == '/' ? bingo.path : '/' + bingo.path;
+                        currRoute += bingo.path[0] === '/' ? bingo.path : '/' + bingo.path;
                         bingo.completePath = currRoute;
                         result.push(bingo);
                         routes = bingo.children;
                     }
-                    
+
                 }
                 return result;
             },
             findFromCurrentRoute(path,routes){
                 for(let i = 0; i < routes.length; i++){
                     let route = routes[i];
-                    if(route.path == path || route.path == '/' + path){
+                    if(route.path === path || route.path === '/' + path){
                         return route;
                     }
                 }
@@ -46,19 +46,18 @@
         computed:{
             paths : function(){
                 let currentPath = this.$store.state.currentRoute;
-                if(currentPath == '/'){
+                if(currentPath === '/'){
                     return [{path:'/' , name:'Home'}]
                 }else {
-                    let paths = currentPath.split('/');
-                    let result = this.getPathsObjects(paths);
-                    return result;
+                  let paths = currentPath.split('/');
+                  return this.getPathsObjects(paths);
                 }
-                
+
             },
 
             isHomeRoute : function(){
                 let currentRoute = this.$store.state.currentRoute;
-                return currentRoute == '/'
+                return currentRoute === '/'
             }
         }
     }

@@ -1,14 +1,24 @@
 <template>
-  <div class="contacts">
-    <a-table :columns="columns" :data-source="data" :pagination="pagination">
-    <span slot="action" slot-scope="text, record">
-      <a>编辑</a>
-      <a-divider type="vertical"/>
-      <a>删除</a>
-    </span>
-    </a-table>
+  <div class="contacts" v-if='isRoot'>
+    <div>
+      <a-button type="primary" @click="() => this.routeTo('/contacts/add')">
+        新增
+      </a-button>
+      <a-input-search placeholder="联系人名称" style="width: 200px; float:right" @search="onSearch"/>
+    </div>
+    <div>
+      <a-table :columns="columns" :data-source="data" :pagination="pagination">
+        <span slot="action" slot-scope="text, record">
+          <a>编辑</a>
+          <a-divider type="vertical"/>
+          <a>删除</a>
+        </span>
+      </a-table>
+    </div>
   </div>
-
+  <div class="contacts" v-else>
+    <router-view/>
+  </div>
 </template>
 
 <script>
@@ -57,53 +67,55 @@ export default {
   name: 'Contacts',
   components: {},
   beforeMount() {
-    this.getListPage(1,1);
+    this.getListPage(this.pagination.defaultCurrent, this.pagination.defaultPageSize);
   },
 
   data() {
     return {
       data,
       columns,
-      // current: 1,
-      // pageSize: 1,
+      name: '',
+      email: '',
+      phone: '',
+      groupId: '',
       pagination: {
         total: 0,
         defaultCurrent: 1,
-        defaultPageSize: 1,
+        defaultPageSize: 10,
+        current: 1,
         onShowSizeChange: (current, pageSize) => {
           this.pageSize = pageSize;
-          // this.pagination.defaultPageSize = pageSize
-          // this.pagination.defaultCurrent = current;
-          this.getListPage(current,pageSize);
+          this.getListPage(current, pageSize);
         },
-        showTotal: total => {
-          return `共 ${total} 条数据`
-        },
+        showTotal: total => `共 ${total} 条数据`,
         showSizeChanger: true,
-        pageSizeOptions: ['1', '2', '30', '40', '50'],
+        pageSizeOptions: ['10', '20', '30', '40', '50'],
+        onChange: (current, pageSize) => {
+          this.getListPage(current, pageSize)
+        }
       }
     };
   },
   methods: {
-    // getList: function () {
-    //   this.request.get('/contactor/', {
-    //     page: this.current ? this.current: 1,
-    //     page_size: this.pageSize ? this.pageSize:1,
-    //   }, (data => {
-    //      this.data = data.records
-    //      this.pagination.total =  data.count
-    //   }));
-    // },
-    getListPage: function (current, pageSize) {
-      this.request.get('/contactor/', {
-        page: current ? current: "1",
-        page_size: pageSize ? pageSize:"1",
-      }, (data => {
-         this.data = data.records;
-         this.pagination.pageSize = pageSize;
-         this.pagination.current = current;
-         this.pagination.total =  data.total;
+    getListPage: function (current, pageSize, name) {
+      let params = {
+        page: current,
+        page_size: pageSize
+      }
+      if (name) {
+        params.name = name
+      }
+      this.request.get('/contactor/', params, (data => {
+        this.data = data.records;
+        this.pagination.pageSize = pageSize;
+        this.pagination.current = current;
+        this.pagination.total = data.total;
       }));
+    }
+  },
+  computed: {
+    isRoot: function () {
+      return this.$store.state.currentRoute === "/contacts"
     }
   }
 }

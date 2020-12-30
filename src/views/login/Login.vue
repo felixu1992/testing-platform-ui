@@ -46,7 +46,7 @@ export default {
     doLogin: function () {
       let email = this.email;
       let pswd = this.password;
-      this.request.post('/user/signin', {
+      this.request.post('/user/signin/', {
         email: email,
         password: pswd
       },(data =>{

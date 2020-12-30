@@ -11,7 +11,9 @@ import FilesGroup from '../views/files-group/FilesGroup'
 import Projects from '../views/projects/Projects'
 import TestRecs from '../views/test-recs/TestRecs'
 import ErrorsPage from "../views/common/errors-page/ErrorsPage";
-import Foo from '../views/files/foo/Foo'
+import AddContacts from "@/views/contacts/AddContacts";
+import AddFile from '../views/files/add-file/AddFile'
+import UpdateFile from '../views/files/update-file/UpdateFile'
 
 Vue.use(VueRouter)
 
@@ -36,7 +38,14 @@ const routes = [
   {
     path: '/contacts',
     name: '联系人',
-    component: Contacts
+    component: Contacts,
+    children: [
+      {
+        path: 'add',
+        name: '新增联系人',
+        component: AddContacts
+      }
+    ]
   },
   {
     path: '/contacts-group',
@@ -49,9 +58,14 @@ const routes = [
     component: Files,
     children:[
       {
-        path: 'foo',
-        name: '乱七叭昭',
-        component: Foo
+        path: 'add-file',
+        name: '添加文件',
+        component: AddFile
+      },
+      {
+        path: 'update-file',
+        name: '更新文件',
+        component: UpdateFile
       }
     ]
   },
