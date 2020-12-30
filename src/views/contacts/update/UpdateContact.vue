@@ -1,5 +1,5 @@
 <template>
-  <div class="add-contacts" style="padding:30px">
+  <div class="update-contacts" style="padding:30px">
     <a-card title="新增联系人" style="width: 100%">
       名  称：
       <a-input placeholder="请输入联系人名称" v-model="name" style="width: 10%"/>
@@ -26,7 +26,7 @@
 
 <script>
 export default {
-  name: "AddContacts",
+  name: "UpdateContact",
   beforeMount() {
     this.getGroups()
   },

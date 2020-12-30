@@ -9,9 +9,20 @@
     <div>
       <a-table :columns="columns" :data-source="data" :pagination="pagination">
         <span slot="action" slot-scope="text, record">
-          <a>编辑</a>
+          <a-button size='small' type="link" @click="() => routeTo('/contacts/update')">
+          更新
+          </a-button>
           <a-divider type="vertical"/>
-          <a>删除</a>
+          <a-popconfirm title="确认删除?"
+                      ok-text="是"
+                      cancel-text="否"
+                      @confirm="deleteContact(record.id)"
+                      @cancel="cancelDelete"
+          >
+          <a-button size='small' type="link" @click="showConfirmDelete(record)">
+            删除
+          </a-button>
+        </a-popconfirm>
         </span>
       </a-table>
     </div>
@@ -111,7 +122,29 @@ export default {
         this.pagination.current = current;
         this.pagination.total = data.total;
       }));
-    }
+    },
+    showConfirmDelete(rowRecord) {
+
+    },
+    deleteContact(contactorId) {
+      this.request.delete('/contactor/' + contactorId + "/", {
+        id: contactorId
+      }, data => {
+        this.$notification.info({
+          message: '操作提示',
+          description: '删除成功',
+          duration: 2
+        });
+        this.getListPage(this.pagination.current, this.pagination.pageSize);
+      });
+    },
+    cancelDelete() {
+      this.$notification.open({
+        message: '操作提示',
+        description: '已取消操作',
+        duration: 2
+      });
+    },
   },
   computed: {
     isRoot: function () {

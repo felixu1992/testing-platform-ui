@@ -11,9 +11,10 @@ import FilesGroup from '../views/files-group/FilesGroup'
 import Projects from '../views/projects/Projects'
 import TestRecs from '../views/test-recs/TestRecs'
 import ErrorsPage from "../views/common/errors-page/ErrorsPage";
-import AddContacts from "@/views/contacts/AddContacts";
 import AddFile from '../views/files/add-file/AddFile'
 import UpdateFile from '../views/files/update-file/UpdateFile'
+import UpdateContact from "@/views/contacts/update/UpdateContact";
+import AddContact from "@/views/contacts/add/AddContact";
 
 Vue.use(VueRouter)
 
@@ -43,7 +44,12 @@ const routes = [
       {
         path: 'add',
         name: '新增联系人',
-        component: AddContacts
+        component: AddContact
+      },
+      {
+        path: 'update',
+        name: '更新联系人',
+        component: UpdateContact
       }
     ]
   },
