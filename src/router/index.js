@@ -10,7 +10,9 @@ import Files from '../views/files/Files'
 import FilesGroup from '../views/files-group/FilesGroup'
 import Projects from '../views/projects/Projects'
 import TestRecs from '../views/test-recs/TestRecs'
-import ErrorsPage from "../views/common/errors-page/ErrorsPage";
+import ErrorsPage from '../views/common/errors-page/ErrorsPage'
+import AddFile from '../views/files/add-file/AddFile'
+import UpdateFile from '../views/files/update-file/UpdateFile'
 
 Vue.use(VueRouter)
 
@@ -46,7 +48,18 @@ const routes = [
     path: '/files',
     name: '文件',
     component: Files,
-    children:[]
+    children:[
+      {
+        path: 'add-file',
+        name: '添加文件',
+        component: AddFile
+      },
+      {
+        path: 'update-file',
+        name: '更新文件',
+        component: UpdateFile
+      }
+    ]
   },
   {
     path: '/files-group',
