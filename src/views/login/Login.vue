@@ -32,7 +32,7 @@
 
 <script>
 // @ is an alias to /src
-
+import api from '../../plugins/api';
 export default {
   name: 'Login',
   components: {},
@@ -46,7 +46,7 @@ export default {
     doLogin: function () {
       let email = this.email;
       let pswd = this.password;
-      this.request.post(this.Api.LOGIN, {
+      api.signin({
         email: email,
         password: pswd
       },(data =>{

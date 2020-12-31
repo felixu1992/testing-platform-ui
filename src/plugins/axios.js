@@ -153,5 +153,5 @@ Plugin.install = function(Vue) {
     })
 }
 Vue.use(Plugin);
-export {request}
-export default _axios
+// export {request}
+export default request;
