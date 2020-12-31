@@ -1,5 +1,5 @@
 <template>
-  <div class="contacts" v-if='isRoot'>
+  <div class="contacts test-platform-frame-margin" v-if='isRoot'>
     <div>
       <a-button type="primary" @click="() => this.routeTo('/contacts/add')">
         新增
@@ -121,5 +121,6 @@ export default {
 }
 </script>
 <style scoped>
+@import '../../assets/css/common.css';
 
 </style>

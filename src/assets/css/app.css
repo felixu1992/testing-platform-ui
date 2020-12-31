@@ -30,10 +30,3 @@
         margin-left: 10px;
     }
 }
-
-@media screen and (min-width: 860px){
-    #test-platform-area {
-        margin-left: 10px;
-        margin-right: 10px;
-    }
-}

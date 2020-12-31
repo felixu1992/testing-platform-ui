@@ -1,5 +1,5 @@
 <template>
-  <div class="files" v-if="isRouteOfFile">
+  <div class="files test-platform-frame-margin" v-if="isRouteOfFile">
     <div>
       <a-form class="ant-advanced-search-form" :form="form" @submit="handleSearch">
       <a-row :gutter="24">
@@ -230,6 +230,7 @@ export default {
 }
 </script>
 <style scoped>
+@import '../../assets/css/common.css';
 .ant-advanced-search-form {
   padding: 18px;
   background: #fbfbfb;
