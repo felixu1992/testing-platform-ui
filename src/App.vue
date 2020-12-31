@@ -5,14 +5,14 @@
       <div id="test-platform-nav-logo" class="float-to-left" @click="()=>this.routeTo('/')">
         <h1 class="test-platform-nav-title">logo Of TP</h1>
       </div>
-      <div id="test-platform-nav-content" class="float-to-left">
+      <div id="test-platform-nav-content" class="float-to-left"  v-if="loggedIn">
         <top-nav/>
       </div>
       <div id="test-platform-info-area">
         <info-area/>
       </div>
     </div>
-    <div class="test-platform-breadcrumb">
+    <div class="test-platform-breadcrumb" v-if="loggedIn">
       <common-breadcrumb/>
     </div>
     <div id="test-platform-area">
@@ -33,7 +33,11 @@
         locale: zhCN
       }
     },
-    computed:{}
+    computed:{
+      loggedIn: function () {
+        return this.$store.getters.loggedIn
+      }
+    }
   }
 </script>
 <style scoped>
