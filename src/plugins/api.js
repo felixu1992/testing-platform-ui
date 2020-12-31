@@ -44,7 +44,7 @@ export default {
         request.post(CONTACTOR,param,handler);
     },
     updateContactor : function(id,param,handler){
-        request.put(`${CONTACTOR}id/`,param,handler);
+        request.put(`${CONTACTOR}${id}/`,param,handler);
     }
 
 }
