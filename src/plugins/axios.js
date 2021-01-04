@@ -110,15 +110,24 @@ let responseHandler = (response,dataHandler)=>{
     //normal case:200 ~ 299
     const responseData = response.data
     let respCode = responseData.code
+    let respMsg = responseData.message
     if (respCode === 106){
         //106 离线状态
-        message.error(responseData.message)
+        message.error(respMsg)
         //登出操作
         store.commit("doLogoff");
         //跳转到登陆页
         router.push("/login")
     } else if (respCode !== 0) {
-        message.warn(responseData.message)
+        if (typeof respMsg === "string") {
+            message.warn(respMsg)
+        } else {
+            let msg = '';
+            for (let key in respMsg) {
+                msg += respMsg[key] + '\n'
+            }
+            message.warn(msg)
+        }
     }else {
         // normal case: BS code is 0
         if (dataHandler) {
