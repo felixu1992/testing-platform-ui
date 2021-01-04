@@ -68,9 +68,6 @@
           <a @click="()=>{this.routeTo('/register')}"> 注册 </a>
           一个吧
         </a-form-item>
-        <a-form-item>
-
-        </a-form-item>
       </a-form>
     </a-card>
   </div>

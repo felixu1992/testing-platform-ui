@@ -1,25 +1,67 @@
 <template>
   <div class="add-contact" style="padding:30px">
-    <a-card title="新增联系人" style="width: 100%">
-      名  称：
-      <a-input placeholder="请输入联系人名称" v-model="name" style="width: 10%"/>
-      <br/>
-      邮  箱：
-      <a-input placeholder="请输入联系人邮箱" v-model="email" style="width: 10%"/>
-      <br/>
-      手  机：
-      <a-input placeholder="请输入联系人手机" v-model="phone" style="width: 10%"/>
-      <br/>
-      分  组：
-      <a-select default-value="--请选择--" style="width: 120px" @change="value => chooseGroup(value)">
-        <a-select-option v-for="group in groups" :value="group.id">
-          {{ group.name }}
-        </a-select-option>
-      </a-select>
-      <br/>
-      <a-button type="primary" @click="createContactor">
-        确定
-      </a-button>
+    <a-card title="新增联系人">
+      <a-form
+          id="add-contact-form"
+          :form="form"
+          class="contact-form"
+          @submit="handleSubmit"
+      >
+        <a-form-item>
+          名  称：
+          <a-input class="contact-name" style="width: 10%"
+                   v-decorator="[
+          'name',
+          { rules: [{ required: true, message: '联系人名称不可为空！' }] },
+        ]"
+                   placeholder="请输入联系人名称"
+          >
+          </a-input>
+        </a-form-item>
+        <a-form-item>
+          邮  箱：
+          <a-input class="contact-email" style="width: 10%"
+                   v-decorator="[
+          'email',
+          { rules: [{ required: true, message: '联系人邮箱不可为空！' }] },
+        ]"
+                   placeholder="请输入联系人邮箱"
+          >
+          </a-input>
+        </a-form-item>
+        <a-form-item>
+          手  机：
+          <a-input class="contact-phone" style="width: 10%"
+                   v-decorator="[
+          'phone',
+          { rules: [{ required: true, message: '联系人手机不可为空！' }] },
+        ]"
+                   placeholder="请输入联系人手机"
+          >
+          </a-input>
+        </a-form-item>
+        <a-form-item>
+          分  组：
+          <a-select default-value="--请选择--" style="width: 120px" @change="value => chooseGroup(value)"
+                    v-decorator="[
+                      'group_id',
+                      { rules: [{
+                        required: true, message: '联系人分组不可为空！' }
+                      ] },
+                      { option: [{ initialValue: '--请选择--' }] }
+                    ]"
+          >
+            <a-select-option v-for="group in groups" :value="group.id">
+              {{ group.name }}
+            </a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item>
+          <a-button type="primary" html-type="submit" class="contact-form-button">
+            确 定
+          </a-button>
+        </a-form-item>
+      </a-form>
     </a-card>
   </div>
 </template>
@@ -27,6 +69,9 @@
 <script>
 export default {
   name: "AddContact",
+  beforeCreate() {
+    this.form = this.$form.createForm(this, {name: 'normal_login'});
+  },
   beforeMount() {
     this.getGroups()
   },
@@ -36,10 +81,18 @@ export default {
       email: '',
       phone: '',
       groupId: '',
-      groups: []
+      groups: [],
     }
   },
   methods: {
+    handleSubmit(e) {
+      e.preventDefault();
+      this.form.validateFields((err, values) => {
+        if (!err) {
+          this.createContactor(values)
+        }
+      });
+    },
     getGroups: function () {
       this.request.get('/contactor/group/', {
         page: 1,
@@ -51,7 +104,7 @@ export default {
     chooseGroup: function (groupId) {
       this.groupId = groupId
     },
-    createContactor: function () {
+    createContactor: function (values) {
       this.request.post('/contactor/', {
         name: this.name,
         email: this.email,
@@ -60,7 +113,7 @@ export default {
       }, (data => {
         this.routeTo('/contacts')
       }))
-    }
+    },
   }
 }
 </script>

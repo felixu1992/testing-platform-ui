@@ -4,7 +4,7 @@ import 'ant-design-vue/dist/antd.less';
 import {
     Button, Layout, Row, Col, Menu, Icon, Tabs, Input, Select, Dropdown, List, Avatar,
     Form, Divider, BackTop, Modal, Upload, message, notification, Spin, Badge, LocaleProvider,
-    Comment, Affix, Table, Breadcrumb, Tag, Pagination, Card,Popconfirm,DatePicker
+    Comment, Affix, Table, Breadcrumb, Tag, Pagination, Card, Popconfirm, DatePicker, ConfigProvider
 } from 'ant-design-vue';
 //按需加载 减少资源使用量
 Vue.use(Button);
@@ -27,6 +27,7 @@ Vue.use(Upload);
 Vue.use(Spin);
 Vue.use(Badge);
 Vue.use(LocaleProvider);
+Vue.use(ConfigProvider)
 Vue.use(Comment);
 Vue.use(Affix);
 Vue.use(Table);

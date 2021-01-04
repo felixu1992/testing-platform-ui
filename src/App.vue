@@ -1,31 +1,31 @@
 <template>
-  <a-locale-provider :locale="locale">
-  <div id="app">
-    <div id="test-platform-nav">
-      <div id="test-platform-nav-logo" class="float-to-left"v-if="loggedIn">
-        <h1 class="test-platform-nav-title">TP</h1>
+  <a-config-provider :locale="locale">
+    <div id="app">
+      <div id="test-platform-nav">
+        <div id="test-platform-nav-logo" class="float-to-left"v-if="loggedIn">
+          <h1 class="test-platform-nav-title">TP</h1>
+        </div>
+        <div id="test-platform-nav-content" class="float-to-left"  v-if="loggedIn">
+          <top-nav/>
+        </div>
+        <div id="test-platform-info-area">
+          <info-area/>
+        </div>
       </div>
-      <div id="test-platform-nav-content" class="float-to-left"  v-if="loggedIn">
-        <top-nav/>
+      <div class="test-platform-breadcrumb" v-if="loggedIn">
+        <common-breadcrumb/>
       </div>
-      <div id="test-platform-info-area">
-        <info-area/>
+      <div id="test-platform-area">
+        <router-view/>
       </div>
     </div>
-    <div class="test-platform-breadcrumb" v-if="loggedIn">
-      <common-breadcrumb/>
-    </div>
-    <div id="test-platform-area">
-      <router-view/>
-    </div>
-  </div>
-  </a-locale-provider>
+  </a-config-provider>
 </template>
 <script>
   import TopNav from './views/common/top-nav/TopNav'
   import InfoArea from './views/common/info-area/InfoArea'
   import CommonBreadcrumb from './views/common/common-breadcrumb/CommonBreadcrumb'
-  import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN'
+  import zhCN from 'ant-design-vue/es/locale/zh_CN';
   export default {
     components:{TopNav,InfoArea,CommonBreadcrumb},
     data(){
