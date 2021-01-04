@@ -110,7 +110,7 @@ let responseHandler = (response,dataHandler)=>{
     //normal case:200 ~ 299
     const responseData = response.data
     let respCode = responseData.code
-    if (responseData.code === 106){
+    if (respCode === 106){
         //106 离线状态
         message.error(responseData.message)
         //登出操作

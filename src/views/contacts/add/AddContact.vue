@@ -42,13 +42,12 @@
         </a-form-item>
         <a-form-item>
           分  组：
-          <a-select default-value="--请选择--" style="width: 120px" @change="value => chooseGroup(value)"
+          <a-select style="width: 120px" @change="value => value"
                     v-decorator="[
                       'group_id',
                       { rules: [{
                         required: true, message: '联系人分组不可为空！' }
-                      ] },
-                      { option: [{ initialValue: '--请选择--' }] }
+                      ], initialValue: '--请选择--' }
                     ]"
           >
             <a-select-option v-for="group in groups" :value="group.id">
@@ -101,16 +100,8 @@ export default {
         this.groups = data.records;
       }));
     },
-    chooseGroup: function (groupId) {
-      this.groupId = groupId
-    },
-    createContactor: function (values) {
-      this.request.post('/contactor/', {
-        name: this.name,
-        email: this.email,
-        phone: this.phone,
-        group_id: this.groupId
-      }, (data => {
+    createContactor: function (params) {
+      this.request.post('/contactor/', params, (data => {
         this.routeTo('/contacts')
       }))
     },
