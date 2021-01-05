@@ -10,7 +10,7 @@
           <a-menu-item key="contact-grp" @click="()=>this.routeTo('/contacts-group')">
             联系人分组
           </a-menu-item>
-          <a-menu-item key="contact-itm" @click="()=>this.routeTo('/contacts')">
+          <a-menu-item key="contact-itm" @click="()=>this.routeTo('/contact')">
             联系人
           </a-menu-item>
         </a-menu-item-group>

@@ -1,5 +1,5 @@
 <template>
-  <div class="contacts test-platform-frame-margin" v-if='isRoot'>
+  <div>
     <div class="contact-search-div">
       <a-form class="contact-search-form" :form="form" @submit="handleSearch">
         <a-row :gutter="24">
@@ -7,15 +7,15 @@
             <a-form-item :label="`名 称: `">
               <a-input
                   v-decorator="[
-                    `name`,
-                    {
-                      rules: [
-                        {
-                          required: false
-                        },
-                      ],
-                    },
-                  ]"
+                  `name`,
+                  {
+                    rules: [
+                      {
+                        required: false
+                      },
+                    ],
+                  },
+                ]"
                   placeholder="联系人名称"
               />
             </a-form-item>
@@ -24,15 +24,15 @@
             <a-form-item :label="`邮 箱: `">
               <a-input
                   v-decorator="[
-                    `email`,
-                    {
-                      rules: [
-                        {
-                          required: false
-                        },
-                      ],
-                    },
-                  ]"
+                  `email`,
+                  {
+                    rules: [
+                      {
+                        required: false
+                      },
+                    ],
+                  },
+                ]"
                   placeholder="联系人邮箱"
               />
             </a-form-item>
@@ -47,7 +47,7 @@
           </a-col>
         </a-row>
         <a-row>
-          <a-button class="add-button" type="primary" @click="() => this.routeTo('/contacts/add-contact')">
+          <a-button class="add-button" type="primary" @click="() => this.routeTo('/contact/add-contact')">
             新增
           </a-button>
           <a-button class="batch-delete-button" :style="{ marginLeft: '8px' }" @click="() => console.info('批量删除')">
@@ -58,33 +58,28 @@
     </div>
     <div>
       <a-table :columns="columns" :data-source="data" :pagination="pagination">
-        <span slot="action" slot-scope="text, record">
-          <a-button size='small' type="link" @click="updateContact(record.id)">
-          更新
-          </a-button>
-          <a-divider type="vertical"/>
-          <a-popconfirm title="确认删除?"
+      <span slot="action" slot-scope="text, record">
+        <a-button size='small' type="link" @click="updateContact(record.id)">
+        更 新
+        </a-button>
+        <a-divider type="vertical"/>
+        <a-popconfirm title="确认删除?"
                       ok-text="是"
                       cancel-text="否"
                       @confirm="deleteContact(record.id)"
                       @cancel="cancelDelete"
-          >
-          <a-button size='small' type="link" @click="showConfirmDelete(record)">
-            删除
-          </a-button>
-        </a-popconfirm>
-        </span>
+        >
+        <a-button size='small' type="link" @click="showConfirmDelete(record)">
+          删 除
+        </a-button>
+      </a-popconfirm>
+      </span>
       </a-table>
     </div>
-  </div>
-  <div class="contacts" v-else>
-    <router-view/>
   </div>
 </template>
 
 <script>
-
-import store from "@/store";
 
 const columns = [
   {
@@ -127,7 +122,7 @@ const columns = [
 const data = [];
 
 export default {
-  name: 'Contacts',
+  name: 'ContactList',
   components: {},
   beforeMount() {
     this.getListPage(this.pagination.defaultCurrent, this.pagination.defaultPageSize);
@@ -186,15 +181,12 @@ export default {
 
     },
     updateContact(contactorId) {
-      // this.routeTo('/contacts/update-contact')
-      this.$store.commit('routeTo', '/contacts/update-contact');
-      this.$router.push('/contacts/update-contact')
-      // this.$router.push({
-      //   name: '更新联系人',
-      //   query: {
-      //     id: contactorId
-      //   }
-      // });
+      this.$router.push({
+        path: '/contact/update-contact',
+        query: {
+          id: contactorId
+        }
+      });
     },
     deleteContact(contactorId) {
       this.request.delete('/contactor/' + contactorId + "/", {
@@ -243,6 +235,6 @@ export default {
 }
 </script>
 <style scoped>
-@import '../../assets/css/common.css';
-@import "contacts.css";
+@import '../../../assets/css/common.css';
+@import "contact-list.css";
 </style>
