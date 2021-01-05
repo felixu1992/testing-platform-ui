@@ -1,8 +1,8 @@
 <template>
-  <div class="add-contact" style="padding:30px">
-    <a-card title="新增联系人">
+  <div class="update-contact-div" style="padding:30px">
+    <a-card title="更新联系人">
       <a-form
-          id="add-contact-form"
+          id="update-contact-form"
           :form="form"
           class="contact-form"
           @submit="handleSubmit"
@@ -48,7 +48,7 @@
                       { rules: [{
                           required: true, message: '联系人分组不可为空！' }
                         ],
-                      initialValue: '--请选择--'
+                        initialValue: '--请选择--'
                       }
                     ]"
           >
@@ -69,19 +69,19 @@
 
 <script>
 export default {
-  name: "AddContact",
+  name: "UpdateContact",
   beforeCreate() {
-    this.form = this.$form.createForm(this, {name: 'add-contact'});
+    this.form = this.$form.createForm(this, {name: 'update-contact'});
   },
   beforeMount() {
     this.getGroups()
+    const {
+      id
+    } = this.$route.query
+    this.getContact(id)
   },
   data() {
     return {
-      name: '',
-      email: '',
-      phone: '',
-      groupId: '',
       groups: [],
     }
   },
@@ -90,7 +90,7 @@ export default {
       e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
-          this.createContactor(values)
+          // this.createContactor(values)
         }
       });
     },
@@ -102,15 +102,18 @@ export default {
         this.groups = data.records;
       }));
     },
-    createContactor: function (params) {
-      this.request.post('/contactor/', params, (data => {
-        this.$router.push('/contact');
-      }))
+    chooseGroup: function (groupId) {
+      this.groupId = groupId
+    },
+    getContact(id) {
+      this.request.get('/contactor/' + id + '/', {}, (data => {
+        this.form.setFieldsValue(data)
+      }));
     },
   }
 }
 </script>
 
 <style scoped>
-@import "add-contact.css";
+@import "update-contact.css";
 </style>
