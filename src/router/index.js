@@ -14,7 +14,7 @@ import ErrorsPage from "../views/common/errors-page/ErrorsPage";
 import AddFile from '../views/files/add-file/AddFile'
 import UpdateFile from '../views/files/update-file/UpdateFile'
 import UpdateContact from "@/views/contacts/update/UpdateContact";
-import AddContact from "@/views/contacts/add/AddContact";
+import AddContact from "@/views/contacts/add-contact/AddContact";
 
 Vue.use(VueRouter)
 
@@ -42,7 +42,7 @@ const routes = [
     component: Contacts,
     children: [
       {
-        path: 'add',
+        path: 'add-contact',
         name: '新增联系人',
         component: AddContact
       },

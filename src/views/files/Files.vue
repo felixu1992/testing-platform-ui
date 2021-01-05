@@ -48,7 +48,7 @@
         </a-col>
       </a-row>
       <a-row :gutter="24">
-        
+
         <a-col :span=10>
           <a-form-item :label="`更新时间: `">
             <a-range-picker
@@ -69,7 +69,7 @@
       </a-row>
     </a-form>
     </div>
-    
+
     <a-table :columns="columns" :data-source="data" :pagination='false'>
       <span slot="action" slot-scope="text, record">
         <a-button size='small' type="link" @click="()=>routeTo('/files/update-file')">
@@ -83,13 +83,13 @@
         >
           <a-button size='small' type="link" @click="showConfirmDelete(record)">
             删除
-          </a-button> 
+          </a-button>
         </a-popconfirm>
       </span>
     </a-table>
     <div>
       <div class="add-file-btn">
-        <a-button size='small' type='primary' @click="()=>routeTo('/files/add-file')">添加文件</a-button>
+        <a-button size='small' type='primary' @click="()=>routeTo('/files/add-contact-file')">添加文件</a-button>
       </div>
       <div class="pagination-bar">
         <a-pagination size="small" :total="50" :show-total="total => `Total ${total} items`" show-size-changer show-quick-jumper />
@@ -222,11 +222,11 @@ export default {
       form: this.$form.createForm(this, { name: 'advanced_search' }),
     };
   },
-  
+
   beforeMount(current,pageSize){
     this.listFilePage(1,10);
   }
-  
+
 }
 </script>
 <style scoped>

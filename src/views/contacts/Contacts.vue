@@ -1,10 +1,60 @@
 <template>
   <div class="contacts test-platform-frame-margin" v-if='isRoot'>
-    <div>
-      <a-button type="primary" @click="() => this.routeTo('/contacts/add')">
-        新增
-      </a-button>
-      <a-input-search placeholder="联系人名称" style="width: 200px; float:right" @search="onSearch"/>
+    <div class="contact-search-div">
+      <a-form class="contact-search-form" :form="form" @submit="handleSearch">
+        <a-row :gutter="24">
+          <a-col :span=6>
+            <a-form-item :label="`名 称: `">
+              <a-input
+                  v-decorator="[
+                    `name`,
+                    {
+                      rules: [
+                        {
+                          required: false
+                        },
+                      ],
+                    },
+                  ]"
+                  placeholder="联系人名称"
+              />
+            </a-form-item>
+          </a-col>
+          <a-col :span=6>
+            <a-form-item :label="`邮 箱: `">
+              <a-input
+                  v-decorator="[
+                    `email`,
+                    {
+                      rules: [
+                        {
+                          required: false
+                        },
+                      ],
+                    },
+                  ]"
+                  placeholder="联系人邮箱"
+              />
+            </a-form-item>
+          </a-col>
+          <a-col :span="12" :style="{ textAlign: 'right' }">
+            <a-button class="search-button" type="primary" html-type="submit">
+              搜索
+            </a-button>
+            <a-button class="reset-button" :style="{ marginLeft: '8px' }" @click="handleReset">
+              重置
+            </a-button>
+          </a-col>
+        </a-row>
+        <a-row>
+          <a-button class="add-button" type="primary" @click="() => this.routeTo('/contacts/add-contact')">
+            新增
+          </a-button>
+          <a-button class="batch-delete-button" :style="{ marginLeft: '8px' }" @click="() => console.info('批量删除')">
+            批量删除
+          </a-button>
+        </a-row>
+      </a-form>
     </div>
     <div>
       <a-table :columns="columns" :data-source="data" :pagination="pagination">
@@ -80,7 +130,9 @@ export default {
   beforeMount() {
     this.getListPage(this.pagination.defaultCurrent, this.pagination.defaultPageSize);
   },
-
+  beforeCreate() {
+    this.form = this.$form.createForm(this, {name: 'search-form'});
+  },
   data() {
     return {
       data,
@@ -88,7 +140,6 @@ export default {
       name: '',
       email: '',
       phone: '',
-      groupId: '',
       pagination: {
         total: 0,
         defaultCurrent: 1,
@@ -96,25 +147,31 @@ export default {
         current: 1,
         onShowSizeChange: (current, pageSize) => {
           this.pageSize = pageSize;
-          this.getListPage(current, pageSize);
+          this.getListPage(current, pageSize, this.name, this.phone, this.email);
         },
         showTotal: total => `共 ${total} 条数据`,
         showSizeChanger: true,
         pageSizeOptions: ['10', '20', '30', '40', '50'],
         onChange: (current, pageSize) => {
-          this.getListPage(current, pageSize)
+          this.getListPage(current, pageSize, this.name, this.phone, this.email)
         }
       }
     };
   },
   methods: {
-    getListPage: function (current, pageSize, name) {
+    getListPage: function (current, pageSize, name, phone, email) {
       let params = {
         page: current,
         page_size: pageSize
       }
       if (name) {
         params.name = name
+      }
+      if (phone) {
+        params.phone = phone
+      }
+      if (email) {
+        params.email = email
       }
       this.request.get('/contactor/', params, (data => {
         this.data = data.records;
@@ -135,7 +192,7 @@ export default {
           description: '删除成功',
           duration: 2
         });
-        this.getListPage(this.pagination.current, this.pagination.pageSize);
+        this.getListPage(this.pagination.current, this.pagination.pageSize, this.name, this.phone, this.email);
       });
     },
     cancelDelete() {
@@ -144,6 +201,25 @@ export default {
         description: '已取消操作',
         duration: 2
       });
+    },
+    handleSearch(e) {
+      e.preventDefault();
+      this.form.validateFields((err, values) => {
+        if (!err) {
+          this.name = values['name'];
+          this.phone = values['phone'];
+          this.email = values['email'];
+          this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.name, this.phone, this.email);
+        }
+      });
+    },
+
+    handleReset() {
+      this.form.resetFields();
+      this.name = '';
+      this.phone = '';
+      this.email = '';
+      this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.name, this.phone, this.email)
     },
   },
   computed: {
@@ -155,5 +231,5 @@ export default {
 </script>
 <style scoped>
 @import '../../assets/css/common.css';
-
+@import "contacts.css";
 </style>

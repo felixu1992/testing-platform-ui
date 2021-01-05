@@ -46,8 +46,10 @@
                     v-decorator="[
                       'group_id',
                       { rules: [{
-                        required: true, message: '联系人分组不可为空！' }
-                      ], initialValue: '--请选择--' }
+                          required: true, message: '联系人分组不可为空！' }
+                        ],
+                      initialValue: '--请选择--'
+                      }
                     ]"
           >
             <a-select-option v-for="group in groups" :value="group.id">
