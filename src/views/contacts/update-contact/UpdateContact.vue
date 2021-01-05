@@ -8,7 +8,7 @@
           @submit="handleSubmit"
       >
         <a-form-item>
-          名  称：
+          名 称：
           <a-input class="contact-name" style="width: 10%"
                    v-decorator="[
           'name',
@@ -19,7 +19,7 @@
           </a-input>
         </a-form-item>
         <a-form-item>
-          邮  箱：
+          邮 箱：
           <a-input class="contact-email" style="width: 10%"
                    v-decorator="[
           'email',
@@ -30,7 +30,7 @@
           </a-input>
         </a-form-item>
         <a-form-item>
-          手  机：
+          手 机：
           <a-input class="contact-phone" style="width: 10%"
                    v-decorator="[
           'phone',
@@ -41,7 +41,7 @@
           </a-input>
         </a-form-item>
         <a-form-item>
-          分  组：
+          分 组：
           <a-select style="width: 120px" @change="value => value"
                     v-decorator="[
                       'group_id',
@@ -68,6 +68,8 @@
 </template>
 
 <script>
+import api from '@/plugins/api'
+
 export default {
   name: "UpdateContact",
   beforeCreate() {
@@ -78,11 +80,13 @@ export default {
     const {
       id
     } = this.$route.query
+    this.id = id
     this.getContact(id)
   },
   data() {
     return {
       groups: [],
+      id: '',
     }
   },
   methods: {
@@ -90,26 +94,30 @@ export default {
       e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
-          // this.createContactor(values)
+          values.id = this.id
+          debugger
+          this.updateContact(this.id, values)
         }
       });
     },
     getGroups: function () {
-      this.request.get('/contactor/group/', {
+      api.listContactorGroup({
         page: 1,
         page_size: 999
       }, (data => {
         this.groups = data.records;
-      }));
-    },
-    chooseGroup: function (groupId) {
-      this.groupId = groupId
+      }))
     },
     getContact(id) {
       this.request.get('/contactor/' + id + '/', {}, (data => {
         this.form.setFieldsValue(data)
       }));
     },
+    updateContact(id, params) {
+      this.request.put('/contactor/' + id + '/', params, (data => {
+        this.$router.push('/contact')
+      }))
+    }
   }
 }
 </script>

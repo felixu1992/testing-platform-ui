@@ -37,6 +37,11 @@ export default {
     signout : function(handler){
         request.post(USER_SIGNOUT,{},handler);
     },
+    /*-------------- 联系人 ---------------*/
+    // 分页查询联系人分组
+    listContactorGroup: function (params, handler) {
+        request.get(CONTACTOR_GROUP, params, handler)
+    },
     listContactor :function(param , handler){
         request.get(CONTACTOR,param,handler);
     },
