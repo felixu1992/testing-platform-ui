@@ -51,7 +51,7 @@ const routes = [
             },
             {
                 path: 'update-contact',
-                name: '更新',
+                name: '编辑',
                 component: UpdateContact
             }
         ]
@@ -119,6 +119,11 @@ const routes = [
                 path: 'add-project',
                 name: '新增',
                 component: () => import('@/views/projects/add/AddProject')
+            },
+            {
+                path: 'update-project',
+                name: '编辑',
+                component: () => import('@/views/projects/update/UpdateProject')
             }
         ]
     },
