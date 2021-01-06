@@ -55,6 +55,7 @@ export default {
     updateContactGroup: function (id, params, handler) {
         request.put(`${CONTACTOR_GROUP}${id}/`, params, handler)
     },
+
     listContactor: function (param, handler) {
         request.get(CONTACTOR, param, handler);
     },
@@ -63,6 +64,22 @@ export default {
     },
     updateContactor: function (id, param, handler) {
         request.put(`${CONTACTOR}${id}/`, param, handler);
-    }
-
+    },
+    /*-------------- 项目 ---------------*/
+    // 分页查询联系人分组
+    listProjectGroup: function (params, handler) {
+        request.get(PROJECT_GROUP, params, handler)
+    },
+    // 删除联系人分组
+    deleteProjectGroup: function (id, params, handler) {
+        request.delete(`${PROJECT_GROUP}${id}/`, handler)
+    },
+    // 新增联系人分组
+    createProjectGroup: function (params, handler) {
+        request.post(PROJECT_GROUP, params, handler)
+    },
+    // 更新联系人分组
+    updateProjectGroup: function (id, params, handler) {
+        request.put(`${PROJECT_GROUP}${id}/`, params, handler)
+    },
 }

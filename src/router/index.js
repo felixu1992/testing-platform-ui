@@ -93,6 +93,19 @@ const routes = [
         component: FilesGroup
     },
     {
+        path: '/project-group',
+        name: '项目分组',
+        component: () => import('@/views/projects-group/index'),
+        redirect: '/project-group/list',
+        children: [
+            {
+                path: 'list',
+                name: '列表',
+                component: () => import('@/views/projects-group/list/index')
+            }
+        ]
+    },
+    {
         path: '/projects',
         name: '项目列表',
         component: Projects

@@ -1,13 +1,13 @@
 <template>
   <div>
-    <div class="contact-group-search-div">
+    <div class="project-group-search-div">
       <a-modal :visible="visible" :title="title" @ok="handleOk" @cancel="cancelModal">
-        <a-form class="contact-group-edit-form" :form="editForm">
+        <a-form class="project-group-edit-form" :form="editForm">
           <a-row>
             <a-col>
               <a-form-item :label="`名 称: `">
                 <a-input
-                    placeholder="联系人分组名称"
+                    placeholder="项目分组名称"
                     style="width: 50%"
                     v-decorator="[
                     `newName`,
@@ -25,7 +25,7 @@
           </a-row>
         </a-form>
       </a-modal>
-      <a-form class="contact-group-search-form" :form="form" @submit="handleSearch">
+      <a-form class="project-group-search-form" :form="form" @submit="handleSearch">
         <a-row :gutter="24">
           <a-col :span=4>
             <a-form-item :label="`名 称: `">
@@ -40,7 +40,7 @@
                     ],
                   },
                 ]"
-                  placeholder="联系人分组名称"
+                  placeholder="项目分组名称"
               />
             </a-form-item>
           </a-col>
@@ -73,7 +73,7 @@
         <a-popconfirm title="确认删除?"
                       ok-text="是"
                       cancel-text="否"
-                      @confirm="deleteContact(record.id)"
+                      @confirm="deleteProject(record.id)"
                       @cancel="cancelDelete"
         >
         <a-button size='small' type="link">
@@ -159,16 +159,16 @@ export default {
       if (name) {
         params.name = name
       }
-      api.listContactorGroup(params, data => {
+      api.listProjectGroup(params, data => {
         this.data = data.records;
         this.pagination.pageSize = pageSize;
         this.pagination.current = current;
         this.pagination.total = data.total;
       })
     },
-    deleteContact(contactorId) {
-      api.deleteContactGroup(contactorId, {
-        id: contactorId
+    deleteProject(id) {
+      api.deleteProjectGroup(id, {
+        id: id
       }, data => {
         this.$notification.info({
           message: '操作提示',
@@ -201,13 +201,14 @@ export default {
     },
     showModal(edit, record) {
       this.resetModal();
+      debugger
       if (edit) {
-        this.title = '编辑联系人分组';
+        this.title = '编辑项目分组';
         this.id = record.id;
         this.newName = record.name
-        this.editForm.setFieldsValue({ newName: this.newName })
+        this.editForm.setFieldsValue({ newName: this.newName})
       } else {
-        this.title = '新增联系人分组';
+        this.title = '新增项目分组';
       }
       this.visible = true;
     },
@@ -223,9 +224,9 @@ export default {
           debugger
           if (this.id) {
             params.id = this.id
-            api.updateContactGroup(this.id, params, handler)
+            api.updateProjectGroup(this.id, params, handler)
           } else {
-            api.createContactGroup(params, handler)
+            api.createProjectGroup(params, handler)
           }
           this.resetModal();
           this.visible = false;
@@ -241,7 +242,7 @@ export default {
       this.id = '';
       this.newName = '';
       this.title = '';
-      this.editForm.setFieldsValue({ newName: ''})
+      this.editForm.setFieldsValue({ newName: '' })
     }
   },
   computed: {}
