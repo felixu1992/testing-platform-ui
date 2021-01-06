@@ -1,0 +1,7 @@
+.project-form .ant-form-item {
+    display: flex;
+}
+
+.project-form .ant-form-item-control-wrapper {
+    flex: 1;
+}

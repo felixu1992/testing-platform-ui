@@ -65,7 +65,7 @@ const routes = [
             {
                 path: 'list',
                 name: '列表',
-                component: () => import('@/views/contacts-group/list/index')
+                component: () => import('@/views/contacts-group/list/ContactGroupList')
             }
         ]
     },
@@ -100,7 +100,7 @@ const routes = [
             {
                 path: 'list',
                 name: '列表',
-                component: () => import('@/views/projects-group/list/index')
+                component: () => import('@/views/projects-group/list/ProjectGroupList')
             }
         ]
     },
@@ -113,7 +113,12 @@ const routes = [
             {
                 path: 'list',
                 name: '列表',
-                component: () => import('@/views/projects/list/index')
+                component: () => import('@/views/projects/list/ProjectList')
+            },
+            {
+                path: 'add-project',
+                name: '新增',
+                component: () => import('@/views/projects/add/AddProject')
             }
         ]
     },

@@ -30,7 +30,7 @@
           </a-col>
         </a-row>
         <a-row>
-          <a-button class="add-button" type="primary" @click="() => this.routeTo('/project/add-project')">
+          <a-button class="add-button" type="primary" @click="() => this.$router.push('/project/add-project')">
             新增
           </a-button>
           <a-button class="batch-delete-button" :style="{ marginLeft: '8px' }" @click="() => console.info('批量删除')">
