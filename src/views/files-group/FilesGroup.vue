@@ -3,11 +3,11 @@
     <div>
       <a-form class="ant-advanced-search-form" :form="form" @submit="handleSearch">
         <a-row :gutter="24">
-          <a-col :span=8>
+          <a-col :span=12>
             <a-form-item :label="`分组名称: `">
               <a-input
                   v-decorator="[
-                `fileGroup`,
+                `name`,
                 {
                   rules: [
                     {
@@ -20,53 +20,54 @@
               />
             </a-form-item>
           </a-col>
-        </a-row>
-        <a-row :gutter="24">
-          <a-col :span=12>
-            <a-form-item :label="`创建时间: `">
-              <a-range-picker
-                  v-decorator="['create-time-picker']"
-                  show-time
-                  format="YYYY-MM-DD HH:mm:ss"
-              />
-            </a-form-item>
-          </a-col>
-          <a-col :span=10>
-            <a-form-item :label="`更新时间: `">
-              <a-range-picker
-                  v-decorator="['update-time-picker']"
-                  show-time
-                  format="YYYY-MM-DD HH:mm:ss"
-              />
-            </a-form-item>
-          </a-col>
-          <a-col :span="12" :style="{ textAlign: 'right' }">
+          <a-col :span="12" :style="{ textAlign: 'left' }">
             <a-button type="primary" html-type="submit">
               搜索
             </a-button>
-            <a-button :style="{ marginLeft: '8px' }" @click="handleReset">
-              重置
-            </a-button>
           </a-col>
         </a-row>
+
+        <div>
+          <a-button type="primary" @click="showAddModal">
+            +添加新分组名
+          </a-button>
+          <a-modal v-model:visible="addView" title="添加文件分组">
+            <template #footer>
+              <a-button key="submit" type="primary" @click="addHandleOk()">
+                提交
+              </a-button>
+            </template>
+            <a-input style="width: 60%" v-model:value="addGroupName"
+                     v-decorator="[
+          'groupName',
+          { rules: [{ required: true, message: '分组名称不可为空！' }] },
+        ]"
+                     placeholder="请输入分组名称"
+            >
+            </a-input>
+          </a-modal>
+        </div>
       </a-form>
     </div>
-    <a-table :columns="columns" :data-source="data" :pagination='false'>
+    <a-table :columns="columns" :data-source="data" :pagination='pagination'>
       <span slot="action" slot-scope="text, record">
-        <span><a-button size='small' type="link" @click="showEditModal">
+        <span>
+          <a-button size='small' type="link" @click="showEditModal(record)">
           编辑
-        </a-button>
-        <a-modal v-model:visible="editView" title="Basic Modal" @ok="showEditModal">
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-       </a-modal></span>
-
+          </a-button>
+          <a-modal v-model:visible="editView" title="文件分组名称修改" @ok="editViewSubmit(editItem.id)">
+            <p>id:      {{ editItem.id }}<p>
+            <b>修改当前分组名: </b>
+            <a-input style="width: 60%" v-model:value="editGroupName"
+            ></a-input>
+            <p>创建时间：{{ editItem.created_at }}<p>
+            <p>修改时间：{{ editItem.updated_at }}</p>
+          </a-modal>
+        </span>
         <a-popconfirm title="确认删除?"
                       ok-text="是"
                       cancel-text="否"
                       @confirm="deleteFilesGroup(record.id)"
-                      @cancel="cancelDeleteFilesGroup"
         >
           <a-button size='small' type="link">
             删除
@@ -74,32 +75,6 @@
         </a-popconfirm>
       </span>
     </a-table>
-    <!--    //分页组件-->
-    <div class="pagination-bar">
-      <a-pagination size="small" :total=total :show-total="total => `Total ${total} items`" show-size-changer
-                    show-quick-jumper/>
-    </div>
-    <!--    //添加组件-->
-    <div>
-      <a-button type="primary" @click="showAddModal">
-        +添加新分组名
-      </a-button>
-      <a-modal v-model:visible="visible" title="添加文件分组">
-        <template #footer>
-          <a-button key="submit" type="primary" @click="addHandleOk()">
-            提交
-          </a-button>
-        </template>
-        <a-input style="width: 60%" v-model:value="addGroupName"
-                 v-decorator="[
-          'groupName',
-          { rules: [{ required: true, message: '分组名称不可为空！' }] },
-        ]"
-                 placeholder="请输入分组名称"
-        >
-        </a-input>
-      </a-modal>
-    </div>
   </div>
   <div v-else>
     <router-view/>
@@ -111,10 +86,26 @@ export default {
   name: 'FilesGroup',
   components: {},
   methods: {
+    getListPage: function (current, pageSize, name) {
+      let params = {
+        page: current,
+        page_size: pageSize
+      }
+      if (name) {
+        params.name = name
+      }
+      this.request.get('/file/group/', params, (data => {
+        this.data = data.records;
+        this.pagination.pageSize = pageSize;
+        this.pagination.current = current;
+        this.pagination.total = data.total;
+      }));
+    },
     //添加分组的页脚模态窗
     showAddModal() {
-      this.visible = true;
+      this.addView = true;
     },
+    //添加成功
     addHandleOk() {
       this.request.post('/file/group/', {name: this.addGroupName}, data => {
         if (200 !== data.code) {
@@ -123,16 +114,32 @@ export default {
             description: '添加成功',
             duration: 2,
           });
-          this.visible = false;
+          this.addView = false;
           this.addGroupName = '';
           this.listFilePage(this.current, this.pageSize)
         }
       });
     },
-    //编辑模态窗
-    showEditModal() {
+    // 编辑模态窗
+    showEditModal(record) {
+      this.editItem = record;
+      this.editGroupName = record.name
       this.editView = true;
     },
+    editViewSubmit(id) {
+      this.request.put('/file/group/' + id + '/', {name: this.editGroupName, id: id}, data => {
+        if (200 !== data.code) {
+          this.$notification.info({
+            message: '操作提示',
+            description: '修改成功',
+            duration: 2,
+          });
+          this.editView = false;
+          this.listFilePage(this.current, this.pageSize)
+        }
+      })
+    },
+    //删除功能
     deleteFilesGroup(id) {
       this.request.delete('/file/group/' + id + '/', {}, data => {
             this.$notification.info({
@@ -143,9 +150,6 @@ export default {
             this.listFilePage(this.current, this.pageSize);
           }
       )
-
-    },
-    cancelDeleteFilesGroup() {
     },
     listFilePage(current, pageSize) {
       this.request.get('/file/group/', {current: current, pageSize: pageSize}, data => {
@@ -156,15 +160,11 @@ export default {
         }
       });
     },
-    handleReset() {
-      this.form.resetFields();
-    },
-    //form test
     handleSearch(e) {
       e.preventDefault();
       this.form.validateFields((error, values) => {
-        console.log('error', error);
-        console.log('Received values of form: ', values);
+        this.name = values['name'];
+        this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.name);
       });
     },
   },
@@ -172,13 +172,6 @@ export default {
     isRouteOfFileGroup() {
       return this.$store.state.currentRoute == '/files-group'
     },
-
-    // form test
-    count() {
-      return this.expand ? 11 : 7;
-    },
-  },
-  showConfirmDelete(record) {
   },
   data() {
     const data = [];
@@ -209,20 +202,40 @@ export default {
         scopedSlots: {customRender: 'action'},
       }
     ];
+    const editItem = [];
     return {
       data,
       columns,
+      name: '',
       expand: false,
       form: this.$form.createForm(this, {name: 'advanced_search'}),
-      visible: false,
+      addView: false,
       editView: false,
+      editItem,
       total: 0,
-      addGroupName: ''
+      addGroupName: '',
+      editGroupName: '',
+      pagination: {
+        total: 0,
+        defaultCurrent: 1,
+        defaultPageSize: 10,
+        current: 1,
+        onShowSizeChange: (current, pageSize) => {
+          this.pageSize = pageSize;
+          this.getListPage(current, pageSize, this.name);
+        },
+        showTotal: total => `共 ${total} 条数据`,
+        showSizeChanger: true,
+        pageSizeOptions: ['10', '20', '30', '40', '50'],
+        onChange: (current, pageSize) => {
+          this.getListPage(current, pageSize, this.name)
+        }
+      }
     };
   },
 
-  beforeMount(current, pageSize) {
-    this.listFilePage(current, pageSize);
+  beforeMount() {
+    this.getListPage(this.pagination.defaultCurrent, this.pagination.defaultPageSize);
   }
 
 }
@@ -244,11 +257,5 @@ export default {
 .ant-advanced-search-form .ant-form-item-control-wrapper {
   flex: 1;
 }
-
-.pagination-bar {
-  margin-bottom: 24px;
-  float: right;
-}
-
 </style>
 
