@@ -4,7 +4,6 @@ import store from '../store/index.js'
 import Home from '../views/home/Home.vue'
 import Login from '../views/login/Login'
 import Register from '../views/register/Register'
-import ContactsGroup from '../views/contacts-group/ContactsGroup'
 import Files from '../views/files/Files'
 import FilesGroup from '../views/files-group/FilesGroup'
 import Projects from '../views/projects/Projects'
@@ -59,9 +58,17 @@ const routes = [
         ]
     },
     {
-        path: '/contacts-group',
+        path: '/contact-group',
         name: '联系人分组',
-        component: ContactsGroup
+        component: () => import('@/views/contacts-group/index'),
+        redirect: '/contact-group/list',
+        children: [
+            {
+                path: 'list',
+                name: '列表',
+                component: () => import('@/views/contacts-group/list/index')
+            }
+        ]
     },
     {
         path: '/files',

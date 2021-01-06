@@ -1,7 +1,31 @@
 <template>
   <div>
-    <div class="contact-search-div">
-      <a-form class="contact-search-form" :form="form" @submit="handleSearch">
+    <div class="contact-group-search-div">
+      <a-modal :visible="visible" :title="title" @ok="handleOk" @cancel="cancelModal">
+        <a-form class="contact-group-edit-form" :form="editForm">
+          <a-row>
+            <a-col>
+              <a-form-item :label="`名 称: `">
+                <a-input
+                    placeholder="联系人分组名称"
+                    style="width: 50%"
+                    v-decorator="[
+                    `newName`,
+                    {
+                      rules: [
+                        {
+                          required: true, message: '分组名称不能为空'
+                        },
+                      ],
+                    },
+                ]"
+                />
+              </a-form-item>
+            </a-col>
+          </a-row>
+        </a-form>
+      </a-modal>
+      <a-form class="contact-group-search-form" :form="form" @submit="handleSearch">
         <a-row :gutter="24">
           <a-col :span=4>
             <a-form-item :label="`名 称: `">
@@ -16,41 +40,7 @@
                     ],
                   },
                 ]"
-                  placeholder="联系人名称"
-              />
-            </a-form-item>
-          </a-col>
-          <a-col :span=4>
-            <a-form-item :label="`邮 箱: `">
-              <a-input
-                  v-decorator="[
-                  `email`,
-                  {
-                    rules: [
-                      {
-                        required: false
-                      },
-                    ],
-                  },
-                ]"
-                  placeholder="联系人邮箱"
-              />
-            </a-form-item>
-          </a-col>
-          <a-col :span=4>
-            <a-form-item :label="`手 机: `">
-              <a-input
-                  v-decorator="[
-                  `phone`,
-                  {
-                    rules: [
-                      {
-                        required: false
-                      },
-                    ],
-                  },
-                ]"
-                  placeholder="联系人手机号"
+                  placeholder="联系人分组名称"
               />
             </a-form-item>
           </a-col>
@@ -64,7 +54,7 @@
           </a-col>
         </a-row>
         <a-row>
-          <a-button class="add-button" type="primary" @click="() => this.routeTo('/contact/add-contact')">
+          <a-button class="add-button" type="primary" @click="showModal(false)">
             新增
           </a-button>
           <a-button class="batch-delete-button" :style="{ marginLeft: '8px' }" @click="() => console.info('批量删除')">
@@ -76,7 +66,7 @@
     <div>
       <a-table :columns="columns" :data-source="data" :pagination="pagination">
       <span slot="action" slot-scope="text, record">
-        <a-button size='small' type="link" @click="updateContact(record.id)">
+        <a-button size='small' type="link" @click="showModal(true, record)">
         编 辑
         </a-button>
         <a-divider type="vertical"/>
@@ -86,7 +76,7 @@
                       @confirm="deleteContact(record.id)"
                       @cancel="cancelDelete"
         >
-        <a-button size='small' type="link" @click="showConfirmDelete(record)">
+        <a-button size='small' type="link">
           删 除
         </a-button>
       </a-popconfirm>
@@ -98,26 +88,13 @@
 
 <script>
 
+import api from "@/plugins/api";
+
 const columns = [
   {
     title: '名称',
     dataIndex: 'name',
     key: 'name',
-  },
-  {
-    title: '邮箱',
-    dataIndex: 'email',
-    key: 'email',
-  },
-  {
-    title: '手机号',
-    dataIndex: 'phone',
-    key: 'phone',
-  },
-  {
-    title: '所属分组',
-    key: 'group_name',
-    dataIndex: 'group_name'
   },
   {
     title: '创建时间',
@@ -139,21 +116,22 @@ const columns = [
 const data = [];
 
 export default {
-  name: 'ContactList',
-  components: {},
   beforeMount() {
     this.getListPage(this.pagination.defaultCurrent, this.pagination.defaultPageSize);
   },
   beforeCreate() {
     this.form = this.$form.createForm(this, {name: 'search-form'});
+    this.editForm = this.$form.createForm(this, {name: 'edit-form'});
   },
   data() {
     return {
       data,
       columns,
+      id: '',
+      newName: '',
       name: '',
-      email: '',
-      phone: '',
+      title: '',
+      visible: false,
       pagination: {
         total: 0,
         defaultCurrent: 1,
@@ -161,19 +139,19 @@ export default {
         current: 1,
         onShowSizeChange: (current, pageSize) => {
           this.pageSize = pageSize;
-          this.getListPage(current, pageSize, this.name, this.phone, this.email);
+          this.getListPage(current, pageSize, this.name);
         },
         showTotal: total => `共 ${total} 条数据`,
         showSizeChanger: true,
         pageSizeOptions: ['10', '20', '30', '40', '50'],
         onChange: (current, pageSize) => {
-          this.getListPage(current, pageSize, this.name, this.phone, this.email)
+          this.getListPage(current, pageSize, this.name)
         }
       }
     };
   },
   methods: {
-    getListPage: function (current, pageSize, name, phone, email) {
+    getListPage: function (current, pageSize, name) {
       let params = {
         page: current,
         page_size: pageSize
@@ -181,32 +159,15 @@ export default {
       if (name) {
         params.name = name
       }
-      if (phone) {
-        params.phone = phone
-      }
-      if (email) {
-        params.email = email
-      }
-      this.request.get('/contactor/', params, (data => {
+      api.listContactorGroup(params, data => {
         this.data = data.records;
         this.pagination.pageSize = pageSize;
         this.pagination.current = current;
         this.pagination.total = data.total;
-      }));
-    },
-    showConfirmDelete(rowRecord) {
-
-    },
-    updateContact(contactorId) {
-      this.$router.push({
-        path: '/contact/update-contact',
-        query: {
-          id: contactorId
-        }
-      });
+      })
     },
     deleteContact(contactorId) {
-      this.request.delete('/contactor/' + contactorId + "/", {
+      api.deleteContactGroup(contactorId, {
         id: contactorId
       }, data => {
         this.$notification.info({
@@ -214,7 +175,7 @@ export default {
           description: '删除成功',
           duration: 2
         });
-        this.getListPage(this.pagination.current, this.pagination.pageSize, this.name, this.phone, this.email);
+        this.getListPage(this.pagination.current, this.pagination.pageSize, this.name);
       });
     },
     cancelDelete() {
@@ -228,30 +189,64 @@ export default {
       e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
-          this.name = values['name'];
-          this.phone = values['phone'];
-          this.email = values['email'];
-          this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.name, this.phone, this.email);
+          this.name = values.name;
+          this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.name);
         }
       });
     },
-
     handleReset() {
       this.form.resetFields();
       this.name = '';
-      this.phone = '';
-      this.email = '';
-      this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.name, this.phone, this.email)
+      this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.name)
     },
-  },
-  computed: {
-    isRoot: function () {
-      return this.$store.state.currentRoute === "/contacts"
+    showModal(edit, record) {
+      this.resetModal();
+      if (edit) {
+        this.title = '编辑联系人分组';
+        this.id = record.id;
+        this.newName = record.name
+      } else {
+        this.title = '新增联系人分组';
+      }
+      this.visible = true;
+    },
+    handleOk(e) {
+      e.preventDefault();
+      this.editForm.validateFields((err, values) => {
+        if (!err) {
+          this.newName = values.newName
+          let params = {
+            name: this.newName
+          };
+          let handler = data => this.getListPage(this.pagination.current, this.pagination.pageSize, this.name);
+          debugger
+          if (this.id) {
+            params.id = this.id
+            api.updateContactGroup(this.id, params, handler)
+          } else {
+            api.createContactGroup(params, handler)
+          }
+          this.resetModal();
+          this.visible = false;
+        }
+      });
+
+    },
+    cancelModal() {
+      this.resetModal();
+      this.visible = false;
+    },
+    resetModal() {
+      this.id = '';
+      this.newName = '';
+      this.title = '';
     }
-  }
+  },
+  computed: {}
 }
 </script>
 <style scoped>
 @import '../../../assets/css/common.css';
-@import "contact-list.css";
+@import "list.css";
 </style>
+

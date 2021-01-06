@@ -7,7 +7,7 @@
           <a-icon type="contacts"/>联系人管理
         </span>
         <a-menu-item-group>
-          <a-menu-item key="contact-grp" @click="()=>this.routeTo('/contacts-group')">
+          <a-menu-item key="contact-grp" @click="()=>this.routeTo('/contact-group')">
             联系人分组
           </a-menu-item>
           <a-menu-item key="contact-itm" @click="()=>this.routeTo('/contact')">
