@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="project-search-div">
-      <a-form class="project-search-form" :form="form" @submit="handleSearch">
+    <div class="case-search-div">
+      <a-form class="case-search-form" :form="form" @submit="handleSearch">
         <a-row :gutter="24">
           <a-col :span=4>
             <a-form-item :label="`名 称: `">
@@ -30,7 +30,7 @@
           </a-col>
         </a-row>
         <a-row>
-          <a-button class="add-button" type="primary" @click="() => this.$router.push('/project/add-project')">
+          <a-button class="add-button" type="primary" @click="createCase">
             新增
           </a-button>
           <a-button class="batch-delete-button" :style="{ marginLeft: '8px' }" @click="() => console.info('批量删除')">
@@ -45,22 +45,18 @@
           {{record.notify ? '是' : '否'}}
         </span>
         <span slot="action" slot-scope="text, record">
-          <a-button size='small' type="link" @click="getCases(record.id)">
-          用 例
-          </a-button>
-          <a-divider type="vertical"/>
-          <a-button size='small' type="link" @click="updateProject(record.id)">
+          <a-button size='small' type="link" @click="updateproject(record.id)">
           查 看
           </a-button>
           <a-divider type="vertical"/>
-          <a-button size='small' type="link" @click="updateProject(record.id)">
+          <a-button size='small' type="link" @click="updateproject(record.id)">
           编 辑
           </a-button>
           <a-divider type="vertical"/>
           <a-popconfirm title="确认删除?"
                         ok-text="是"
                         cancel-text="否"
-                        @confirm="deleteProject(record.id)"
+                        @confirm="deleteproject(record.id)"
                         @cancel="cancelDelete"
           >
             <a-button size='small' type="link" @click="showConfirmDelete(record)">
@@ -84,6 +80,11 @@ const columns = [
     key: 'name',
   },
   {
+    title: '请求方法',
+    dataIndex: 'method',
+    key: 'method',
+  },
+  {
     title: '请求地址',
     dataIndex: 'host',
     key: 'host',
@@ -94,14 +95,19 @@ const columns = [
     key: 'headers',
   },
   {
+    title: '请求路径',
+    dataIndex: 'path',
+    key: 'path',
+  },
+  {
     title: '是否通知',
     key: 'notify',
     scopedSlots: { customRender: 'notify' }
   },
   {
-    title: '所属分组',
-    key: 'group_name',
-    dataIndex: 'group_name'
+    title: '所属项目',
+    key: 'project_name',
+    dataIndex: 'project_name'
   },
   {
     title: '创建时间',
@@ -125,7 +131,11 @@ const data = [];
 export default {
   components: {},
   beforeMount() {
-    this.getListPage(this.pagination.defaultCurrent, this.pagination.defaultPageSize);
+    const {
+      project
+    } = this.$route.query
+    this.projectId = project
+    this.getListPage(this.pagination.defaultCurrent, this.pagination.defaultPageSize, this.projectId);
   },
   beforeCreate() {
     this.form = this.$form.createForm(this, {name: 'search-form'});
@@ -137,6 +147,7 @@ export default {
       name: '',
       email: '',
       phone: '',
+      projectId: '',
       pagination: {
         total: 0,
         defaultCurrent: 1,
@@ -156,21 +167,13 @@ export default {
     };
   },
   methods: {
-    getListPage: function (current, pageSize, name, phone, email) {
+    getListPage: function (current, pageSize, projectId) {
       let params = {
         page: current,
-        page_size: pageSize
+        page_size: pageSize,
+        project_id: projectId
       }
-      if (name) {
-        params.name = name
-      }
-      if (phone) {
-        params.phone = phone
-      }
-      if (email) {
-        params.email = email
-      }
-      api.listProject(params, (data => {
+      api.listCase(params, (data => {
         this.data = data.records;
         this.pagination.pageSize = pageSize;
         this.pagination.current = current;
@@ -180,23 +183,23 @@ export default {
     showConfirmDelete(rowRecord) {
 
     },
-    getCases(id) {
+    createCase() {
       this.$router.push({
-        path: '/project/case',
+        path: '/project/case/add-case',
         query: {
-          project: id
+          projectId: this.projectId
         }
-      });
+      })
     },
-    updateProject(id) {
+    updateproject(id) {
       this.$router.push({
-        path: '/project/update-project',
+        path: '/project/case/update-case',
         query: {
           id: id
         }
       });
     },
-    deleteProject(id) {
+    deleteproject(id) {
       this.request.delete('/projector/' + projectorId + "/", {
         id: id
       }, data => {
@@ -238,6 +241,6 @@ export default {
 }
 </script>
 <style scoped>
-@import '../../../assets/css/common.css';
-@import "list.css";
+@import '../../../../assets/css/common.css';
+@import "case-list.css";
 </style>

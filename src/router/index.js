@@ -41,17 +41,17 @@ const routes = [
         children: [
             {
                 path: 'list',
-                name: '列表',
+                name: '联系人列表',
                 component: () => import('@/views/contacts/list/ContactList')
             },
             {
                 path: 'add-contact',
-                name: '新增',
+                name: '联系人新增',
                 component: AddContact
             },
             {
                 path: 'update-contact',
-                name: '编辑',
+                name: '联系人编辑',
                 component: UpdateContact
             }
         ]
@@ -64,7 +64,7 @@ const routes = [
         children: [
             {
                 path: 'list',
-                name: '列表',
+                name: '联系人分组列表',
                 component: () => import('@/views/contacts-group/list/ContactGroupList')
             }
         ]
@@ -99,7 +99,7 @@ const routes = [
         children: [
             {
                 path: 'list',
-                name: '列表',
+                name: '项目分组列表',
                 component: () => import('@/views/projects-group/list/ProjectGroupList')
             }
         ]
@@ -112,18 +112,41 @@ const routes = [
         children: [
             {
                 path: 'list',
-                name: '列表',
+                name: '项目列表',
                 component: () => import('@/views/projects/list/ProjectList')
             },
             {
                 path: 'add-project',
-                name: '新增',
+                name: '项目新增',
                 component: () => import('@/views/projects/add/AddProject')
             },
             {
                 path: 'update-project',
-                name: '编辑',
+                name: '项目编辑',
                 component: () => import('@/views/projects/update/UpdateProject')
+            },
+            {
+                path: 'case',
+                name: '用例',
+                component: () => import('@/views/projects/case/index'),
+                redirect: '/project/case/list',
+                children: [
+                    {
+                        path: 'list',
+                        name: '用例列表',
+                        component: () => import('@/views/projects/case/list/CaseList')
+                    },
+                    {
+                        path: 'add-case',
+                        name: '用例新增',
+                        component: () => import('@/views/projects/case/add-case/AddCase')
+                    },
+                    {
+                        path: 'update-case',
+                        name: '用例编辑',
+                        component: () => import('@/views/projects/case/update-case/UpdateCase')
+                    }
+                ]
             }
         ]
     },
