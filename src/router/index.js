@@ -6,7 +6,6 @@ import Login from '../views/login/Login'
 import Register from '../views/register/Register'
 import Files from '../views/files/Files'
 import FilesGroup from '../views/files-group/FilesGroup'
-import Projects from '../views/projects/Projects'
 import TestRecs from '../views/test-recs/TestRecs'
 import ErrorsPage from "../views/common/errors-page/ErrorsPage";
 import AddFile from '../views/files/add-file/AddFile'
@@ -106,9 +105,17 @@ const routes = [
         ]
     },
     {
-        path: '/projects',
-        name: '项目列表',
-        component: Projects
+        path: '/project',
+        name: '项目',
+        component: () => import('@/views/projects/index'),
+        redirect: '/project/list',
+        children: [
+            {
+                path: 'list',
+                name: '列表',
+                component: () => import('@/views/projects/list/index')
+            }
+        ]
     },
     {
         path: '/test-recs',
