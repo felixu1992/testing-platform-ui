@@ -1,0 +1,14 @@
+.project-search-form {
+    padding: 18px;
+    /*background: #fbfbfb;*/
+    border: 1px solid #d9d9d9;
+    /*border-radius: 6px;*/
+}
+
+.project-search-form .ant-form-item {
+    display: flex;
+}
+
+.project-search-form .ant-form-item-control-wrapper {
+    flex: 1;
+}

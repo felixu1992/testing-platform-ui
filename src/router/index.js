@@ -6,7 +6,6 @@ import Login from '../views/login/Login'
 import Register from '../views/register/Register'
 import Files from '../views/files/Files'
 import FilesGroup from '../views/files-group/FilesGroup'
-import Projects from '../views/projects/Projects'
 import TestRecs from '../views/test-recs/TestRecs'
 import ErrorsPage from "../views/common/errors-page/ErrorsPage";
 import AddFile from '../views/files/add-file/AddFile'
@@ -52,7 +51,7 @@ const routes = [
             },
             {
                 path: 'update-contact',
-                name: '更新',
+                name: '编辑',
                 component: UpdateContact
             }
         ]
@@ -66,7 +65,7 @@ const routes = [
             {
                 path: 'list',
                 name: '列表',
-                component: () => import('@/views/contacts-group/list/index')
+                component: () => import('@/views/contacts-group/list/ContactGroupList')
             }
         ]
     },
@@ -101,14 +100,32 @@ const routes = [
             {
                 path: 'list',
                 name: '列表',
-                component: () => import('@/views/projects-group/list/index')
+                component: () => import('@/views/projects-group/list/ProjectGroupList')
             }
         ]
     },
     {
-        path: '/projects',
-        name: '项目列表',
-        component: Projects
+        path: '/project',
+        name: '项目',
+        component: () => import('@/views/projects/index'),
+        redirect: '/project/list',
+        children: [
+            {
+                path: 'list',
+                name: '列表',
+                component: () => import('@/views/projects/list/ProjectList')
+            },
+            {
+                path: 'add-project',
+                name: '新增',
+                component: () => import('@/views/projects/add/AddProject')
+            },
+            {
+                path: 'update-project',
+                name: '编辑',
+                component: () => import('@/views/projects/update/UpdateProject')
+            }
+        ]
     },
     {
         path: '/test-recs',

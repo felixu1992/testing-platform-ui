@@ -65,21 +65,43 @@ export default {
     updateContactor: function (id, param, handler) {
         request.put(`${CONTACTOR}${id}/`, param, handler);
     },
-    /*-------------- 项目 ---------------*/
-    // 分页查询联系人分组
+    /*-------------- 项目分组 ---------------*/
+    // 分页查询项目分组
     listProjectGroup: function (params, handler) {
         request.get(PROJECT_GROUP, params, handler)
     },
-    // 删除联系人分组
+    // 删除项目分组
     deleteProjectGroup: function (id, params, handler) {
         request.delete(`${PROJECT_GROUP}${id}/`, handler)
     },
-    // 新增联系人分组
+    // 新增项目分组
     createProjectGroup: function (params, handler) {
         request.post(PROJECT_GROUP, params, handler)
     },
-    // 更新联系人分组
+    // 更新项目分组
     updateProjectGroup: function (id, params, handler) {
         request.put(`${PROJECT_GROUP}${id}/`, params, handler)
+    },
+
+    /*-------------- 项目 ---------------*/
+    // 分页查询项目
+    listProject: function (params, handler) {
+        request.get(PROJECT, params, handler)
+    },
+    // 删除项目
+    deleteProject: function (id, params, handler) {
+        request.delete(`${PROJECT}${id}/`, handler)
+    },
+    // 新增项目
+    createProject: function (params, handler) {
+        request.post(PROJECT, params, handler)
+    },
+    // 更新项目
+    updateProject: function (id, params, handler) {
+        request.put(`${PROJECT}${id}/`, params, handler)
+    },
+    // 查询项目
+    getProject: function (id, params, handler) {
+        request.get(`${PROJECT}${id}/`, params, handler)
     },
 }
