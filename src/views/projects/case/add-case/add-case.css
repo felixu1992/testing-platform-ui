@@ -1,7 +1,7 @@
-.add-project .project-form .ant-form-item {
+.add-case .case-form .ant-form-item {
     display: flex;
 }
 
-.add-project .project-form .ant-form-item-control-wrapper {
+.add-case .case-form .ant-form-item-control-wrapper {
     flex: 1;
 }

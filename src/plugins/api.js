@@ -110,20 +110,8 @@ export default {
     listCase: function (params, handler) {
         request.get(CASE, params, handler)
     },
-    // // 删除项目
-    // deleteProject: function (id, params, handler) {
-    //     request.delete(`${PROJECT}${id}/`, handler)
-    // },
-    // // 新增项目
-    // createProject: function (params, handler) {
-    //     request.post(PROJECT, params, handler)
-    // },
-    // // 更新项目
-    // updateProject: function (id, params, handler) {
-    //     request.put(`${PROJECT}${id}/`, params, handler)
-    // },
-    // // 查询项目
-    // getProject: function (id, params, handler) {
-    //     request.get(`${PROJECT}${id}/`, params, handler)
-    // },
+    // 创建用例
+    createCase: function (params, handler) {
+        request.post(CASE, params, handler)
+    }
 }
