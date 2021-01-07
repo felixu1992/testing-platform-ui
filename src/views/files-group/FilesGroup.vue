@@ -3,19 +3,14 @@
     <div>
       <a-form class="ant-advanced-search-form" :form="form" @submit="handleSearch">
         <a-row :gutter="24">
-          <a-col :span=12>
+          <a-col :span=6>
             <a-form-item :label="`分组名称: `">
               <a-input
-                  v-decorator="[
-                `name`,
-                {
-                  rules: [
+                  v-decorator="[`name`,
                     {
-                      required: false
+                      rules: [{required: false},],
                     },
-                  ],
-                },
-              ]"
+                  ]"
                   placeholder="请输入"
               />
             </a-form-item>
@@ -40,8 +35,7 @@
             <a-input style="width: 60%" v-model:value="addGroupName"
                      v-decorator="[
           'groupName',
-          { rules: [{ required: true, message: '分组名称不可为空！' }] },
-        ]"
+          { rules: [{ required: true, message: '分组名称不可为空！' }] },]"
                      placeholder="请输入分组名称"
             >
             </a-input>
@@ -135,7 +129,7 @@ export default {
             duration: 2,
           });
           this.editView = false;
-          this.listFilePage(this.current, this.pageSize)
+          this.listFilePage(this.pagination.defaultCurrent, this.pagination.defaultPageSize)
         }
       })
     },
@@ -147,7 +141,7 @@ export default {
               description: '删除成功',
               duration: 2
             });
-            this.listFilePage(this.current, this.pageSize);
+            this.listFilePage(this.pagination.defaultCurrent, this.pagination.defaultPageSize);
           }
       )
     },
@@ -170,7 +164,7 @@ export default {
   },
   computed: {
     isRouteOfFileGroup() {
-      return this.$store.state.currentRoute == '/files-group'
+      return this.$store.state.currentRoute === '/files-group'
     },
   },
   data() {
@@ -212,7 +206,6 @@ export default {
       addView: false,
       editView: false,
       editItem,
-      total: 0,
       addGroupName: '',
       editGroupName: '',
       pagination: {
