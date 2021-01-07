@@ -74,7 +74,11 @@
       </a-form>
     </div>
     <div>
-      <a-table :columns="columns" :data-source="data" :pagination="pagination">
+      <a-table :columns="columns"
+               :data-source="data"
+               :pagination="pagination"
+               :customRow="customRow"
+      >
       <span slot="action" slot-scope="text, record">
         <a-button size='small' type="link" @click="updateContact(record.id)">
         编 辑
@@ -154,6 +158,8 @@ export default {
       name: '',
       email: '',
       phone: '',
+      targetObj: {},
+      sourceObj: {},
       pagination: {
         total: 0,
         defaultCurrent: 1,
@@ -173,6 +179,47 @@ export default {
     };
   },
   methods: {
+    customRow (record) {
+      return {
+        attrs: {
+          draggable: true // 设置拖拽属性
+        },
+        on: {
+          // 鼠标移入，不需要做什么
+          mouseenter: (event) => {
+            // 兼容IE
+            var ev = event || window.event
+          },
+          // 开始拖拽，记录原始坐标
+          dragstart: (event) => {
+            // 兼容IE
+            var ev = event || window.event
+            // 阻止冒泡
+            ev.stopPropagation()
+            // 得到源目标数据
+            this.sourceObj = record
+          },
+          // 拖动元素经过的元素，往经过的数组中 push 坐标
+          dragover: (event) => {
+            // 兼容 IE
+            debugger
+            var ev = event || window.event
+            // 阻止默认行为
+            ev.preventDefault()
+          },
+          // 鼠标松开，根据原坐标和终坐标计算上移还是下移，经过的坐标该加一还是减一，然后重新刷新列表
+          drop: (event) => {
+            // 兼容IE
+            debugger
+            var ev = event || window.event
+            // 阻止冒泡
+            ev.stopPropagation()
+            // 得到目标数据
+            this.targetObj = record
+          }
+        }
+      };
+    },
     getListPage: function (current, pageSize, name, phone, email) {
       let params = {
         page: current,
