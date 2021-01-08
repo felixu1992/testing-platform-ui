@@ -113,5 +113,5 @@ export default {
     // 创建用例
     createCase: function (params, handler) {
         request.post(CASE, params, handler)
-    }
+    },
 }
