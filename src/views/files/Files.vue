@@ -21,6 +21,7 @@
               <a-select v-model:value="groupId"
                         placeholder="请选择分组"
                         style="width: 200px"
+                        allowClear=true
               >
                 <a-select-option v-for="item in group "
                                  :key="item.id"
@@ -45,18 +46,28 @@
             +添加新文件
           </a-button>
           <a-modal v-model:visible="addView" title="添加文件">
-            <!--            <template #footer>-->
-            <!--              <a-button key="submit" type="primary" @click="addHandleOk()">-->
-            <!--                提交-->
-            <!--              </a-button>-->
-            <!--            </template>-->
-            <!--            <a-input style="width: 60%" v-model:value="addGroupName"-->
-            <!--                     v-decorator="[-->
-            <!--          'groupName',-->
-            <!--          { rules: [{ required: true, message: '分组名称不可为空！' }] },]"-->
-            <!--                     placeholder="请输入分组名称"-->
-            <!--            >-->
-            <!--            </a-input>-->
+<!--            <a-form class="contact-group-edit-form" >-->
+<!--              <a-row>-->
+<!--                <a-col>-->
+<!--                  <a-form-item :label="`名 称: `">-->
+<!--                    <a-input-->
+<!--                        placeholder="联系人分组名称"-->
+<!--                        style="width: 50%"-->
+<!--                        v-decorator="[-->
+<!--                    `newName`,-->
+<!--                    {-->
+<!--                      rules: [-->
+<!--                        {-->
+<!--                          required: true, message: '分组名称不能为空'-->
+<!--                        },-->
+<!--                      ],-->
+<!--                    },-->
+<!--                ]"-->
+<!--                    />-->
+<!--                  </a-form-item>-->
+<!--                </a-col>-->
+<!--              </a-row>-->
+<!--            </a-form>-->
           </a-modal>
         </div>
       </a-form>
@@ -64,7 +75,7 @@
 
     <a-table :columns="columns" :data-source="data" :pagination='pagination'>
       <span slot="action" slot-scope="text, record">
-        <a-button size='small' type="link" >
+        <a-button size='small' type="link">
           更新
         </a-button>
         <a-popconfirm title="确认删除?"
@@ -88,6 +99,8 @@
 </template>
 
 <script>
+import api from "@/plugins/api";
+
 export default {
   name: 'Files',
   components: {},
@@ -96,6 +109,7 @@ export default {
       let params = {
         page: current,
         page_size: pageSize,
+
       }
       if (filePath) {
         params.file_path = filePath
@@ -136,19 +150,19 @@ export default {
       e.preventDefault();
       this.form.validateFields((error, values) => {
         this.path = values['path'];
-        this.groupId = values['groupId'];
-        this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.name);
+        this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.path, this.groupId);
       });
     },
 
     handleReset() {
       this.form.resetFields();
     },
-    addFile(){},
+    addFile() {
+      this.addView = true;
+    },
     getAllGroups() {
       this.request.get('/file/group/', {}, data => {
         this.group = data.records;
-        console.log(group);
       });
     }
   },
@@ -212,9 +226,9 @@ export default {
       data,
       columns,
       //分组对象
-      group:[],
-      path:'',
-      groupId:'',
+      group: [],
+      path: '',
+      groupId: '',
       expand: false,
       form: this.$form.createForm(this, {name: 'advanced_search'}),
       addView: false,
@@ -242,10 +256,53 @@ export default {
 
   beforeMount() {
     this.getListPage(this.pagination.defaultCurrent, this.pagination.defaultPageSize);
-    this.request.get('/file/group/', {}, data => {
+    this.request.get('/file/group/', {page_size: 999}, data => {
       this.group = data.records;
     });
-  }
+  },
+  // showModal(edit, record) {
+  //   this.resetModal();
+  //   if (edit) {
+  //     this.title = '编辑文件';
+  //     this.id = record.id;
+  //     this.newName = record.name
+  //     this.editForm.setFieldsValue({newName: this.newName})
+  //   } else {
+  //     this.title = '新增文件';
+  //   }
+  //   this.visible = true;
+  // },
+  // handleOk(e) {
+  //   e.preventDefault();
+  //   this.editForm.validateFields((err, values) => {
+  //     if (!err) {
+  //       this.newName = values.newName
+  //       let params = {
+  //         name: this.newName
+  //       };
+  //       let handler = data => this.getListPage(this.pagination.current, this.pagination.pageSize, this.name);
+  //       if (this.id) {
+  //         params.id = this.id
+  //         api.updateContactGroup(this.id, params, handler)
+  //       } else {
+  //         api.createContactGroup(params, handler)
+  //       }
+  //       this.resetModal();
+  //       this.visible = false;
+  //     }
+  //   });
+  //
+  // },
+  // cancelModal() {
+  //   this.resetModal();
+  //   this.visible = false;
+  // },
+  // resetModal() {
+  //   this.id = '';
+  //   this.newName = '';
+  //   this.title = '';
+  //   this.editForm.setFieldsValue({newName: ''})
+  // }
 
 }
 </script>
