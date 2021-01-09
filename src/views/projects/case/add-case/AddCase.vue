@@ -1,7 +1,7 @@
 <template>
   <div class="add-case" style="padding:30px">
     <a-card title="新增用例">
-      <a-modal :visible="visible" :title="title" @ok="handleOk" @cancel="cancelModal">
+      <a-modal :visible="extendVisible" :title="extendTitle" @ok="extendHandleOk" @cancel="extendCancelModal">
         <a-form id="extend-modal-form" :form="extendModalForm" class="extend-form">
           <a-form-item :label="`注入键: `">
             <div v-for="(item, index) in this.extendModal.ste">
@@ -18,7 +18,45 @@
           </a-form-item>
           <a-form-item :label="`注入值: `">
             <div>
-              <a-tree class="draggable-tree" :tree-data="treeData" @select="extendSelect"/>
+              <a-select style="width: 50%" @change="value => extendSelectChange(value)"
+                        v-model="extendModal.dep.depend" allowClear>
+                <a-select-option v-for="item in extendModal.cases" :value="item.id">
+                  {{ item.name }}
+                </a-select-option>
+              </a-select>
+              <a-tree class="draggable-tree"
+                      :tree-data="extendTreeData"
+                      @select="extendSelect"/>
+            </div>
+          </a-form-item>
+        </a-form>
+      </a-modal>
+      <a-modal :visible="extendVisible" :title="extendTitle" @ok="extendHandleOk" @cancel="extendCancelModal">
+        <a-form id="expected-modal-form" class="expected-form">
+          <a-form-item :label="`预期字段: `">
+            <div v-for="(item, index) in this.extendModal.ste">
+              <a-input :key="`input`+index" v-model="item.value" class="step" placeholder="请输入步骤" style="width: 70%"/>
+              <a-button :key="`button`+index" size='small' type="link" @click="extendDropInp(index)">
+                <a-icon type="minus"/>
+                删除此步
+              </a-button>
+            </div>
+            <a-button size='small' type="link" @click="extendAddInp">
+              <a-icon type="plus"/>
+              新增步骤
+            </a-button>
+          </a-form-item>
+          <a-form-item :label="`预期值: `">
+            <div>
+              <a-select style="width: 50%" @change="value => extendSelectChange(value)"
+                        v-model="extendModal.dep.depend" allowClear>
+                <a-select-option v-for="item in extendModal.cases" :value="item.id">
+                  {{ item.name }}
+                </a-select-option>
+              </a-select>
+              <a-tree class="draggable-tree"
+                      :tree-data="extendTreeData"
+                      @select="extendSelect"/>
             </div>
           </a-form-item>
         </a-form>
@@ -97,46 +135,101 @@
           <vue-json-editor :show-btns="false"
                            :expandedOnStart="true"
                            @json-change="onJsonChange"
-                           style="width: 30%; height: 200px"
+                           style="width: 50%; height: 200px"
                            lang="zh"
                            mode="code"
                            v-model="json"
           />
         </a-form-item>
         <a-form-item :label="`参数注入: `">
-          <a-table :columns="columns" :data-source="extendData" :pagination="false"
-                   style="width: 30%" size="small" bordered tableLayout="fixed">
+          <a-table :columns="extendColumns" :data-source="extendData" :pagination="false"
+                   style="width: 50%" size="small" bordered tableLayout="fixed">
             <span slot="extend_key" slot-scope="text, record">
-              {{ record.extend_key }}
+              <span v-for="(item, index) in record.ste" >
+                {{ item.value }}
+                <span :key="index" v-if="index + 1 < record.ste.length">
+                   >
+                </span>
+              </span>
             </span>
-            <span slot="action" slot-scope="text, record">
-              <a-button size='small' type="link" @click="updateproject(record.id)">
+            <span slot="extend_value" slot-scope="text, record">
+              <span v-for="(item, index) in record.dep.steps" >
+                {{ item }}
+                <span :key="index" v-if="index + 1 < record.ste.length">
+                   >
+                </span>
+              </span>
+            </span>
+            <span slot="extend_action" slot-scope="text, record">
+              <a-button size='small' type="link" @click="extendEdit(record)">
                 编 辑
               </a-button>
               <a-divider type="vertical"/>
               <a-popconfirm title="确认删除?"
                             ok-text="是"
                             cancel-text="否"
-                            @confirm="deleteproject(record.id)"
-                            @cancel="cancelDelete"
+                            @confirm="extendDelete(record)"
+                            @cancel="record => record"
               >
                 <a-button v-if="record.extend_key !== 'button'" size='small' type="link"
-                          @click="showConfirmDelete(record)">
+                          @click="record => record">
                   删 除
                 </a-button>
               </a-popconfirm>
             </span>
           </a-table>
-          <a-button size='small' type="link" @click="showModal(false)">
+          <a-button size='small' type="link" @click="extendAdd">
             <a-icon type="plus"/>
             新增注入
+          </a-button>
+        </a-form-item>
+        <a-form-item :label="`预期结果: `">
+          <a-table :columns="expectedColumns" :data-source="expectedData" :pagination="false"
+                   style="width: 50%" size="small" bordered tableLayout="fixed">
+            <span slot="expected_key" slot-scope="text, record">
+              <span v-for="(item, index) in record.ste" >
+                {{ item.value }}
+                <span :key="index" v-if="index + 1 < record.ste.length">
+                   >
+                </span>
+              </span>
+            </span>
+            <span slot="expected_key" slot-scope="text, record">
+              <span v-for="(item, index) in record.dep.steps" >
+                {{ item }}
+                <span :key="index" v-if="index + 1 < record.ste.length">
+                   >
+                </span>
+              </span>
+            </span>
+            <span slot="expected_action" slot-scope="text, record">
+              <a-button size='small' type="link" @click="extendEdit(record)">
+                编 辑
+              </a-button>
+              <a-divider type="vertical"/>
+              <a-popconfirm title="确认删除?"
+                            ok-text="是"
+                            cancel-text="否"
+                            @confirm="extendDelete(record)"
+                            @cancel="record => record"
+              >
+                <a-button v-if="record.extend_key !== 'button'" size='small' type="link"
+                          @click="record => record">
+                  删 除
+                </a-button>
+              </a-popconfirm>
+            </span>
+          </a-table>
+          <a-button size='small' type="link" @click="expectedAdd">
+            <a-icon type="plus"/>
+            新增预期
           </a-button>
         </a-form-item>
         <a-form-item :label="`结果示例: `">
           <vue-json-editor :show-btns="false"
                            :expandedOnStart="true"
                            @json-change="onJsonChange"
-                           style="width: 30%; height: 200px"
+                           style="width: 50%; height: 200px"
                            lang="zh"
                            mode="code"
                            v-model="json"
@@ -259,7 +352,7 @@
 <script>
 import api from '@/plugins/api'
 import vueJsonEditor from 'vue-json-editor'
-const columns = [
+const extendColumns = [
   {
     title: '注入键',
     key: 'extend_key',
@@ -268,21 +361,40 @@ const columns = [
   },
   {
     title: '注入值',
-    dataIndex: 'extend_value',
     key: 'extend_value',
+    scopedSlots: {customRender: 'extend_value'},
     align: 'center'
   },
   {
     title: '操作',
-    key: 'action',
-    scopedSlots: {customRender: 'action'},
+    key: 'extend_action',
+    scopedSlots: {customRender: 'extend_action'},
+    align: 'center'
+  }
+];
+const expectedColumns = [
+  {
+    title: '预期字段',
+    key: 'expected_key',
+    scopedSlots: {customRender: 'expected_key'},
+    align: 'center'
+  },
+  {
+    title: '预期值',
+    key: 'expected_value',
+    scopedSlots: {customRender: 'expected_value'},
+    align: 'center'
+  },
+  {
+    title: '操作',
+    key: 'expected_action',
+    scopedSlots: {customRender: 'expected_action'},
     align: 'center'
   }
 ];
 export default {
   beforeCreate() {
     this.form = this.$form.createForm(this, {name: 'add-case'});
-    this.extendModalForm=this.$form.createForm(this, {name: 'extend-modal'})
   },
   beforeMount() {
     const {projectId} = this.$route.query;
@@ -294,33 +406,7 @@ export default {
       json: {
         msg: 'demo of jsoneditor'
       },
-      title: '',
-      visible: false,
-      columns,
-      expectedData: [],
-      extendData: [
-        // {
-        //   extend_key: ['a', 'b', 'c'],
-        //   extend_value: 'wocao'
-        //   // extend_value: {
-        //   //   depend: 1,
-        //   //   steps: ['d', 'e', 'f']
-        //   // }
-        // }
-      ],
-      treeData: [],
-      mockJson: {
-        code: 0,
-        data: {
-          total: 10,
-          records: [
-            {
-              name: 'felixu',
-              age: 18
-            }
-          ]
-        }
-      },
+
       projectId: '',
       groups: [],
       notifyData: [
@@ -351,13 +437,36 @@ export default {
           text: 'DELETE'
         }
       ],
+      extendTitle: '',
+      extendVisible: false,
+      extendColumns,
+      extendTreeData: [],
       extendModal: {
+        index: -1,
         ste: [],
         dep: {
-          depend: 0,
+          depend: '--请选择--',
           steps: []
-        }
-      }
+        },
+        cases: []
+      },
+      extendData: [],
+      extendIndex: 0,
+      expectedTitle: '',
+      expectedVisible: false,
+      expectedColumns,
+      expectedTreeData: [],
+      expectedModal: {
+        index: -1,
+        ste: [],
+        dep: {
+          depend: '--请选择--',
+          steps: []
+        },
+        cases: []
+      },
+      expectedData: [],
+      expectedIndex: 0
     }
   },
   methods: {
@@ -390,43 +499,70 @@ export default {
     onJsonChange(value) {
       console.log('value:', value)
     },
-    showModal(edit) {
-      this.resetModal();
-      if (edit) {
-        this.title = '编辑参数注入';
-      } else {
-        this.title = '新增参数注入';
+    // extend modal
+    extendAdd() {
+      this.extendTitle = '新增参数注入';
+      this.extendFillCases();
+      this.extendVisible = true;
+    },
+    extendSelectChange(caseId) {
+      let item = {};
+      for (let i = 0; i < this.extendModal.cases.length; i++) {
+        if (this.extendModal.cases[i].id === caseId) {
+          item = this.extendModal.cases[i]
+          break
+        }
       }
-      this.treeData = [];
-      this.verfiedData(this.mockJson)
-      this.visible = true;
+      if (item && item.sample) {
+        this.verfiedData(item.sample)
+      } else {
+        this.$notification.error({
+          message: '错误提示',
+          description: '当前选择不存在 sample 无法使用',
+          duration: 3
+        });
+      }
     },
-    handleOk(e) {
+    extendHandleOk(e) {
       e.preventDefault();
-      // this.editForm.validateFields((err, values) => {
-      //   if (!err) {
-      //     this.newName = values.newName
-      //     let params = {
-      //       name: this.newName
-      //     };
-      //     let handler = data => this.getListPage(this.pagination.current, this.pagination.pageSize, this.name);
-      //     debugger
-      //     if (this.id) {
-      //       params.id = this.id
-      //       api.updateContactGroup(this.id, params, handler)
-      //     } else {
-      //       api.createContactGroup(params, handler)
-      //     }
-      //     this.resetModal();
-      //     this.visible = false;
-      //   }
-      // });
+      if (this.extendModal.ste.length === 0
+          || this.extendModal.dep.depend === '--请选择--'
+          || this.extendModal.dep.depend === undefined
+          || this.extendModal.dep.steps.length === 0) {
+        this.$notification.warn({
+          message: '警告',
+          description: '步骤和依赖不匹配，将被忽略',
+          duration: 3
+        });
+        this.extendCancelModal();
+        return;
+      }
+      if (this.extendModal.index !== -1) {
+        for (let i = 0; i < this.extendData.length; i++) {
+          if (this.extendData[i].index === this.extendModal.index) {
+            this.extendData[i] = this.extendModal;
+          }
+        }
+      } else {
+        this.extendIndex += 1;
+        this.extendModal.index = this.extendIndex;
+        this.extendData.push(this.extendModal);
+      }
+      this.extendCancelModal();
     },
-    cancelModal() {
-      this.visible = false;
-    },
-    resetModal() {
-      this.title = '';
+    extendCancelModal() {
+      this.extendTitle = '';
+      this.extendModal = {
+        index: -1,
+        ste: [],
+        dep: {
+          depend: '--请选择--',
+          steps: []
+        },
+        cases: []
+      };
+      this.extendTreeData = [];
+      this.extendVisible = false;
     },
     extendAddInp() {
       this.extendModal.ste.push({value: ''})
@@ -436,9 +572,134 @@ export default {
       this.extendModal.ste.splice(index, 1)
     },
     extendSelect: function(selectedKeys, e) {
-      this.backtracking(e.node)
-      console.info(this.extendModal.dep.steps);
+      this.extendModal.dep.steps = [];
+      this.backtracking(e.node);
+      this.extendModal.dep.steps.reverse();
     },
+    extendEdit(record) {
+      this.extendTitle = '编辑参数注入';
+      this.extendModal = record
+      this.extendFillCases();
+      for (let i = 0; i < this.extendModal.cases.length; i++) {
+        debugger
+        if (this.extendModal.cases[i].id === this.extendModal.dep.depend) {
+          this.verfiedData(this.extendModal.cases[i].sample)
+          break
+        }
+      }
+      this.extendVisible = true
+    },
+    extendDelete(record) {
+      this.extendData.splice(record.index - 1, 1)
+    },
+    extendFillCases() {
+      api.listCase({
+        page: 1,
+        page_size: 999,
+        project_id: this.projectId
+      }, (data => this.extendModal.cases = data.records));
+    },
+    // expected modal
+    expectedAdd() {
+      this.expectedTitle = '新增预期结果';
+      this.expectedFillCases();
+      this.expectedVisible = true;
+    },
+    expectedSelectChange(caseId) {
+      let item = {};
+      for (let i = 0; i < this.extendModal.cases.length; i++) {
+        if (this.extendModal.cases[i].id === caseId) {
+          item = this.extendModal.cases[i]
+          break
+        }
+      }
+      if (item && item.sample) {
+        this.verfiedData(item.sample)
+      } else {
+        this.$notification.error({
+          message: '错误提示',
+          description: '当前选择不存在 sample 无法使用',
+          duration: 3
+        });
+      }
+    },
+    expectedHandleOk(e) {
+      e.preventDefault();
+      if (this.extendModal.ste.length === 0
+          || this.extendModal.dep.depend === '--请选择--'
+          || this.extendModal.dep.depend === undefined
+          || this.extendModal.dep.steps.length === 0) {
+        this.$notification.warn({
+          message: '警告',
+          description: '步骤和依赖不匹配，将被忽略',
+          duration: 3
+        });
+        this.extendCancelModal();
+        return;
+      }
+      if (this.extendModal.index !== -1) {
+        for (let i = 0; i < this.extendData.length; i++) {
+          if (this.extendData[i].index === this.extendModal.index) {
+            this.extendData[i] = this.extendModal;
+          }
+        }
+      } else {
+        this.extendIndex += 1;
+        this.extendModal.index = this.extendIndex;
+        this.extendData.push(this.extendModal);
+      }
+      this.extendCancelModal();
+    },
+    expectedCancelModal() {
+      this.extendTitle = '';
+      this.extendModal = {
+        index: -1,
+        ste: [],
+        dep: {
+          depend: '--请选择--',
+          steps: []
+        },
+        cases: []
+      };
+      this.extendTreeData = [];
+      this.extendVisible = false;
+    },
+    expectedAddInp() {
+      this.extendModal.ste.push({value: ''})
+    },
+    expectedDropInp(index) {
+      debugger
+      this.extendModal.ste.splice(index, 1)
+    },
+    expectedSelect: function(selectedKeys, e) {
+      this.extendModal.dep.steps = [];
+      this.backtracking(e.node);
+      this.extendModal.dep.steps.reverse();
+    },
+    expectedEdit(record) {
+      this.extendTitle = '编辑参数注入';
+      this.extendModal = record
+      this.extendFillCases();
+      for (let i = 0; i < this.extendModal.cases.length; i++) {
+        debugger
+        if (this.extendModal.cases[i].id === this.extendModal.dep.depend) {
+          this.verfiedData(this.extendModal.cases[i].sample)
+          break
+        }
+      }
+      this.extendVisible = true
+    },
+    expectedDelete(record) {
+      this.extendData.splice(record.index - 1, 1)
+    },
+    expectedFillCases() {
+      api.listCase({
+        page: 1,
+        page_size: 999,
+        project_id: this.projectId
+      }, (data => this.extendModal.cases = data.records));
+    },
+    // 计算链路
     backtracking(node, _track) {
       const track = _track || this.extendModal.dep.steps;
       let key = node.eventKey;
@@ -449,7 +710,7 @@ export default {
     },
     // 从普通 json 转换为树需要的数据结构
     verfiedData(data, _prekey, _tns) {
-      const tns = _tns || this.treeData
+      const tns = _tns || this.extendTreeData
       // 判断子元素的数据类型
       let dataType = this.checkDataType(data)
       switch (dataType) {
@@ -501,7 +762,6 @@ export default {
           })
       }
     },
-
     // 判断数据类型
     checkDataType(data) {
       let type = null
