@@ -31,32 +31,37 @@
           </a-form-item>
         </a-form>
       </a-modal>
-      <a-modal :visible="extendVisible" :title="extendTitle" @ok="extendHandleOk" @cancel="extendCancelModal">
+      <a-modal :visible="expectedVisible" :title="expectedTitle" @ok="expectedHandleOk" @cancel="expectedCancelModal">
         <a-form id="expected-modal-form" class="expected-form">
           <a-form-item :label="`预期字段: `">
-            <div v-for="(item, index) in this.extendModal.ste">
-              <a-input :key="`input`+index" v-model="item.value" class="step" placeholder="请输入步骤" style="width: 70%"/>
-              <a-button :key="`button`+index" size='small' type="link" @click="extendDropInp(index)">
-                <a-icon type="minus"/>
-                删除此步
-              </a-button>
+            <div v-for="(item, index) in this.expectedModal.ste">
+              <a-input :key="`input`+index" v-model="item.value" class="step" placeholder="请输入预期字段" style="width: 70%"/>
             </div>
-            <a-button size='small' type="link" @click="extendAddInp">
-              <a-icon type="plus"/>
-              新增步骤
-            </a-button>
           </a-form-item>
           <a-form-item :label="`预期值: `">
             <div>
-              <a-select style="width: 50%" @change="value => extendSelectChange(value)"
-                        v-model="extendModal.dep.depend" allowClear>
-                <a-select-option v-for="item in extendModal.cases" :value="item.id">
+              <a-radio-group v-model:value="expectedModal.valueOrDepend">
+                <a-radio :value="1">
+                  固定值
+                </a-radio>
+                <a-radio :value="2">
+                  依赖值
+                </a-radio>
+              </a-radio-group>
+            </div>
+            <div v-if="expectedModal.valueOrDepend === 1">
+              <a-input v-model="expectedModal.dep.value" placeholder="请输入预期值" style="width: 70%"/>
+            </div>
+            <div v-if="expectedModal.valueOrDepend === 2">
+              <a-select style="width: 50%" @change="value => expectedSelectChange(value)"
+                        v-model="expectedModal.dep.depend" allowClear>
+                <a-select-option v-for="item in expectedModal.cases" :value="item.id">
                   {{ item.name }}
                 </a-select-option>
               </a-select>
               <a-tree class="draggable-tree"
-                      :tree-data="extendTreeData"
-                      @select="extendSelect"/>
+                      :tree-data="expectedTreeData"
+                      @select="expectedSelect"/>
             </div>
           </a-form-item>
         </a-form>
@@ -134,18 +139,17 @@
         <a-form-item :label="`请求参数: `">
           <vue-json-editor :show-btns="false"
                            :expandedOnStart="true"
-                           @json-change="onJsonChange"
                            style="width: 50%; height: 200px"
                            lang="zh"
                            mode="code"
-                           v-model="json"
+                           v-model="params"
           />
         </a-form-item>
         <a-form-item :label="`参数注入: `">
           <a-table :columns="extendColumns" :data-source="extendData" :pagination="false"
                    style="width: 50%" size="small" bordered tableLayout="fixed">
             <span slot="extend_key" slot-scope="text, record">
-              <span v-for="(item, index) in record.ste" >
+              <span v-for="(item, index) in record.ste">
                 {{ item.value }}
                 <span :key="index" v-if="index + 1 < record.ste.length">
                    >
@@ -153,9 +157,9 @@
               </span>
             </span>
             <span slot="extend_value" slot-scope="text, record">
-              <span v-for="(item, index) in record.dep.steps" >
+              <span v-for="(item, index) in record.dep.steps">
                 {{ item }}
-                <span :key="index" v-if="index + 1 < record.ste.length">
+                <span :key="index" v-if="index + 1 < record.dep.steps.length">
                    >
                 </span>
               </span>
@@ -187,30 +191,30 @@
           <a-table :columns="expectedColumns" :data-source="expectedData" :pagination="false"
                    style="width: 50%" size="small" bordered tableLayout="fixed">
             <span slot="expected_key" slot-scope="text, record">
-              <span v-for="(item, index) in record.ste" >
+              <span v-for="(item, index) in record.ste">
                 {{ item.value }}
-                <span :key="index" v-if="index + 1 < record.ste.length">
-                   >
-                </span>
               </span>
             </span>
-            <span slot="expected_key" slot-scope="text, record">
-              <span v-for="(item, index) in record.dep.steps" >
+            <span slot="expected_value" slot-scope="text, record">
+              <span v-if="record.valueOrDepend === 1">
+                {{ record.dep.value }}
+              </span>
+              <span v-if="record.valueOrDepend === 2" v-for="(item, index) in record.dep.steps">
                 {{ item }}
-                <span :key="index" v-if="index + 1 < record.ste.length">
+                <span :key="index" v-if="index + 1 < record.dep.steps.length">
                    >
                 </span>
               </span>
             </span>
             <span slot="expected_action" slot-scope="text, record">
-              <a-button size='small' type="link" @click="extendEdit(record)">
+              <a-button size='small' type="link" @click="expectedEdit(record)">
                 编 辑
               </a-button>
               <a-divider type="vertical"/>
               <a-popconfirm title="确认删除?"
                             ok-text="是"
                             cancel-text="否"
-                            @confirm="extendDelete(record)"
+                            @confirm="expectedDelete(record)"
                             @cancel="record => record"
               >
                 <a-button v-if="record.extend_key !== 'button'" size='small' type="link"
@@ -228,11 +232,10 @@
         <a-form-item :label="`结果示例: `">
           <vue-json-editor :show-btns="false"
                            :expandedOnStart="true"
-                           @json-change="onJsonChange"
                            style="width: 50%; height: 200px"
                            lang="zh"
                            mode="code"
-                           v-model="json"
+                           v-model="sample"
           />
         </a-form-item>
         <a-form-item :label="`通 知: `">
@@ -352,6 +355,7 @@
 <script>
 import api from '@/plugins/api'
 import vueJsonEditor from 'vue-json-editor'
+
 const extendColumns = [
   {
     title: '注入键',
@@ -403,10 +407,8 @@ export default {
   },
   data() {
     return {
-      json: {
-        msg: 'demo of jsoneditor'
-      },
-
+      params: {},
+      sample: {},
       projectId: '',
       groups: [],
       notifyData: [
@@ -458,10 +460,16 @@ export default {
       expectedTreeData: [],
       expectedModal: {
         index: -1,
-        ste: [],
+        valueOrDepend: 1,
+        ste: [
+          {
+            value: ''
+          }
+        ],
         dep: {
           depend: '--请选择--',
-          steps: []
+          steps: [],
+          value: ''
         },
         cases: []
       },
@@ -474,9 +482,38 @@ export default {
       e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
+          this.buildExtend(values)
+          this.buildExpected(values)
           this.createCase(values)
         }
       });
+    },
+    buildExtend(value) {
+      if (this.extendData.length > 0) {
+        let extend_keys = [];
+        let extend_values = [];
+        for (let i = 0; i < this.extendData.length; i++) {
+          let data = this.extendData[i];
+          let steps = data.ste.map(t => t.value);
+          extend_keys.push(steps);
+          extend_values.push(data.dep);
+        }
+        value.extend_keys = extend_keys;
+        value.extend_values = extend_values;
+      }
+    },
+    buildExpected(value) {
+      if (this.expectedData.length > 0) {
+        let expected_keys = [];
+        let expected_values = [];
+        for (let i = 0; i < this.expectedData.length; i++) {
+          let data = this.expectedData[i];
+          expected_keys = data.ste.map(t => t.value);
+          expected_values.push(data.dep);
+        }
+        value.expected_keys = expected_keys;
+        value.expected_values = expected_values;
+      }
     },
     getGroups: function () {
       api.listcaseGroup({
@@ -487,17 +524,16 @@ export default {
       }))
     },
     createCase: function (params) {
-      if (this.json) {
-        params.params = this.json;
-        params.sample = this.json;
+      if (this.params) {
+        params.params = this.params;
+      }
+      if (this.sample) {
+        params.sample = this.sample;
       }
       debugger
       api.createCase(params, (data => {
         this.$router.push('/project/case');
       }));
-    },
-    onJsonChange(value) {
-      console.log('value:', value)
     },
     // extend modal
     extendAdd() {
@@ -514,7 +550,7 @@ export default {
         }
       }
       if (item && item.sample) {
-        this.verfiedData(item.sample)
+        this.verfiedData(item.sample, null, null, this.extendTreeData)
       } else {
         this.$notification.error({
           message: '错误提示',
@@ -571,9 +607,9 @@ export default {
       debugger
       this.extendModal.ste.splice(index, 1)
     },
-    extendSelect: function(selectedKeys, e) {
+    extendSelect: function (selectedKeys, e) {
       this.extendModal.dep.steps = [];
-      this.backtracking(e.node);
+      this.backtracking(e.node, null, this.extendModal.dep.steps);
       this.extendModal.dep.steps.reverse();
     },
     extendEdit(record) {
@@ -583,7 +619,7 @@ export default {
       for (let i = 0; i < this.extendModal.cases.length; i++) {
         debugger
         if (this.extendModal.cases[i].id === this.extendModal.dep.depend) {
-          this.verfiedData(this.extendModal.cases[i].sample)
+          this.verfiedData(this.extendModal.cases[i].sample, null, null, this.extendTreeData)
           break
         }
       }
@@ -607,14 +643,15 @@ export default {
     },
     expectedSelectChange(caseId) {
       let item = {};
-      for (let i = 0; i < this.extendModal.cases.length; i++) {
-        if (this.extendModal.cases[i].id === caseId) {
-          item = this.extendModal.cases[i]
+      for (let i = 0; i < this.expectedModal.cases.length; i++) {
+        if (this.expectedModal.cases[i].id === caseId) {
+          item = this.expectedModal.cases[i]
           break
         }
       }
       if (item && item.sample) {
-        this.verfiedData(item.sample)
+        this.verfiedData(item.sample, null, null, this.expectedTreeData)
+        debugger
       } else {
         this.$notification.error({
           message: '错误提示',
@@ -625,92 +662,99 @@ export default {
     },
     expectedHandleOk(e) {
       e.preventDefault();
-      if (this.extendModal.ste.length === 0
-          || this.extendModal.dep.depend === '--请选择--'
-          || this.extendModal.dep.depend === undefined
-          || this.extendModal.dep.steps.length === 0) {
+      if (this.expectedModal.valueOrDepend === 1) {
+        this.expectedModal.dep.steps = this.expectedModal.ste;
+        this.expectedModal.dep.depend = '--请选择--';
+      } else {
+        this.expectedModal.dep.value = ''
+      }
+      if (this.expectedModal.ste.length === 0
+          || (this.expectedModal.valueOrDepend === 1 && (this.expectedModal.dep.value === ''
+              || this.expectedModal.dep.value === undefined))
+          || (this.expectedModal.valueOrDepend === 2 && (this.expectedModal.dep.depend === '--请选择--'
+              || this.expectedModal.dep.depend === undefined))
+          || this.expectedModal.dep.steps.length === 0) {
         this.$notification.warn({
           message: '警告',
-          description: '步骤和依赖不匹配，将被忽略',
+          description: '预期字段和预期值不匹配，将被忽略',
           duration: 3
         });
-        this.extendCancelModal();
+        this.expectedCancelModal();
         return;
       }
-      if (this.extendModal.index !== -1) {
-        for (let i = 0; i < this.extendData.length; i++) {
-          if (this.extendData[i].index === this.extendModal.index) {
-            this.extendData[i] = this.extendModal;
+      if (this.expectedModal.index !== -1) {
+        for (let i = 0; i < this.expectedData.length; i++) {
+          if (this.expectedData[i].index === this.expectedModal.index) {
+            this.expectedData[i] = this.expectedModal;
           }
         }
       } else {
-        this.extendIndex += 1;
-        this.extendModal.index = this.extendIndex;
-        this.extendData.push(this.extendModal);
+        this.expectedIndex += 1;
+        this.expectedModal.index = this.expectedIndex;
+        this.expectedData.push(this.expectedModal);
       }
-      this.extendCancelModal();
+      this.expectedCancelModal();
     },
     expectedCancelModal() {
-      this.extendTitle = '';
-      this.extendModal = {
+      this.expectedTitle = '';
+      this.expectedModal = {
         index: -1,
-        ste: [],
+        valueOrDepend: 1,
+        ste: [
+          {
+            value: ''
+          }
+        ],
         dep: {
           depend: '--请选择--',
-          steps: []
+          steps: [],
+          value: ''
         },
         cases: []
       };
-      this.extendTreeData = [];
-      this.extendVisible = false;
+      this.expectedTreeData = [];
+      this.expectedVisible = false;
     },
-    expectedAddInp() {
-      this.extendModal.ste.push({value: ''})
-    },
-    expectedDropInp(index) {
-      debugger
-      this.extendModal.ste.splice(index, 1)
-    },
-    expectedSelect: function(selectedKeys, e) {
-      this.extendModal.dep.steps = [];
-      this.backtracking(e.node);
-      this.extendModal.dep.steps.reverse();
+    expectedSelect: function (selectedKeys, e) {
+      this.expectedModal.dep.steps = [];
+      this.backtracking(e.node, null, this.expectedModal.dep.steps);
+      this.expectedModal.dep.steps.reverse();
     },
     expectedEdit(record) {
-      this.extendTitle = '编辑参数注入';
-      this.extendModal = record
-      this.extendFillCases();
-      for (let i = 0; i < this.extendModal.cases.length; i++) {
+      this.expectedTitle = '编辑预期结果';
+      this.expectedModal = record
+      this.expectedFillCases();
+      for (let i = 0; i < this.expectedModal.cases.length; i++) {
         debugger
-        if (this.extendModal.cases[i].id === this.extendModal.dep.depend) {
-          this.verfiedData(this.extendModal.cases[i].sample)
+        if (this.expectedModal.cases[i].id === this.expectedModal.dep.depend) {
+          this.verfiedData(this.expectedModal.cases[i].sample, null, null, this.expectedTreeData)
           break
         }
       }
-      this.extendVisible = true
+      this.expectedVisible = true
     },
     expectedDelete(record) {
-      this.extendData.splice(record.index - 1, 1)
+      this.expectedData.splice(record.index - 1, 1)
     },
     expectedFillCases() {
       api.listCase({
         page: 1,
         page_size: 999,
         project_id: this.projectId
-      }, (data => this.extendModal.cases = data.records));
+      }, (data => this.expectedModal.cases = data.records));
     },
     // 计算链路
-    backtracking(node, _track) {
-      const track = _track || this.extendModal.dep.steps;
+    backtracking(node, _track, sourceTrack) {
+      const track = _track || sourceTrack;
       let key = node.eventKey;
       if (key !== undefined) {
         track.push(key)
-        this.backtracking(node.$parent, track)
+        this.backtracking(node.$parent, track, null)
       }
     },
     // 从普通 json 转换为树需要的数据结构
-    verfiedData(data, _prekey, _tns) {
-      const tns = _tns || this.extendTreeData
+    verfiedData(data, _prekey, _tns, _data) {
+      const tns = _tns || _data;
       // 判断子元素的数据类型
       let dataType = this.checkDataType(data)
       switch (dataType) {
@@ -740,7 +784,7 @@ export default {
               return tns
             } else {
               tns[index].children = []
-              this.verfiedData(data[key], key, tns[index].children)
+              this.verfiedData(data[key], key, tns[index].children, null)
             }
           })
           break;
@@ -752,7 +796,7 @@ export default {
               key: index
             })
             tns[index].children = []
-            this.verfiedData(data[index], index, tns[index].children)
+            this.verfiedData(data[index], index, tns[index].children, null)
           });
           break;
         default:
