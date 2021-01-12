@@ -37,7 +37,8 @@ import {
     ConfigProvider,
     Tree,
     Radio,
-    TreeSelect
+    TreeSelect,
+    Popover
 } from 'ant-design-vue';
 //按需加载 减少资源使用量
 Vue.use(Button);
@@ -74,5 +75,6 @@ Vue.use(DatePicker);
 Vue.use(Tree);
 Vue.use(Radio);
 Vue.use(TreeSelect);
+Vue.use(Popover)
 Vue.prototype.$message = message;
 Vue.prototype.$notification = notification;

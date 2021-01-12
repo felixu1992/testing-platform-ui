@@ -297,7 +297,6 @@
                    ]"
                    placeholder="请输入预期状态码"
           />
-          这是个提示气泡
         </a-form-item>
         <a-form-item :label="`开发者: `">
           <a-tree-select
@@ -323,7 +322,12 @@
                             },
                           ]"
                           placeholder="延迟时长" />
-          这是个提示气泡
+          <a-popover title="Tips">
+            <template #content>
+              单位为秒，最大 300 秒
+            </template>
+            <a-icon type="exclamation" />
+          </a-popover>
         </a-form-item>
         <a-form-item :label="`备 注: `">
           <a-textarea class="case-remark"
