@@ -40,7 +40,7 @@
       </a-form>
     </div>
     <div>
-      <a-table :columns="columns" :data-source="data" :pagination="pagination">
+      <a-table :columns="columns" :data-source="data" :pagination="pagination" :customRow="customRow">
         <span slot="notify" slot-scope="text, record">
           {{record.notify ? '是' : '否'}}
         </span>
@@ -78,51 +78,61 @@ const columns = [
     title: '名称',
     dataIndex: 'name',
     key: 'name',
+    align: 'center'
   },
   {
     title: '请求方法',
     dataIndex: 'method',
     key: 'method',
+    align: 'center'
   },
   {
     title: '请求地址',
     dataIndex: 'host',
     key: 'host',
+    align: 'center'
   },
   {
     title: '请求头',
     dataIndex: 'headers',
     key: 'headers',
+    align: 'center'
   },
   {
     title: '请求路径',
     dataIndex: 'path',
     key: 'path',
+    align: 'center'
   },
   {
-    title: '是否通知',
-    key: 'notify',
-    scopedSlots: { customRender: 'notify' }
+    title: '是否执行',
+    key: 'run',
+    scopedSlots: { customRender: 'run' },
+    align: 'center'
   },
   {
     title: '所属项目',
     key: 'project_name',
-    dataIndex: 'project_name'
+    dataIndex: 'project_name',
+    align: 'center'
   },
   {
     title: '创建时间',
     key: 'created_at',
-    dataIndex: 'created_at'
+    dataIndex: 'created_at',
+    align: 'center'
   },
   {
     title: '更新时间',
     key: 'updated_at',
-    dataIndex: 'updated_at'
+    dataIndex: 'updated_at',
+    align: 'center'
   },
   {
     title: '操作',
     key: 'action',
     scopedSlots: { customRender: 'action'},
+    align: 'center'
   }
 ];
 
@@ -148,6 +158,8 @@ export default {
       email: '',
       phone: '',
       projectId: '',
+      targetSort: 0,
+      sourceSort: 0,
       pagination: {
         total: 0,
         defaultCurrent: 1,
@@ -167,6 +179,53 @@ export default {
     };
   },
   methods: {
+    customRow (record) {
+      return {
+        attrs: {
+          draggable: true // 设置拖拽属性
+        },
+        on: {
+          // 鼠标移入，不需要做什么
+          mouseenter: (event) => {
+            // 兼容IE
+            var ev = event || window.event
+          },
+          // 开始拖拽，记录原始坐标
+          dragstart: (event) => {
+            // 兼容IE
+            var ev = event || window.event
+            // 阻止冒泡
+            ev.stopPropagation()
+            // 得到源目标数据
+            this.sourceSort = record.sort
+          },
+          // 拖动元素经过的元素，往经过的数组中 push 坐标
+          dragover: (event) => {
+            // 兼容 IE
+            var ev = event || window.event
+            // 阻止默认行为
+            ev.preventDefault()
+          },
+          // 鼠标松开，根据原坐标和终坐标计算上移还是下移，经过的坐标该加一还是减一，然后重新刷新列表
+          drop: (event) => {
+            // 兼容IE
+            var ev = event || window.event
+            // 阻止冒泡
+            ev.stopPropagation()
+            // 得到目标数据
+            this.targetSort = record.sort
+            this.sort()
+          }
+        }
+      };
+    },
+    sort: function () {
+      api.sortCase({
+        source: this.sourceSort,
+        target: this.targetSort,
+        transfer: 'drag'
+      }, (data => this.getListPage(this.pagination.current, this.pagination.pageSize, this.projectId)))
+    },
     getListPage: function (current, pageSize, projectId) {
       let params = {
         page: current,

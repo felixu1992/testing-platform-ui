@@ -6,6 +6,7 @@ const USER_SIGNOUT = `${USER}signout/`;
 
 const CONTACTOR = '/contactor/';
 const CONTACTOR_GROUP = `${CONTACTOR}group/`;
+const CONTACTOR_TREE = `${CONTACTOR}group/tree/`;
 
 const FILE = '/file/';
 const FILE_GROUP = `${FILE}group/`;
@@ -23,6 +24,7 @@ const CASE_COPY = `${CASE}copy/`;
 const CASE_EXECUTE = `${CASE}execute/`;
 const CASE_EXPORT = `${CASE}export/`;
 const CASE_IMPORT = `${CASE}import/`;
+const CASE_SORT = `${CASE}sort/`;
 
 const RECORD = '/record/';
 const RECORD_EXPORT = `${RECORD}export/`;
@@ -55,7 +57,10 @@ export default {
     updateContactGroup: function (id, params, handler) {
         request.put(`${CONTACTOR_GROUP}${id}/`, params, handler)
     },
-
+    // 查询联系人树
+    treeContactor: function (params, handler) {
+        request.get(CONTACTOR_TREE, params, handler)
+    },
     listContactor: function (param, handler) {
         request.get(CONTACTOR, param, handler);
     },
@@ -114,4 +119,8 @@ export default {
     createCase: function (params, handler) {
         request.post(CASE, params, handler)
     },
+    // 用例排序
+    sortCase: function (params, handler) {
+        request.put(CASE_SORT, params, handler)
+    }
 }

@@ -300,32 +300,29 @@
           这是个提示气泡
         </a-form-item>
         <a-form-item :label="`开发者: `">
-          <a-select style="width: 120px" @change="value => value"
-                    v-decorator="[
-                      'developer',
-                      { rules: [
-                            { required: true, message: '是否运行不可为空！' }
-                          ],
-                        initialValue: true
-                      }
-                    ]"
+          <a-tree-select
+              v-decorator="['developer']"
+              style="width: 10%"
+              :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+              :tree-data="developTreeData"
+              placeholder="选择开发者"
+              allowClear
+              tree-default-expand-all
           >
-            <a-select-option v-for="item in notifyData" :value="item.value">
-              {{ item.text }}
-            </a-select-option>
-          </a-select>
+          </a-tree-select>
         </a-form-item>
         <a-form-item :label="`延迟时长: `">
-          <a-input class="case-host" style="width: 10%"
-                   v-decorator="[
-                    'delay',
-                    { rules: [
-                          { required: false }
-                        ]
-                    },
-                   ]"
-                   placeholder="请输入延迟时长"
-          />
+          <a-input-number id="inputNumber"
+                          :min="0"
+                          :max="300"
+                          v-decorator="[
+                            'delay',
+                            { rules: [
+                                  { required: false }
+                                ]
+                            },
+                          ]"
+                          placeholder="延迟时长" />
           这是个提示气泡
         </a-form-item>
         <a-form-item :label="`备 注: `">
@@ -403,14 +400,14 @@ export default {
   beforeMount() {
     const {projectId} = this.$route.query;
     this.projectId = projectId;
-    this.getGroups();
+    api.treeContactor({}, (data => this.developTreeData = data))
   },
   data() {
     return {
       params: {},
       sample: {},
       projectId: '',
-      groups: [],
+      developTreeData: [],
       notifyData: [
         {
           value: true,
@@ -515,14 +512,6 @@ export default {
         value.expected_values = expected_values;
       }
     },
-    getGroups: function () {
-      api.listcaseGroup({
-        page: 1,
-        page_size: 999
-      }, (data => {
-        this.groups = data.records;
-      }))
-    },
     createCase: function (params) {
       if (this.params) {
         params.params = this.params;
@@ -530,9 +519,15 @@ export default {
       if (this.sample) {
         params.sample = this.sample;
       }
+      params.project_id = this.projectId;
       debugger
       api.createCase(params, (data => {
-        this.$router.push('/project/case');
+        this.$router.push({
+          path: '/project/case',
+          query: {
+            project: this.projectId
+          }
+        });
       }));
     },
     // extend modal

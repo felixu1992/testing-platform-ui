@@ -2,9 +2,42 @@
 import Vue from 'vue'
 import 'ant-design-vue/dist/antd.less';
 import {
-    Button, Layout, Row, Col, Menu, Icon, Tabs, Input, Select, Dropdown, List, Avatar,
-    Form, Divider, BackTop, Modal, Upload, message, notification, Spin, Badge, LocaleProvider,
-    Comment, Affix, Table, Breadcrumb, Tag, Pagination, Card, Popconfirm, DatePicker, ConfigProvider, Tree, Radio
+    Button,
+    Layout,
+    Row,
+    Col,
+    Menu,
+    Icon,
+    Tabs,
+    Input,
+    InputNumber,
+    Select,
+    Dropdown,
+    List,
+    Avatar,
+    Form,
+    Divider,
+    BackTop,
+    Modal,
+    Upload,
+    message,
+    notification,
+    Spin,
+    Badge,
+    LocaleProvider,
+    Comment,
+    Affix,
+    Table,
+    Breadcrumb,
+    Tag,
+    Pagination,
+    Card,
+    Popconfirm,
+    DatePicker,
+    ConfigProvider,
+    Tree,
+    Radio,
+    TreeSelect
 } from 'ant-design-vue';
 //按需加载 减少资源使用量
 Vue.use(Button);
@@ -15,6 +48,7 @@ Vue.use(Menu);
 Vue.use(Icon);
 Vue.use(Tabs);
 Vue.use(Input);
+Vue.use(InputNumber);
 Vue.use(Select);
 Vue.use(Dropdown);
 Vue.use(List);
@@ -37,7 +71,8 @@ Vue.use(Pagination);
 Vue.use(Card)
 Vue.use(Popconfirm);
 Vue.use(DatePicker);
-Vue.use(Tree)
-Vue.use(Radio)
+Vue.use(Tree);
+Vue.use(Radio);
+Vue.use(TreeSelect);
 Vue.prototype.$message = message;
 Vue.prototype.$notification = notification;

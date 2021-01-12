@@ -77,7 +77,6 @@
       <a-table :columns="columns"
                :data-source="data"
                :pagination="pagination"
-               :customRow="customRow"
       >
       <span slot="action" slot-scope="text, record">
         <a-button size='small' type="link" @click="updateContact(record.id)">
