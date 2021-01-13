@@ -347,6 +347,10 @@
           <a-button type="primary" html-type="submit" class="case-form-button">
             确 定
           </a-button>
+          <a-divider type="vertical"/>
+          <a-button type="primary" class="case-form-button" @click="cancelSubmit">
+            取消
+          </a-button>
         </a-form-item>
       </a-form>
     </a-card>
@@ -486,6 +490,14 @@ export default {
           this.buildExtend(values)
           this.buildExpected(values)
           this.createCase(values)
+        }
+      });
+    },
+    cancelSubmit() {
+      this.$router.push({
+        path: '/project/case',
+        query: {
+          project: this.projectId
         }
       });
     },

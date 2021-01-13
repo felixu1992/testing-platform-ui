@@ -75,6 +75,7 @@ Vue.use(DatePicker);
 Vue.use(Tree);
 Vue.use(Radio);
 Vue.use(TreeSelect);
-Vue.use(Popover)
+Vue.use(Popover);
+Vue.use(Upload);
 Vue.prototype.$message = message;
 Vue.prototype.$notification = notification;

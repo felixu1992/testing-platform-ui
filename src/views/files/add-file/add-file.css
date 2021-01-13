@@ -1,0 +1,7 @@
+.add-file .file-form .ant-form-item {
+    display: flex;
+}
+
+.add-file .file-form .ant-form-item-control-wrapper {
+    flex: 1;
+}

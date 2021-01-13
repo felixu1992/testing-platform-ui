@@ -4,12 +4,8 @@ import store from '../store/index.js'
 import Home from '../views/home/Home.vue'
 import Login from '../views/login/Login'
 import Register from '../views/register/Register'
-import Files from '../views/files/Files'
-import FilesGroup from '../views/files-group/FilesGroup'
 import TestRecs from '../views/test-recs/TestRecs'
 import ErrorsPage from "../views/common/errors-page/ErrorsPage";
-import AddFile from '../views/files/add-file/AddFile'
-import UpdateFile from '../views/files/update-file/UpdateFile'
 import UpdateContact from "@/views/contacts/update-contact/UpdateContact";
 import AddContact from "@/views/contacts/add-contact/AddContact";
 
@@ -70,26 +66,40 @@ const routes = [
         ]
     },
     {
-        path: '/files',
+        path: '/file',
         name: '文件',
-        component: Files,
+        component: () => import('@/views/files/index'),
+        redirect: '/file/list',
         children: [
+            {
+                path: 'list',
+                name: '文件列表',
+                component: () => import('@/views/files/list/FileList')
+            },
             {
                 path: 'add-file',
                 name: '添加文件',
-                component: AddFile
+                component: () => import('@/views/files/add-file/AddFile')
             },
             {
                 path: 'update-file',
                 name: '更新文件',
-                component: UpdateFile
+                component: () => import('@/views/files/update-file/UpdateFile')
             }
         ]
     },
     {
-        path: '/files-group',
+        path: '/file-group',
         name: '文件分组',
-        component: FilesGroup
+        component: () => import('@/views/files-group/index'),
+        redirect: '/file-group/list',
+        children: [
+            {
+                path: 'list',
+                name: '文件分组列表',
+                component: () => import('@/views/files-group/list/FileGroupList')
+            }
+        ]
     },
     {
         path: '/project-group',

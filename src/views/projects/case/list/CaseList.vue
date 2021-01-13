@@ -33,9 +33,9 @@
           <a-button class="add-button" type="primary" @click="createCase">
             新增
           </a-button>
-          <a-button class="batch-delete-button" :style="{ marginLeft: '8px' }" @click="() => console.info('批量删除')">
-            批量删除
-          </a-button>
+<!--          <a-button class="batch-delete-button" :style="{ marginLeft: '8px' }" @click="() => console.info('批量删除')">-->
+<!--            批量删除-->
+<!--          </a-button>-->
         </a-row>
       </a-form>
     </div>

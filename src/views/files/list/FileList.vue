@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="project-search-div">
-      <a-form class="project-search-form" :form="form" @submit="handleSearch">
+    <div class="file-search-div">
+      <a-form class="file-search-form" :form="form" @submit="handleSearch">
         <a-row :gutter="24">
           <a-col :span=4>
             <a-form-item :label="`名 称: `">
@@ -16,7 +16,7 @@
                     ],
                   },
                 ]"
-                  placeholder="联系人名称"
+                  placeholder="文件名称"
               />
             </a-form-item>
           </a-col>
@@ -30,7 +30,7 @@
           </a-col>
         </a-row>
         <a-row>
-          <a-button class="add-button" type="primary" @click="() => this.$router.push('/project/add-project')">
+          <a-button class="add-button" type="primary" @click="() => $router.push('/file/add-file')">
             新增
           </a-button>
 <!--          <a-button class="batch-delete-button" :style="{ marginLeft: '8px' }" @click="() => console.info('批量删除')">-->
@@ -40,90 +40,98 @@
       </a-form>
     </div>
     <div>
-      <a-table :columns="columns" :data-source="data" :pagination="pagination">
-        <span slot="notify" slot-scope="text, record">
-          {{record.notify ? '是' : '否'}}
-        </span>
-        <span slot="action" slot-scope="text, record">
-          <a-button size='small' type="link" @click="getCases(record.id)">
-          用 例
-          </a-button>
-          <a-divider type="vertical"/>
-          <a-button size='small' type="link" @click="updateProject(record.id)">
-          查 看
-          </a-button>
-          <a-divider type="vertical"/>
-          <a-button size='small' type="link" @click="updateProject(record.id)">
-          编 辑
-          </a-button>
-          <a-divider type="vertical"/>
-          <a-popconfirm title="确认删除?"
-                        ok-text="是"
-                        cancel-text="否"
-                        @confirm="deleteProject(record.id)"
-                        @cancel="cancelDelete"
-          >
-            <a-button size='small' type="link" @click="showConfirmDelete(record)">
-              删 除
-            </a-button>
-          </a-popconfirm>
-        </span>
+      <a-table :columns="columns"
+               :data-source="data"
+               :pagination="pagination"
+      >
+      <span slot="action" slot-scope="text, record">
+        <a-button size='small' type="link" @click="updateFile(record.id)">
+        编 辑
+        </a-button>
+        <a-divider type="vertical"/>
+        <a-popconfirm title="确认删除?"
+                      ok-text="是"
+                      cancel-text="否"
+                      @confirm="deleteFile(record.id)"
+                      @cancel="cancelDelete"
+        >
+        <a-button size='small' type="link" @click="showConfirmDelete(record)">
+          删 除
+        </a-button>
+      </a-popconfirm>
+      </span>
       </a-table>
     </div>
   </div>
 </template>
 
 <script>
-
-import api from '@/plugins/api'
-
+import api from "@/plugins/api";
 const columns = [
+  {
+    title: '编号',
+    dataIndex: 'id',
+    key: 'id',
+    align: 'center'
+  },
   {
     title: '名称',
     dataIndex: 'name',
     key: 'name',
+    align: 'center'
   },
   {
-    title: '请求地址',
-    dataIndex: 'host',
-    key: 'host',
-  },
-  {
-    title: '请求头',
-    dataIndex: 'headers',
-    key: 'headers',
-  },
-  {
-    title: '是否通知',
-    key: 'notify',
-    scopedSlots: { customRender: 'notify' }
+    title: '存储地址',
+    key: 'path',
+    dataIndex: 'path',
+    customRender: (text, row, index) => {
+      let len = text.length;
+      return len > 25 ? text.substr(0, 10) + '...' + text.substr(len - 14, len) : text;
+    },
+    align: 'center'
   },
   {
     title: '所属分组',
     key: 'group_name',
-    dataIndex: 'group_name'
+    dataIndex: 'group_name',
+    align: 'center'
+  },
+  {
+    title: '文件描述',
+    key: 'remark',
+    dataIndex: 'remark',
+    customRender: (text, row, index) => {
+      if (text) {
+        return text;
+      } else {
+        return '-';
+      }
+    },
+    align: 'center'
   },
   {
     title: '创建时间',
     key: 'created_at',
-    dataIndex: 'created_at'
+    dataIndex: 'created_at',
+    align: 'center'
   },
   {
     title: '更新时间',
     key: 'updated_at',
-    dataIndex: 'updated_at'
+    dataIndex: 'updated_at',
+    align: 'center'
   },
   {
     title: '操作',
     key: 'action',
-    scopedSlots: { customRender: 'action'},
+    scopedSlots: {customRender: 'action'},
+    align: 'center'
   }
 ];
 
 const data = [];
 
 export default {
-  components: {},
   beforeMount() {
     this.getListPage(this.pagination.defaultCurrent, this.pagination.defaultPageSize);
   },
@@ -135,8 +143,8 @@ export default {
       data,
       columns,
       name: '',
-      email: '',
-      phone: '',
+      targetObj: {},
+      sourceObj: {},
       pagination: {
         total: 0,
         defaultCurrent: 1,
@@ -156,7 +164,7 @@ export default {
     };
   },
   methods: {
-    getListPage: function (current, pageSize, name, phone, email) {
+    getListPage: function (current, pageSize, name) {
       let params = {
         page: current,
         page_size: pageSize
@@ -164,13 +172,7 @@ export default {
       if (name) {
         params.name = name
       }
-      if (phone) {
-        params.phone = phone
-      }
-      if (email) {
-        params.email = email
-      }
-      api.listProject(params, (data => {
+      api.listFile(params, (data => {
         this.data = data.records;
         this.pagination.pageSize = pageSize;
         this.pagination.current = current;
@@ -180,24 +182,16 @@ export default {
     showConfirmDelete(rowRecord) {
 
     },
-    getCases(id) {
+    updateFile(id) {
       this.$router.push({
-        path: '/project/case',
-        query: {
-          project: id
-        }
-      });
-    },
-    updateProject(id) {
-      this.$router.push({
-        path: '/project/update-project',
+        path: '/file/update-file',
         query: {
           id: id
         }
       });
     },
-    deleteProject(id) {
-      this.request.delete('/projector/' + projectorId + "/", {
+    deleteFile(id) {
+      this.request.delete('/file/' + id + "/", {
         id: id
       }, data => {
         this.$notification.info({
@@ -219,10 +213,8 @@ export default {
       e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
-          this.name = values['name'];
-          this.phone = values['phone'];
-          this.email = values['email'];
-          this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.name, this.phone, this.email);
+          this.name = values.name;
+          this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.name);
         }
       });
     },
@@ -230,14 +222,12 @@ export default {
     handleReset() {
       this.form.resetFields();
       this.name = '';
-      this.phone = '';
-      this.email = '';
       this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.name, this.phone, this.email)
     },
-  },
+  }
 }
 </script>
 <style scoped>
 @import '../../../assets/css/common.css';
-@import "list.css";
+@import "file-list.css";
 </style>

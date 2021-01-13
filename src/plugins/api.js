@@ -40,6 +40,33 @@ export default {
     signout: function (handler) {
         request.post(USER_SIGNOUT, {}, handler);
     },
+    notification: function (msg, desc, type) {
+        switch (type) {
+            case 'info':
+                this.$notification.info({
+                    message: msg,
+                    description: desc,
+                    duration: 3
+                });
+                break;
+            case 'error':
+                this.$notification.error({
+                    message: msg,
+                    description: desc,
+                    duration: 3
+                });
+                break;
+            case 'warn':
+                this.$notification.warn({
+                    message: msg,
+                    description: desc,
+                    duration: 3
+                });
+                break;
+            default:
+                break;
+        }
+    },
     /*-------------- 联系人 ---------------*/
     // 分页查询联系人分组
     listContactorGroup: function (params, handler) {
@@ -47,7 +74,7 @@ export default {
     },
     // 删除联系人分组
     deleteContactGroup: function (id, params, handler) {
-        request.delete(`${CONTACTOR_GROUP}${id}/`, handler)
+        request.delete(`${CONTACTOR_GROUP}${id}/`, params, handler)
     },
     // 新增联系人分组
     createContactGroup: function (params, handler) {
@@ -70,6 +97,43 @@ export default {
     updateContactor: function (id, param, handler) {
         request.put(`${CONTACTOR}${id}/`, param, handler);
     },
+    /*-------------- 文件 ---------------*/
+    // 分页查询文件分组
+    listFileGroup: function (params, handler) {
+        request.get(FILE_GROUP, params, handler)
+    },
+    // 删除文件分组
+    deleteFileGroup: function (id, params, handler) {
+        request.delete(`${FILE_GROUP}${id}/`, params, handler)
+    },
+    // 新增文件分组
+    createFileGroup: function (params, handler) {
+        request.post(FILE_GROUP, params, handler)
+    },
+    // 更新文件分组
+    updateFileGroup: function (id, params, handler) {
+        request.put(`${FILE_GROUP}${id}/`, params, handler)
+    },
+    // 新增文件
+    createFile: function (params, handler) {
+        request.post(FILE, params, handler)
+    },
+    // 更新文件
+    updateFile: function (id, params, handler) {
+        request.put(`${FILE}${id}/`, params, handler)
+    },
+    // 删除文件
+    deleteFile: function (id, params, handler) {
+        request.delete(`${FILE}${id}/`, params, handler)
+    },
+    // 分页查询文件
+    listFile: function (params, handler) {
+        request.get(FILE, params, handler)
+    },
+    // 文件下载
+    downloadFile: function (id, params, handler) {
+
+    },
     /*-------------- 项目分组 ---------------*/
     // 分页查询项目分组
     listProjectGroup: function (params, handler) {
@@ -77,7 +141,7 @@ export default {
     },
     // 删除项目分组
     deleteProjectGroup: function (id, params, handler) {
-        request.delete(`${PROJECT_GROUP}${id}/`, handler)
+        request.delete(`${PROJECT_GROUP}${id}/`, params, handler)
     },
     // 新增项目分组
     createProjectGroup: function (params, handler) {
@@ -95,7 +159,7 @@ export default {
     },
     // 删除项目
     deleteProject: function (id, params, handler) {
-        request.delete(`${PROJECT}${id}/`, handler)
+        request.delete(`${PROJECT}${id}/`, params, handler)
     },
     // 新增项目
     createProject: function (params, handler) {

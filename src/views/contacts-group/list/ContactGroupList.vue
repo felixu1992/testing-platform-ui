@@ -57,9 +57,9 @@
           <a-button class="add-button" type="primary" @click="showModal(false)">
             新增
           </a-button>
-          <a-button class="batch-delete-button" :style="{ marginLeft: '8px' }" @click="() => console.info('批量删除')">
-            批量删除
-          </a-button>
+<!--          <a-button class="batch-delete-button" :style="{ marginLeft: '8px' }" @click="() => console.info('批量删除')">-->
+<!--            批量删除-->
+<!--          </a-button>-->
         </a-row>
       </a-form>
     </div>
@@ -169,14 +169,14 @@ export default {
     deleteContact(contactorId) {
       api.deleteContactGroup(contactorId, {
         id: contactorId
-      }, data => {
+      }, (data => {
         this.$notification.info({
           message: '操作提示',
           description: '删除成功',
           duration: 2
         });
         this.getListPage(this.pagination.current, this.pagination.pageSize, this.name);
-      });
+      }));
     },
     cancelDelete() {
       this.$notification.open({

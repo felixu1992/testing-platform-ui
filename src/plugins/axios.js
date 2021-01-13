@@ -14,12 +14,12 @@ let config = {
 const _axios = axios.create(config)
 
 _axios.interceptors.request.use(
-    function(config) {
+    function (config) {
         // Do something before request is sent
         // console.log("config.data",config.data)
         //登录之后的每一次请求都要带着token
         let loggedInUserStr = localStorage.getItem(Consts.USER_INFO_LOCAL_STORAGE_KEY);
-        if (loggedInUserStr){
+        if (loggedInUserStr) {
             let loggedInUser = JSON.parse(loggedInUserStr);
             config.headers["Authorization"] = "token " + loggedInUser.token;
         }
@@ -31,7 +31,7 @@ _axios.interceptors.request.use(
         // }
         return config
     },
-    function(error) {
+    function (error) {
         // Do something with request error
         return Promise.reject(error)
     }
@@ -39,21 +39,21 @@ _axios.interceptors.request.use(
 
 // Add a response interceptor
 _axios.interceptors.response.use(
-    function(response) {
+    function (response) {
         let httpCode = response.status
         if (httpCode >= 200 && httpCode < 300) {
             return response
-        }else if (httpCode >= 400){
+        } else if (httpCode >= 400) {
             // larger than 400
             return Promise.reject(new Error(response.statusText))
-        }else{
+        } else {
             //300 ~ 399 currently do nothing
             // message.warn("redirect response")
-            let msg = "httpCode:"+ httpCode
+            let msg = "httpCode:" + httpCode
             return Promise.reject(new Error(msg))
         }
     },
-    function(error) {
+    function (error) {
         // Do something with response error
         return Promise.reject(error)
     }
@@ -62,56 +62,56 @@ _axios.interceptors.response.use(
 const request = {
     get: function (url, params, dataHandler) {
         let paramEntries = Object.entries(params);
-        if(paramEntries.length > 0) {
+        if (paramEntries.length > 0) {
             url += '?';
         }
         for (let i = 0; i < paramEntries.length; i++) {
             const element = paramEntries[i];
-            url +=  element[0] + '=' + element[1] + '&';
+            url += element[0] + '=' + element[1] + '&';
         }
 
-        if(url[url.length -1] == '&'){
-            url = url.substr(0,url.length - 1);
+        if (url[url.length - 1] == '&') {
+            url = url.substr(0, url.length - 1);
         }
 
         return _axios.get(url)
             .then((response) => {
-                responseHandler(response,dataHandler)
+                responseHandler(response, dataHandler)
             })
             .catch(errorHandler)
 
     },
-    post: function (url, data,dataHandler) {
+    post: function (url, data, dataHandler) {
         return _axios.post(url, data)
             .then((response) => {
-                responseHandler(response,dataHandler)
+                responseHandler(response, dataHandler)
             })
             .catch(errorHandler)
 
     },
-    put: function (url, data,dataHandler) {
+    put: function (url, data, dataHandler) {
         return _axios.put(url, data)
             .then((response) => {
-                responseHandler(response,dataHandler)
+                responseHandler(response, dataHandler)
             })
             .catch(errorHandler)
     },
-    delete: function (url, data,dataHandler) {
+    delete: function (url, data, dataHandler) {
         return _axios.delete(url, data)
             .then((response) => {
-                responseHandler(response,dataHandler)
+                responseHandler(response, dataHandler)
             })
             .catch(errorHandler)
 
     }
 }
 
-let responseHandler = (response,dataHandler)=>{
+let responseHandler = (response, dataHandler) => {
     //normal case:200 ~ 299
     const responseData = response.data
     let respCode = responseData.code
     let respMsg = responseData.message
-    if (respCode === 106){
+    if (respCode === 106) {
         //106 离线状态
         message.error(respMsg)
         //登出操作
@@ -128,7 +128,7 @@ let responseHandler = (response,dataHandler)=>{
             }
             message.warn(msg)
         }
-    }else {
+    } else {
         // normal case: BS code is 0
         if (dataHandler) {
             dataHandler(responseData.data)
@@ -140,7 +140,7 @@ let errorHandler = (error) => {
     message.error("操作失败: " + error.message)
 }
 
-Plugin.install = function(Vue) {
+Plugin.install = function (Vue) {
     Vue.axios = _axios;
     window.axios = _axios;
     Object.defineProperties(Vue.prototype, {
@@ -154,7 +154,7 @@ Plugin.install = function(Vue) {
                 return _axios
             }
         },
-        request:{
+        request: {
             get() {
                 return request
             }

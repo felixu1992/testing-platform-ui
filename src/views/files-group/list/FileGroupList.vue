@@ -1,13 +1,13 @@
 <template>
   <div>
-    <div class="project-group-search-div">
+    <div class="file-group-search-div">
       <a-modal :visible="visible" :title="title" @ok="handleOk" @cancel="cancelModal">
-        <a-form class="project-group-edit-form" :form="editForm">
+        <a-form class="file-group-edit-form" :form="editForm">
           <a-row>
             <a-col>
               <a-form-item :label="`名 称: `">
                 <a-input
-                    placeholder="项目分组名称"
+                    placeholder="文件分组名称"
                     style="width: 50%"
                     v-decorator="[
                     `newName`,
@@ -25,7 +25,7 @@
           </a-row>
         </a-form>
       </a-modal>
-      <a-form class="project-group-search-form" :form="form" @submit="handleSearch">
+      <a-form class="file-group-search-form" :form="form" @submit="handleSearch">
         <a-row :gutter="24">
           <a-col :span=4>
             <a-form-item :label="`名 称: `">
@@ -40,7 +40,7 @@
                     ],
                   },
                 ]"
-                  placeholder="项目分组名称"
+                  placeholder="文件分组名称"
               />
             </a-form-item>
           </a-col>
@@ -73,7 +73,7 @@
         <a-popconfirm title="确认删除?"
                       ok-text="是"
                       cancel-text="否"
-                      @confirm="deleteProject(record.id)"
+                      @confirm="deleteFile(record.id)"
                       @cancel="cancelDelete"
         >
         <a-button size='small' type="link">
@@ -159,24 +159,24 @@ export default {
       if (name) {
         params.name = name
       }
-      api.listProjectGroup(params, data => {
+      api.listFileGroup(params, data => {
         this.data = data.records;
         this.pagination.pageSize = pageSize;
         this.pagination.current = current;
         this.pagination.total = data.total;
       })
     },
-    deleteProject(id) {
-      api.deleteProjectGroup(id, {
-        id: id
-      }, data => {
+    deleteFile(id) {
+      debugger
+      api.deleteFileGroup(id, {id: id}, (data => {
+        debugger
         this.$notification.info({
           message: '操作提示',
           description: '删除成功',
           duration: 2
         });
         this.getListPage(this.pagination.current, this.pagination.pageSize, this.name);
-      });
+      }));
     },
     cancelDelete() {
       this.$notification.open({
@@ -201,14 +201,13 @@ export default {
     },
     showModal(edit, record) {
       this.resetModal();
-      debugger
       if (edit) {
-        this.title = '编辑项目分组';
+        this.title = '编辑文件分组';
         this.id = record.id;
         this.newName = record.name
-        this.editForm.setFieldsValue({ newName: this.newName})
+        this.editForm.setFieldsValue({ newName: this.newName })
       } else {
-        this.title = '新增项目分组';
+        this.title = '新增文件分组';
       }
       this.visible = true;
     },
@@ -221,12 +220,11 @@ export default {
             name: this.newName
           };
           let handler = data => this.getListPage(this.pagination.current, this.pagination.pageSize, this.name);
-          debugger
           if (this.id) {
             params.id = this.id
-            api.updateProjectGroup(this.id, params, handler)
+            api.updateFileGroup(this.id, params, handler)
           } else {
-            api.createProjectGroup(params, handler)
+            api.createFileGroup(params, handler)
           }
           this.resetModal();
           this.visible = false;
@@ -242,7 +240,7 @@ export default {
       this.id = '';
       this.newName = '';
       this.title = '';
-      this.editForm.setFieldsValue({ newName: '' })
+      this.editForm.setFieldsValue({ newName: ''})
     }
   },
   computed: {}
@@ -250,6 +248,6 @@ export default {
 </script>
 <style scoped>
 @import '../../../assets/css/common.css';
-@import "list.css";
+@import "file-group-list.css";
 </style>
 
