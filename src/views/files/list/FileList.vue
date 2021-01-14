@@ -191,14 +191,10 @@ export default {
       });
     },
     deleteFile(id) {
-      this.request.delete('/file/' + id + "/", {
+      api.deleteFile(id, {
         id: id
       }, data => {
-        this.$notification.info({
-          message: '操作提示',
-          description: '删除成功',
-          duration: 2
-        });
+        api.notification(this.$notification, '操作提示', '删除成功', 'info')
         this.getListPage(this.pagination.current, this.pagination.pageSize, this.name, this.phone, this.email);
       });
     },

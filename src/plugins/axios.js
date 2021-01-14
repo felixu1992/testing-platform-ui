@@ -81,8 +81,8 @@ const request = {
             .catch(errorHandler)
 
     },
-    post: function (url, data, dataHandler) {
-        return _axios.post(url, data)
+    post: function (url, data, dataHandler, config) {
+        return _axios.post(url, data, config)
             .then((response) => {
                 responseHandler(response, dataHandler)
             })

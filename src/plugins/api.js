@@ -1,4 +1,5 @@
-import request from './axios.js'
+import request from './axios.js';
+import notification from 'ant-design-vue';
 
 const USER = '/user/';
 const USER_SIGNIN = `${USER}signin/`;
@@ -40,24 +41,25 @@ export default {
     signout: function (handler) {
         request.post(USER_SIGNOUT, {}, handler);
     },
-    notification: function (msg, desc, type) {
+    notification: function (notification, msg, desc, type) {
         switch (type) {
             case 'info':
-                this.$notification.info({
+                debugger
+                notification.info({
                     message: msg,
                     description: desc,
                     duration: 3
                 });
                 break;
             case 'error':
-                this.$notification.error({
+                notification.error({
                     message: msg,
                     description: desc,
                     duration: 3
                 });
                 break;
             case 'warn':
-                this.$notification.warn({
+                notification.warn({
                     message: msg,
                     description: desc,
                     duration: 3
@@ -115,8 +117,8 @@ export default {
         request.put(`${FILE_GROUP}${id}/`, params, handler)
     },
     // 新增文件
-    createFile: function (params, handler) {
-        request.post(FILE, params, handler)
+    createFile: function (params, handler, config) {
+        request.post(FILE, params, handler, config)
     },
     // 更新文件
     updateFile: function (id, params, handler) {

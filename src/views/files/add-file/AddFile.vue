@@ -38,11 +38,21 @@
           <div style="width: 12%">
             <a-upload-dragger
                 name="file"
-                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                 @change="handleChange"
+                :before-upload="file => false"
+                :file-list="fileList"
+                v-decorator="[
+                      'files',
+                      { rules: [
+                          {
+                            required: true, message: '文件不可为空！'
+                          }
+                        ]
+                      }
+                    ]"
             >
               <p class="ant-upload-drag-icon">
-                <a-icon type="inbox" />
+                <a-icon type="inbox"/>
               </p>
               点击或者将文件拖入框内上传
             </a-upload-dragger>
@@ -86,6 +96,7 @@ export default {
     return {
       groups: [],
       fileName: '',
+      fileList: [],
     }
   },
   methods: {
@@ -93,7 +104,19 @@ export default {
       e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
-          api.createFile()
+          let formData = new FormData();
+          let config = {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          };
+          formData.append('name', values.name);
+          formData.append('group_id', values.group_id);
+          formData.append('remark', values.remark);
+          formData.append('files', values.files.fileList[0].originFileObj);
+          api.createFile(formData, (data => {
+            this.$router.push('/file')
+          }), config)
         }
       });
     },
@@ -105,13 +128,18 @@ export default {
         this.groups = data.records;
       }));
     },
-    createFile: function (params) {
-      this.request.post('/contactor/', params, (data => {
-        this.$router.push('/contact');
-      }))
-    },
     handleChange: function (info) {
-
+      if (info.file.status !== 'removed'){
+        let file = info.fileList[info.fileList.length - 1]
+        this.fileList.splice(0, this.fileList.length)
+        this.fileList.push(file)
+      }
+    },
+    customRequest: function (option) {
+      console.info(option)
+      // const formData = new FormData();
+      // formData.append('files[]', option.file);
+      // return
     }
   }
 }
