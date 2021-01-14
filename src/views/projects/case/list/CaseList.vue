@@ -63,6 +63,28 @@
               删 除
             </a-button>
           </a-popconfirm>
+          <a-divider type="vertical"/>
+          <a-dropdown placement="bottomCenter">
+            <a class="ant-dropdown-link" @click="e => e.preventDefault()">
+              更多 <a-icon type="down" />
+            </a>
+            <template #overlay>
+              <a-menu>
+                <a-menu-item>
+                  <a-button size="small" type="link">执行</a-button>
+                </a-menu-item>
+                <a-menu-item>
+                  <a-button size="small" type="link">上移</a-button>
+                </a-menu-item>
+                <a-menu-item>
+                  <a-button size="small" type="link">下移</a-button>
+                </a-menu-item>
+                <a-menu-item>
+                  <a-button size="small" type="link">置顶</a-button>
+                </a-menu-item>
+              </a-menu>
+            </template>
+          </a-dropdown>
         </span>
       </a-table>
     </div>
