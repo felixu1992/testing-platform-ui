@@ -45,11 +45,11 @@
           {{record.notify ? '是' : '否'}}
         </span>
         <span slot="action" slot-scope="text, record">
-          <a-button size='small' type="link" @click="updateproject(record.id)">
+          <a-button size='small' type="link" @click="updateCase(record.id)">
           查 看
           </a-button>
           <a-divider type="vertical"/>
-          <a-button size='small' type="link" @click="updateproject(record.id)">
+          <a-button size='small' type="link" @click="updateCase(record.id)">
           编 辑
           </a-button>
           <a-divider type="vertical"/>
@@ -236,16 +236,16 @@ export default {
             ev.stopPropagation()
             // 得到目标数据
             this.targetSort = record.sort
-            this.sort()
+            this.sort(this.sourceSort, this.targetSort, 'drag')
           }
         }
       };
     },
-    sort: function () {
+    sort: function (source, target, type) {
       api.sortCase({
-        source: this.sourceSort,
-        target: this.targetSort,
-        transfer: 'drag'
+        source: source,
+        target: target,
+        transfer: type
       }, (data => this.getListPage(this.pagination.current, this.pagination.pageSize, this.projectId)))
     },
     getListPage: function (current, pageSize, projectId) {
@@ -272,7 +272,7 @@ export default {
         }
       })
     },
-    updateproject(id) {
+    updateCase(id) {
       this.$router.push({
         path: '/project/case/update-case',
         query: {
