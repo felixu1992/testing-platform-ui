@@ -61,6 +61,10 @@
           <a-button type="primary" html-type="submit" class="contact-form-button">
             确 定
           </a-button>
+          <a-divider type="vertical"/>
+          <a-button class="contact-form-cancel-button" @click="$router.push('/contact')">
+            取消
+          </a-button>
         </a-form-item>
       </a-form>
     </a-card>

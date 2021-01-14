@@ -1,7 +1,6 @@
 <template>
   <div v-if="!this.isHomeRoute" class="common-breadcrumb">
     <a-breadcrumb separator=">">
-      >&nbsp;
       <a-breadcrumb-item :key="name" v-for="name in names">
           <span>
               <a @click="$router.push({name: name})">{{ name }}</a>

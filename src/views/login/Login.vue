@@ -1,33 +1,4 @@
 <template xmlns="http://www.w3.org/1999/html">
-  <!--  <div class="login test-platform-common-background">-->
-  <!--    <div class="login-tile">-->
-  <!--      <span>-->
-  <!--        <h1>登陆</h1>-->
-  <!--      </span>-->
-  <!--    </div>-->
-  <!--    <br>-->
-
-  <!--    <div class="login-form-item">-->
-  <!--      <div class="login-form-item-lable">-->
-  <!--        <span>email: </span>-->
-  <!--      </div>-->
-  <!--      <div>-->
-  <!--        <input v-model="email"/>-->
-  <!--      </div>-->
-  <!--    </div>-->
-  <!--    <div class="login-form-item">-->
-  <!--      <div class="login-form-item-lable">-->
-  <!--        <span>password:</span>-->
-  <!--      </div>-->
-  <!--      <div>-->
-  <!--        <input type="password" v-model="password"/>-->
-  <!--      </div>-->
-  <!--    </div>-->
-  <!--    <br/>-->
-  <!--    <a-button @click="doLogin">登陆</a-button>-->
-  <!--    <span>《&#45;&#45;》</span>-->
-  <!--    <a-button @click="()=>{this.routeTo('/register')}">注册</a-button>-->
-  <!--  </div>-->
   <div class="login test-platform-common-background">
     <a-card class="login-card" title="登 录">
       <a-form
@@ -63,10 +34,13 @@
           <a-button type="primary" html-type="submit" class="login-form-button">
             登录
           </a-button>
+
           <br/>
-          没有账号吗？
-          <a @click="()=>{this.routeTo('/register')}"> 注册 </a>
-          一个吧
+          没有账号或者忘记密码？可以
+          <a @click="()=>{this.routeTo('/register')}">注册</a>
+          一个或者
+          <a @click="()=>{this.routeTo('/register')}">点我</a>
+          找回
         </a-form-item>
       </a-form>
     </a-card>

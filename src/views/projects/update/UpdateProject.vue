@@ -93,6 +93,10 @@
           <a-button type="primary" html-type="submit" class="project-form-button">
             确 定
           </a-button>
+          <a-divider type="vertical"/>
+          <a-button class="project-form-cancel-button" @click="$router.push('/project')">
+            取消
+          </a-button>
         </a-form-item>
       </a-form>
     </a-card>
