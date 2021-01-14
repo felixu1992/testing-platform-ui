@@ -348,7 +348,7 @@
             确 定
           </a-button>
           <a-divider type="vertical"/>
-          <a-button type="primary" class="case-form-button" @click="cancelSubmit">
+          <a-button class="case-form-button" @click="cancelSubmit">
             取消
           </a-button>
         </a-form-item>

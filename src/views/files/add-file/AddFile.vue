@@ -11,9 +11,9 @@
           <a-input class="file-name" style="width: 10%"
                    v-decorator="[
           'name',
-          { rules: [{ required: true, message: '联系人名称不可为空！' }] },
+          { rules: [{ required: true, message: '文件名称不可为空！' }] },
         ]"
-                   placeholder="请输入联系人名称"
+                   placeholder="请输入文件名称"
           >
           </a-input>
         </a-form-item>
@@ -23,7 +23,7 @@
                     v-decorator="[
                       'group_id',
                       { rules: [{
-                          required: true, message: '联系人分组不可为空！' }
+                          required: true, message: '文件分组不可为空！' }
                         ],
                       initialValue: '--请选择--'
                       }
@@ -75,6 +75,10 @@
         <a-form-item>
           <a-button type="primary" html-type="submit" class="file-form-button">
             确 定
+          </a-button>
+          <a-divider type="vertical"/>
+          <a-button class="file-form-cancel-button" @click="$router.push('/file')">
+            取消
           </a-button>
         </a-form-item>
       </a-form>
@@ -134,12 +138,6 @@ export default {
         this.fileList.splice(0, this.fileList.length)
         this.fileList.push(file)
       }
-    },
-    customRequest: function (option) {
-      console.info(option)
-      // const formData = new FormData();
-      // formData.append('files[]', option.file);
-      // return
     }
   }
 }

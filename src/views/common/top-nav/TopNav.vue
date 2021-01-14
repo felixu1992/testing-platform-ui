@@ -26,7 +26,7 @@
           <a-menu-item key="file-grp" @click="()=>$router.push('/file-group')">
             文件分组
           </a-menu-item>
-          <a-menu-item key="file-itm" @click="()=>$router.push('file')">
+          <a-menu-item key="file-itm" @click="()=>$router.push('/file')">
             文件
           </a-menu-item>
         </a-menu-item-group>

@@ -132,6 +132,9 @@ export default {
     listFile: function (params, handler) {
         request.get(FILE, params, handler)
     },
+    getFile: function (id, params, handler) {
+        request.get(`${FILE}${id}/`, params, handler)
+    },
     // 文件下载
     downloadFile: function (id, params, handler) {
 

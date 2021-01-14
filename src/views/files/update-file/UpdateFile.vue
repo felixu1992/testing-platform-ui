@@ -1,8 +1,8 @@
 <template>
-  <div class="add-file" style="padding:30px">
-    <a-card title="新增文件">
+  <div class="update-file" style="padding:30px">
+    <a-card title="更新文件">
       <a-form
-          id="add-file-form"
+          id="update-file-form"
           :form="form"
           class="file-form"
           @submit="handleSubmit"
@@ -11,9 +11,9 @@
           <a-input class="file-name" style="width: 10%"
                    v-decorator="[
           'name',
-          { rules: [{ required: true, message: '联系人名称不可为空！' }] },
+          { rules: [{ required: true, message: '文件名称不可为空！' }] },
         ]"
-                   placeholder="请输入联系人名称"
+                   placeholder="请输入文件名称"
           >
           </a-input>
         </a-form-item>
@@ -23,7 +23,7 @@
                     v-decorator="[
                       'group_id',
                       { rules: [{
-                          required: true, message: '联系人分组不可为空！' }
+                          required: true, message: '文件分组不可为空！' }
                         ],
                       initialValue: '--请选择--'
                       }
@@ -45,7 +45,7 @@
                       'files',
                       { rules: [
                           {
-                            required: true, message: '文件不可为空！'
+                            required: false
                           }
                         ]
                       }
@@ -76,6 +76,10 @@
           <a-button type="primary" html-type="submit" class="file-form-button">
             确 定
           </a-button>
+          <a-divider type="vertical"/>
+          <a-button class="file-form-cancel-button" @click="$router.push('/file')">
+            取消
+          </a-button>
         </a-form-item>
       </a-form>
     </a-card>
@@ -87,13 +91,19 @@ import api from "@/plugins/api";
 
 export default {
   beforeCreate() {
-    this.form = this.$form.createForm(this, {name: 'add-file'});
+    this.form = this.$form.createForm(this, {name: 'update-file'});
   },
   beforeMount() {
     this.getGroups()
+    const {
+      id
+    } = this.$route.query
+    this.id = id
+    this.getFileInfo(id)
   },
   data() {
     return {
+      id: '',
       groups: [],
       fileName: '',
       fileList: [],
@@ -110,15 +120,23 @@ export default {
               'Content-Type': 'multipart/form-data'
             }
           };
+          formData.append('id', this.id)
           formData.append('name', values.name);
           formData.append('group_id', values.group_id);
           formData.append('remark', values.remark);
-          formData.append('files', values.files.fileList[0].originFileObj);
-          api.createFile(formData, (data => {
+          if (values.files !== undefined) {
+            formData.append('files', values.files.fileList[0].originFileObj);
+          }
+          api.updateFile(this.id, formData, data => {
             this.$router.push('/file')
-          }), config)
+          }, config)
         }
       });
+    },
+    getFileInfo: function (id) {
+      api.getFile(id, { id: this.id }, (data => {
+        this.form.setFieldsValue(data)
+      }));
     },
     getGroups: function () {
       api.listFileGroup({
@@ -134,12 +152,6 @@ export default {
         this.fileList.splice(0, this.fileList.length)
         this.fileList.push(file)
       }
-    },
-    customRequest: function (option) {
-      console.info(option)
-      // const formData = new FormData();
-      // formData.append('files[]', option.file);
-      // return
     }
   }
 }
