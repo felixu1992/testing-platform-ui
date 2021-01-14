@@ -465,6 +465,7 @@ export default {
       expectedTreeData: [],
       expectedModal: {
         index: -1,
+        // 1 为固定值，2 为依赖值
         valueOrDepend: 1,
         ste: [
           {
@@ -521,7 +522,7 @@ export default {
         let expected_values = [];
         for (let i = 0; i < this.expectedData.length; i++) {
           let data = this.expectedData[i];
-          expected_keys = data.ste.map(t => t.value);
+          expected_keys.push(data.ste.map(t => t.value));
           expected_values.push(data.dep);
         }
         value.expected_keys = expected_keys;

@@ -184,9 +184,16 @@ export default {
     listCase: function (params, handler) {
         request.get(CASE, params, handler)
     },
+    getCase: function (id, params, handler) {
+        request.get(`${CASE}${id}/`, params, handler)
+    },
     // 创建用例
     createCase: function (params, handler) {
         request.post(CASE, params, handler)
+    },
+    // 更新用例
+    updateCase: function (id, params, handler) {
+        request.put(`${CASE}${id}/`, params, handler)
     },
     // 用例排序
     sortCase: function (params, handler) {
