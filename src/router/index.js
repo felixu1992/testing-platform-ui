@@ -4,7 +4,6 @@ import store from '../store/index.js'
 import Home from '../views/home/Home.vue'
 import Login from '../views/login/Login'
 import Register from '../views/register/Register'
-import TestRecs from '../views/test-recs/TestRecs'
 import ErrorsPage from "../views/common/errors-page/ErrorsPage";
 import UpdateContact from "@/views/contacts/update-contact/UpdateContact";
 import AddContact from "@/views/contacts/add-contact/AddContact";
@@ -14,7 +13,7 @@ Vue.use(VueRouter)
 const routes = [
     {
         path: '/',
-        name: 'Home',
+        name: '首页',
         component: Home,
         children: []
     },
@@ -22,8 +21,7 @@ const routes = [
         path: '/login',
         name: '登陆',
         component: Login
-    }
-    ,
+    },
     {
         path: '/register',
         name: '注册',
@@ -161,18 +159,37 @@ const routes = [
         ]
     },
     {
-        path: '/test-recs',
+        path: '/record',
         name: '测试记录',
-        component: TestRecs
-    }
-    ,
+        component: () => import('@/views/record/index'),
+        redirect: '/record/list',
+        children: [
+            {
+                path: 'list',
+                name: '记录列表',
+                component: () => import('@/views/record/list/RecordList')
+            },
+            {
+                path: 'report',
+                name: '测试报告',
+                component: () => import('@/views/record/report/index'),
+                redirect: '/record/report/list',
+                children: [
+                    {
+                        path: 'list',
+                        name: '报告列表',
+                        component: () => import('@/views/record/report/list/ReportList')
+                    },
+                ]
+            }
+        ]
+    },
     {
         path: '/errors',
         name: 'ErrorsPage',
         component: ErrorsPage
     }
-
-]
+    ]
 
 const router = new VueRouter({
     mode: 'history',

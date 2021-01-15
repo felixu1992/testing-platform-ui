@@ -1,0 +1,300 @@
+<template>
+  <div>
+    <div class="case-search-div">
+      <a-form class="case-search-form" :form="form" @submit="handleSearch">
+        <a-row :gutter="24">
+          <a-col :span=4>
+            <a-form-item :label="`名 称: `">
+              <a-input
+                  v-decorator="[
+                  `name`,
+                  {
+                    rules: [
+                      {
+                        required: false
+                      },
+                    ],
+                  },
+                ]"
+                  placeholder="用例名称"
+              />
+            </a-form-item>
+          </a-col>
+          <a-col :span="12" :style="{ textAlign: 'right' }">
+            <a-button class="search-button" type="primary" html-type="submit">
+              搜索
+            </a-button>
+            <a-button class="reset-button" :style="{ marginLeft: '8px' }" @click="handleReset">
+              重置
+            </a-button>
+          </a-col>
+        </a-row>
+        <a-row>
+          <a-button class="add-button" type="primary" @click="createCase">
+            新增
+          </a-button>
+<!--          <a-button class="batch-delete-button" :style="{ marginLeft: '8px' }" @click="() => console.info('批量删除')">-->
+<!--            批量删除-->
+<!--          </a-button>-->
+          <a-divider type="vertical"/>
+          <a-button class="execute-project-button" @click="executeProject">
+            执行
+          </a-button>
+        </a-row>
+      </a-form>
+    </div>
+    <div>
+      <a-table :columns="columns" :data-source="data" :pagination="pagination" :customRow="customRow">
+        <span slot="notify" slot-scope="text, record">
+          {{record.notify ? '是' : '否'}}
+        </span>
+        <span slot="action" slot-scope="text, record">
+          <a-button size='small' type="link" @click="updateCase(record.id)">
+          查 看
+          </a-button>
+        </span>
+        <span slot="status" slot-scope="text, record">
+          <a-icon type="check-circle" v-if="record.status === 'PASSED'"/>
+          <a-icon type="close-circle" v-if="record.status === 'FAILED'"/>
+          <a-icon type="pause-circle" v-if="record.status === 'IGNORED'"/>
+        </span>
+      </a-table>
+    </div>
+  </div>
+</template>
+
+<script>
+import api from '@/plugins/api'
+
+const columns = [
+  {
+    title: '名称',
+    dataIndex: 'name',
+    key: 'name',
+    align: 'center'
+  },
+  {
+    title: '请求方法',
+    dataIndex: 'method',
+    key: 'method',
+    align: 'center'
+  },
+  {
+    title: '请求地址',
+    dataIndex: 'host',
+    key: 'host',
+    align: 'center'
+  },
+  {
+    title: '请求头',
+    dataIndex: 'headers',
+    key: 'headers',
+    align: 'center'
+  },
+  {
+    title: '请求路径',
+    dataIndex: 'path',
+    key: 'path',
+    align: 'center'
+  },
+  {
+    title: '是否执行',
+    key: 'run',
+    scopedSlots: { customRender: 'run' },
+    align: 'center'
+  },
+  {
+    title: '所属项目',
+    key: 'project_name',
+    dataIndex: 'project_name',
+    align: 'center'
+  },
+  {
+    title: '执行结果',
+    key: 'status',
+    scopedSlots: { customRender: 'status' },
+    align: 'center',
+
+  },
+  {
+    title: '请求耗时',
+    key: 'time_used',
+    dataIndex: 'time_used',
+    align: 'center',
+    customRender: (text, row, index) => `${text}ms`
+  },
+  {
+    title: '创建时间',
+    key: 'created_at',
+    dataIndex: 'created_at',
+    align: 'center'
+  },
+  {
+    title: '操作',
+    key: 'action',
+    scopedSlots: { customRender: 'action'},
+    align: 'center'
+  }
+];
+
+const data = [];
+
+export default {
+  components: {},
+  beforeMount() {
+    const {
+      recordId
+    } = this.$route.query
+    this.recordId = recordId
+    this.getListPage(this.pagination.defaultCurrent, this.pagination.defaultPageSize, this.recordId);
+  },
+  beforeCreate() {
+    this.form = this.$form.createForm(this, {name: 'search-form'});
+  },
+  data() {
+    return {
+      data,
+      columns,
+      name: '',
+      recordId: '',
+      projectId: '',
+      targetSort: 0,
+      sourceSort: 0,
+      pagination: {
+        total: 0,
+        defaultCurrent: 1,
+        defaultPageSize: 10,
+        current: 1,
+        onShowSizeChange: (current, pageSize) => {
+          this.pageSize = pageSize;
+          this.getListPage(current, pageSize, this.projectId, this.name);
+        },
+        showTotal: total => `共 ${total} 条数据`,
+        showSizeChanger: true,
+        pageSizeOptions: ['10', '20', '30', '40', '50'],
+        onChange: (current, pageSize) => {
+          this.getListPage(current, pageSize, this.projectId, this.name)
+        }
+      }
+    };
+  },
+  methods: {
+    executeCase: function (id) {
+      api.executeCase({ id: id }, data => {
+        console.info(data)
+      })
+    },
+    executeProject: function() {
+      api.executeProject({ id: this.projectId }, data => {
+        api.notification(this.$notification, '操作提示', '执行成功，请前往测试记录页面查看结果', 'info')
+      })
+    },
+    customRow (record) {
+      return {
+        attrs: {
+          draggable: true // 设置拖拽属性
+        },
+        on: {
+          // 鼠标移入，不需要做什么
+          mouseenter: (event) => {
+            // 兼容IE
+            var ev = event || window.event
+          },
+          // 开始拖拽，记录原始坐标
+          dragstart: (event) => {
+            // 兼容IE
+            var ev = event || window.event
+            // 阻止冒泡
+            ev.stopPropagation()
+            // 得到源目标数据
+            this.sourceSort = record.sort
+          },
+          // 拖动元素经过的元素，往经过的数组中 push 坐标
+          dragover: (event) => {
+            // 兼容 IE
+            var ev = event || window.event
+            // 阻止默认行为
+            ev.preventDefault()
+          },
+          // 鼠标松开，根据原坐标和终坐标计算上移还是下移，经过的坐标该加一还是减一，然后重新刷新列表
+          drop: (event) => {
+            // 兼容IE
+            var ev = event || window.event
+            // 阻止冒泡
+            ev.stopPropagation()
+            // 得到目标数据
+            this.targetSort = record.sort
+            this.sort(this.sourceSort, this.targetSort, 'drag')
+          }
+        }
+      };
+    },
+    sort: function (source, target, type) {
+      api.sortCase({
+        source: source,
+        target: target,
+        transfer: type
+      }, (data => this.getListPage(this.pagination.current, this.pagination.pageSize, this.projectId)))
+    },
+    getListPage: function (current, pageSize, recordId, name) {
+      let params = {
+        page: current,
+        page_size: pageSize,
+        record_id: recordId,
+      }
+      if (name) {
+        params.name = name
+      }
+      api.listReport(params, (data => {
+        this.data = data.records;
+        this.pagination.pageSize = pageSize;
+        this.pagination.current = current;
+        this.pagination.total = data.total;
+      }));
+    },
+    createCase() {
+      this.$router.push({
+        path: '/project/case/add-case',
+        query: {
+          projectId: this.projectId
+        }
+      })
+    },
+    updateCase(id) {
+      this.$router.push({
+        path: '/project/case/update-case',
+        query: {
+          id: id
+        }
+      });
+    },
+    deleteCase(id) {
+      api.deleteCase(id, { id: id }, data => {
+        api.notification(this.$notification, '操作提示', '删除成功', 'info')
+        this.getListPage(this.pagination.current, this.pagination.pageSize, this.projectId, this.name);
+      })
+    },
+    cancelDelete() {
+      api.notification(this.$notification, '操作提示', '已取消操作', 'info')
+    },
+    handleSearch(e) {
+      e.preventDefault();
+      this.form.validateFields((err, values) => {
+        if (!err) {
+          this.name = values.name;
+          this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.projectId, this.name);
+        }
+      });
+    },
+    handleReset() {
+      this.form.resetFields();
+      this.name = '';
+      this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.projectId, this.name)
+    },
+  },
+}
+</script>
+<style scoped>
+@import '../../../../assets/css/common.css';
+@import "report-list.css";
+</style>

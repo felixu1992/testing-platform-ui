@@ -201,7 +201,6 @@ export default {
     },
     showModal(edit, record) {
       this.resetModal();
-      debugger
       if (edit) {
         this.title = '编辑项目分组';
         this.id = record.id;
@@ -221,7 +220,6 @@ export default {
             name: this.newName
           };
           let handler = data => this.getListPage(this.pagination.current, this.pagination.pageSize, this.name);
-          debugger
           if (this.id) {
             params.id = this.id
             api.updateProjectGroup(this.id, params, handler)

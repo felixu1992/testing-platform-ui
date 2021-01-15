@@ -1,31 +1,7 @@
 <template>
   <div>
-    <div class="file-group-search-div">
-      <a-modal :visible="visible" :title="title" @ok="handleOk" @cancel="cancelModal">
-        <a-form class="file-group-edit-form" :form="editForm">
-          <a-row>
-            <a-col>
-              <a-form-item :label="`名 称: `">
-                <a-input
-                    placeholder="文件分组名称"
-                    style="width: 50%"
-                    v-decorator="[
-                    `newName`,
-                    {
-                      rules: [
-                        {
-                          required: true, message: '分组名称不能为空'
-                        },
-                      ],
-                    },
-                ]"
-                />
-              </a-form-item>
-            </a-col>
-          </a-row>
-        </a-form>
-      </a-modal>
-      <a-form class="file-group-search-form" :form="form" @submit="handleSearch">
+    <div class="record-search-div">
+      <a-form class="record-search-form" :form="form" @submit="handleSearch">
         <a-row :gutter="24">
           <a-col :span=4>
             <a-form-item :label="`名 称: `">
@@ -40,7 +16,7 @@
                     ],
                   },
                 ]"
-                  placeholder="文件分组名称"
+                  placeholder="项目名称"
               />
             </a-form-item>
           </a-col>
@@ -53,27 +29,27 @@
             </a-button>
           </a-col>
         </a-row>
-        <a-row>
-          <a-button class="add-button" type="primary" @click="showModal(false)">
-            新增
-          </a-button>
-<!--          <a-button class="batch-delete-button" :style="{ marginLeft: '8px' }" @click="() => console.info('批量删除')">-->
-<!--            批量删除-->
-<!--          </a-button>-->
-        </a-row>
+<!--        <a-row>-->
+<!--&lt;!&ndash;          <a-button class="add-button" type="primary" @click="showModal(false)">&ndash;&gt;-->
+<!--&lt;!&ndash;            新增&ndash;&gt;-->
+<!--&lt;!&ndash;          </a-button>&ndash;&gt;-->
+<!--&lt;!&ndash;          <a-button class="batch-delete-button" :style="{ marginLeft: '8px' }" @click="() => console.info('批量删除')">&ndash;&gt;-->
+<!--&lt;!&ndash;            批量删除&ndash;&gt;-->
+<!--&lt;!&ndash;          </a-button>&ndash;&gt;-->
+<!--        </a-row>-->
       </a-form>
     </div>
     <div>
       <a-table :columns="columns" :data-source="data" :pagination="pagination">
       <span slot="action" slot-scope="text, record">
-        <a-button size='small' type="link" @click="showModal(true, record)">
-        编 辑
+        <a-button size='small' type="link" @click="toReport(record.id)">
+        查看报告
         </a-button>
         <a-divider type="vertical"/>
         <a-popconfirm title="确认删除?"
                       ok-text="是"
                       cancel-text="否"
-                      @confirm="deleteFile(record.id)"
+                      @confirm="deleteRecord(record.id)"
                       @cancel="cancelDelete"
         >
         <a-button size='small' type="link">
@@ -92,24 +68,52 @@ import api from "@/plugins/api";
 
 const columns = [
   {
-    title: '名称',
-    dataIndex: 'name',
-    key: 'name',
+    title: '项目名称',
+    dataIndex: 'project_name',
+    key: 'project_name',
+    align: 'center'
   },
   {
-    title: '创建时间',
+    title: '项目分组',
+    dataIndex: 'group_name',
+    key: 'group_name',
+    align: 'center'
+  },
+  {
+    title: '通过数',
+    dataIndex: 'passed',
+    key: 'passed',
+    align: 'center'
+  },
+  {
+    title: '失败数',
+    dataIndex: 'failed',
+    key: 'failed',
+    align: 'center'
+  },
+  {
+    title: '忽略数',
+    dataIndex: 'ignored',
+    key: 'ignored',
+    align: 'center'
+  },
+  {
+    title: '接口总数',
+    dataIndex: 'total',
+    key: 'total',
+    align: 'center'
+  },
+  {
+    title: '执行时间',
     key: 'created_at',
-    dataIndex: 'created_at'
-  },
-  {
-    title: '更新时间',
-    key: 'updated_at',
-    dataIndex: 'updated_at'
+    dataIndex: 'created_at',
+    align: 'center'
   },
   {
     title: '操作',
     key: 'action',
     scopedSlots: {customRender: 'action'},
+    align: 'center'
   }
 ];
 
@@ -151,6 +155,14 @@ export default {
     };
   },
   methods: {
+    toReport: function (id) {
+      this.$router.push({
+        path: '/record/report',
+        query: {
+          recordId: id
+        }
+      });
+    },
     getListPage: function (current, pageSize, name) {
       let params = {
         page: current,
@@ -159,29 +171,21 @@ export default {
       if (name) {
         params.name = name
       }
-      api.listFileGroup(params, data => {
+      api.listRecord(params, data => {
         this.data = data.records;
         this.pagination.pageSize = pageSize;
         this.pagination.current = current;
         this.pagination.total = data.total;
       })
     },
-    deleteFile(id) {
-      api.deleteFileGroup(id, {id: id}, (data => {
-        this.$notification.info({
-          message: '操作提示',
-          description: '删除成功',
-          duration: 2
-        });
+    deleteRecord(id) {
+      api.deleteRecord(id, { id: id }, data => {
+        api.notification(this.$notification, '操作提示', '删除成功', 'info')
         this.getListPage(this.pagination.current, this.pagination.pageSize, this.name);
-      }));
+      });
     },
     cancelDelete() {
-      this.$notification.open({
-        message: '操作提示',
-        description: '已取消操作',
-        duration: 2
-      });
+      api.notification(this.$notification, '操作提示', '已取消操作', 'info')
     },
     handleSearch(e) {
       e.preventDefault();
@@ -197,55 +201,12 @@ export default {
       this.name = '';
       this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.name)
     },
-    showModal(edit, record) {
-      this.resetModal();
-      if (edit) {
-        this.title = '编辑文件分组';
-        this.id = record.id;
-        this.newName = record.name
-        this.editForm.setFieldsValue({ newName: this.newName })
-      } else {
-        this.title = '新增文件分组';
-      }
-      this.visible = true;
-    },
-    handleOk(e) {
-      e.preventDefault();
-      this.editForm.validateFields((err, values) => {
-        if (!err) {
-          this.newName = values.newName
-          let params = {
-            name: this.newName
-          };
-          let handler = data => this.getListPage(this.pagination.current, this.pagination.pageSize, this.name);
-          if (this.id) {
-            params.id = this.id
-            api.updateFileGroup(this.id, params, handler)
-          } else {
-            api.createFileGroup(params, handler)
-          }
-          this.resetModal();
-          this.visible = false;
-        }
-      });
-
-    },
-    cancelModal() {
-      this.resetModal();
-      this.visible = false;
-    },
-    resetModal() {
-      this.id = '';
-      this.newName = '';
-      this.title = '';
-      this.editForm.setFieldsValue({ newName: ''})
-    }
   },
   computed: {}
 }
 </script>
 <style scoped>
 @import '../../../assets/css/common.css';
-@import "file-group-list.css";
+@import "record-list.css";
 </style>
 

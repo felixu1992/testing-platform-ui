@@ -220,7 +220,6 @@ export default {
             name: this.newName
           };
           let handler = data => this.getListPage(this.pagination.current, this.pagination.pageSize, this.name);
-          debugger
           if (this.id) {
             params.id = this.id
             api.updateContactGroup(this.id, params, handler)

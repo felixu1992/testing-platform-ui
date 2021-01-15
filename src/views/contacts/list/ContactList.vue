@@ -201,7 +201,6 @@ export default {
           // 拖动元素经过的元素，往经过的数组中 push 坐标
           dragover: (event) => {
             // 兼容 IE
-            debugger
             var ev = event || window.event
             // 阻止默认行为
             ev.preventDefault()
@@ -209,7 +208,6 @@ export default {
           // 鼠标松开，根据原坐标和终坐标计算上移还是下移，经过的坐标该加一还是减一，然后重新刷新列表
           drop: (event) => {
             // 兼容IE
-            debugger
             var ev = event || window.event
             // 阻止冒泡
             ev.stopPropagation()

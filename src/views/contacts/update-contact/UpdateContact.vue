@@ -99,7 +99,6 @@ export default {
       this.form.validateFields((err, values) => {
         if (!err) {
           values.id = this.id
-          debugger
           this.updateContact(this.id, values)
         }
       });

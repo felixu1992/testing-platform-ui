@@ -44,7 +44,6 @@ export default {
     notification: function (notification, msg, desc, type) {
         switch (type) {
             case 'info':
-                debugger
                 notification.info({
                     message: msg,
                     description: desc,
@@ -210,4 +209,21 @@ export default {
     executeCase: function (params, handler) {
         request.post(CASE_EXECUTE, params, handler)
     },
+    /*-------------- 记录 ---------------*/
+    // 分页查询记录
+    listRecord: function (params, handler) {
+        request.get(RECORD, params, handler)
+    },
+    // 删除记录
+    deleteRecord: function (id, params, handler) {
+        request.delete(`${RECORD}${id}/`, params, handler)
+    },
+    // 分页查询报告
+    listReport: function (params, handler) {
+        request.get(REPORT, params, handler)
+    },
+    // 查询报告详情
+    getReport: function (id, params, handler) {
+        request.get(`${REPORT}${id}/`, params, handler)
+    }
 }

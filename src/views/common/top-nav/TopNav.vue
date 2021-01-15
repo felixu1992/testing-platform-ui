@@ -49,7 +49,7 @@
           <a-icon type="dashboard"/>测试记录
         </span>
         <a-menu-item-group>
-          <a-menu-item key="test-recs" @click="()=>this.routeTo('/test-recs')">
+          <a-menu-item key="test-recs" @click="()=> $router.push('/record')">
             测试记录
           </a-menu-item>
         </a-menu-item-group>

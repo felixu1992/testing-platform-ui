@@ -146,7 +146,6 @@ export default {
       }))
     },
     createProjector: function (params) {
-      debugger
       api.createProject(params, (data => {
         this.$router.push('/project');
       }));

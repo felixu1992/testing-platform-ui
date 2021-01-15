@@ -537,7 +537,6 @@ export default {
         params.sample = this.sample;
       }
       params.project_id = this.projectId;
-      debugger
       api.createCase(params, (data => {
         this.$router.push({
           path: '/project/case',
@@ -616,7 +615,6 @@ export default {
       this.extendModal.ste.push({value: ''})
     },
     extendDropInp(index) {
-      debugger
       this.extendModal.ste.splice(index, 1)
     },
     extendSelect: function (selectedKeys, e) {
@@ -629,7 +627,6 @@ export default {
       this.extendModal = record
       this.extendFillCases();
       for (let i = 0; i < this.extendModal.cases.length; i++) {
-        debugger
         if (this.extendModal.cases[i].id === this.extendModal.dep.depend) {
           this.verfiedData(this.extendModal.cases[i].sample, null, null, this.extendTreeData)
           break
@@ -663,7 +660,6 @@ export default {
       }
       if (item && item.sample) {
         this.verfiedData(item.sample, null, null, this.expectedTreeData)
-        debugger
       } else {
         this.$notification.error({
           message: '错误提示',
@@ -737,7 +733,6 @@ export default {
       this.expectedModal = record
       this.expectedFillCases();
       for (let i = 0; i < this.expectedModal.cases.length; i++) {
-        debugger
         if (this.expectedModal.cases[i].id === this.expectedModal.dep.depend) {
           this.verfiedData(this.expectedModal.cases[i].sample, null, null, this.expectedTreeData)
           break
