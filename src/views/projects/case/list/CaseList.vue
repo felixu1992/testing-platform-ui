@@ -16,7 +16,7 @@
                     ],
                   },
                 ]"
-                  placeholder="联系人名称"
+                  placeholder="用例名称"
               />
             </a-form-item>
           </a-col>
@@ -36,6 +36,10 @@
 <!--          <a-button class="batch-delete-button" :style="{ marginLeft: '8px' }" @click="() => console.info('批量删除')">-->
 <!--            批量删除-->
 <!--          </a-button>-->
+          <a-divider type="vertical"/>
+          <a-button class="execute-project-button" @click="executeProject">
+            执行
+          </a-button>
         </a-row>
       </a-form>
     </div>
@@ -56,10 +60,10 @@
           <a-popconfirm title="确认删除?"
                         ok-text="是"
                         cancel-text="否"
-                        @confirm="deleteproject(record.id)"
+                        @confirm="deleteCase(record.id)"
                         @cancel="cancelDelete"
           >
-            <a-button size='small' type="link" @click="showConfirmDelete(record)">
+            <a-button size='small' type="link" @click="record => record">
               删 除
             </a-button>
           </a-popconfirm>
@@ -71,7 +75,7 @@
             <template #overlay>
               <a-menu>
                 <a-menu-item>
-                  <a-button size="small" type="link">执行</a-button>
+                  <a-button size="small" type="link" @click="executeCase(record.id)">执行</a-button>
                 </a-menu-item>
                 <a-menu-item>
                   <a-button size="small" type="link">上移</a-button>
@@ -177,8 +181,6 @@ export default {
       data,
       columns,
       name: '',
-      email: '',
-      phone: '',
       projectId: '',
       targetSort: 0,
       sourceSort: 0,
@@ -189,18 +191,28 @@ export default {
         current: 1,
         onShowSizeChange: (current, pageSize) => {
           this.pageSize = pageSize;
-          this.getListPage(current, pageSize, this.name, this.phone, this.email);
+          this.getListPage(current, pageSize, this.projectId, this.name);
         },
         showTotal: total => `共 ${total} 条数据`,
         showSizeChanger: true,
         pageSizeOptions: ['10', '20', '30', '40', '50'],
         onChange: (current, pageSize) => {
-          this.getListPage(current, pageSize, this.name, this.phone, this.email)
+          this.getListPage(current, pageSize, this.projectId, this.name)
         }
       }
     };
   },
   methods: {
+    executeCase: function (id) {
+      api.executeCase({ id: id }, data => {
+        console.info(data)
+      })
+    },
+    executeProject: function() {
+      api.executeProject({ id: this.projectId }, data => {
+        api.notification(this.$notification, '操作提示', '执行成功，请前往测试记录页面查看结果', 'info')
+      })
+    },
     customRow (record) {
       return {
         attrs: {
@@ -248,11 +260,14 @@ export default {
         transfer: type
       }, (data => this.getListPage(this.pagination.current, this.pagination.pageSize, this.projectId)))
     },
-    getListPage: function (current, pageSize, projectId) {
+    getListPage: function (current, pageSize, projectId, name) {
       let params = {
         page: current,
         page_size: pageSize,
-        project_id: projectId
+        project_id: projectId,
+      }
+      if (name) {
+        params.name = name
       }
       api.listCase(params, (data => {
         this.data = data.records;
@@ -260,9 +275,6 @@ export default {
         this.pagination.current = current;
         this.pagination.total = data.total;
       }));
-    },
-    showConfirmDelete(rowRecord) {
-
     },
     createCase() {
       this.$router.push({
@@ -280,43 +292,28 @@ export default {
         }
       });
     },
-    deleteproject(id) {
-      this.request.delete('/projector/' + projectorId + "/", {
-        id: id
-      }, data => {
-        this.$notification.info({
-          message: '操作提示',
-          description: '删除成功',
-          duration: 2
-        });
-        this.getListPage(this.pagination.current, this.pagination.pageSize, this.name, this.phone, this.email);
-      });
+    deleteCase(id) {
+      api.deleteCase(id, { id: id }, data => {
+        api.notification(this.$notification, '操作提示', '删除成功', 'info')
+        this.getListPage(this.pagination.current, this.pagination.pageSize, this.projectId, this.name);
+      })
     },
     cancelDelete() {
-      this.$notification.open({
-        message: '操作提示',
-        description: '已取消操作',
-        duration: 2
-      });
+      api.notification(this.$notification, '操作提示', '已取消操作', 'info')
     },
     handleSearch(e) {
       e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
-          this.name = values['name'];
-          this.phone = values['phone'];
-          this.email = values['email'];
-          this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.name, this.phone, this.email);
+          this.name = values.name;
+          this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.projectId, this.name);
         }
       });
     },
-
     handleReset() {
       this.form.resetFields();
       this.name = '';
-      this.phone = '';
-      this.email = '';
-      this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.name, this.phone, this.email)
+      this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.projectId, this.name)
     },
   },
 }

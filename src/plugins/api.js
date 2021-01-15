@@ -178,7 +178,10 @@ export default {
     getProject: function (id, params, handler) {
         request.get(`${PROJECT}${id}/`, params, handler)
     },
-
+    // 执行项目
+    executeProject: function (params, handler) {
+        request.post(PROJECT_EXECUTE, params, handler)
+    },
     /*-------------- 用例 ---------------*/
     // 分页查询用例
     listCase: function (params, handler) {
@@ -198,5 +201,13 @@ export default {
     // 用例排序
     sortCase: function (params, handler) {
         request.put(CASE_SORT, params, handler)
-    }
+    },
+    // 删除用例
+    deleteCase: function (id, params, handler) {
+        request.delete(`${CASE}${id}/`, params, handler)
+    },
+    // 执行用例
+    executeCase: function (params, handler) {
+        request.post(CASE_EXECUTE, params, handler)
+    },
 }
