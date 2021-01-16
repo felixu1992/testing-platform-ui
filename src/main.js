@@ -5,6 +5,7 @@ import store from './store'
 import './plugins/ant-design-vue.js'
 import './plugins/axios.js'
 import './plugins/api.js'
+import './plugins/mavon-enditor.js'
 
 Vue.config.productionTip = false
 

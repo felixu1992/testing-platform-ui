@@ -43,7 +43,7 @@
       <a-table :columns="columns" :data-source="data" :pagination="pagination">
       <span slot="action" slot-scope="text, record">
         <a-button size='small' type="link" @click="toReport(record.id)">
-        查看报告
+        详 情
         </a-button>
         <a-divider type="vertical"/>
         <a-popconfirm title="确认删除?"

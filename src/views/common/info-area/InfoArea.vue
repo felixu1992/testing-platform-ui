@@ -1,7 +1,9 @@
 <template>
   <div class="info-area">
     <div class="logged-in-user-info" v-if="loggedIn">
-      当前用户：{{infoText}}
+      <a-avatar :src="user.avatar" v-if="user.avatar"/>
+      <a-avatar icon="user" style="width: 30px; height: 30px" v-else/>
+      {{ infoText }}
       <span class="logoff"> <a @click="logoff()">注销</a></span>
     </div>
     <div class="two-btns" v-else>
@@ -12,28 +14,32 @@
   </div>
 </template>
 <script>
-  export default{
-    name:'InfoArea',
-    data:function(){
-      return {}
+export default {
+  name: 'InfoArea',
+  data: function () {
+    return {
+      user: {}
+    }
+  },
+  computed: {
+    loggedIn: function () {
+      return this.$store.getters.loggedIn
     },
-    computed:{
-      loggedIn: function () {
-        return this.$store.getters.loggedIn
-      },
-      infoText: function () {
-        let userInfo = this.$store.state.loggedInUserInfo;
-        return userInfo.username.length > 10 ? userInfo.username.substr(0,10) + '...' : userInfo.username;
-      }
-    },
-    methods: {
-      logoff: function () {
-        this.$store.commit("doLogoff");
-        this.routeTo("/login");
-      }
+    infoText: function () {
+      let userInfo = this.$store.state.loggedInUserInfo;
+      debugger
+      this.user = userInfo
+      return userInfo.username.length > 10 ? userInfo.username.substr(0, 10) + '...' : userInfo.username;
+    }
+  },
+  methods: {
+    logoff: function () {
+      this.$store.commit("doLogoff");
+      this.routeTo("/login");
     }
   }
+}
 </script>
 <style scoped>
-  @import "./info-area.css";
+@import "./info-area.css";
 </style>

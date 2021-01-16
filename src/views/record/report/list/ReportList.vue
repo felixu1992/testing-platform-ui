@@ -54,9 +54,9 @@
           </a-button>
         </span>
         <span slot="status" slot-scope="text, record">
-          <a-icon type="check-circle" style="font-size: 24px; color: #52c41a" v-if="record.status === 'PASSED'"/>
-          <a-icon type="close-circle" style="font-size: 24px; color: #ff0000" v-if="record.status === 'FAILED'"/>
-          <a-icon type="pause-circle" style="font-size: 24px; color: #7f7f7f" v-if="record.status === 'IGNORED'"/>
+          <a-icon type="check-circle" style="font-size: 20px; color: #52c41a" v-if="record.status === 'PASSED'"/>
+          <a-icon type="close-circle" style="font-size: 20px; color: #ff0000" v-if="record.status === 'FAILED'"/>
+          <a-icon type="pause-circle" style="font-size: 20px; color: #7f7f7f" v-if="record.status === 'IGNORED'"/>
         </span>
       </a-table>
     </div>

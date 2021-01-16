@@ -95,21 +95,25 @@ const columns = [
     title: '名称',
     dataIndex: 'name',
     key: 'name',
+    align: 'center'
   },
   {
     title: '创建时间',
     key: 'created_at',
-    dataIndex: 'created_at'
+    dataIndex: 'created_at',
+    align: 'center'
   },
   {
     title: '更新时间',
     key: 'updated_at',
-    dataIndex: 'updated_at'
+    dataIndex: 'updated_at',
+    align: 'center'
   },
   {
     title: '操作',
     key: 'action',
     scopedSlots: {customRender: 'action'},
+    align: 'center'
   }
 ];
 

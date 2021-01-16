@@ -82,41 +82,49 @@ const columns = [
     title: '名称',
     dataIndex: 'name',
     key: 'name',
+    align: 'center'
   },
   {
     title: '请求地址',
     dataIndex: 'host',
     key: 'host',
+    align: 'center'
   },
   {
     title: '请求头',
     dataIndex: 'headers',
     key: 'headers',
+    align: 'center'
   },
   {
     title: '是否通知',
     key: 'notify',
-    scopedSlots: { customRender: 'notify' }
+    scopedSlots: { customRender: 'notify' },
+    align: 'center'
   },
   {
     title: '所属分组',
     key: 'group_name',
-    dataIndex: 'group_name'
+    dataIndex: 'group_name',
+    align: 'center'
   },
   {
     title: '创建时间',
     key: 'created_at',
-    dataIndex: 'created_at'
+    dataIndex: 'created_at',
+    align: 'center'
   },
   {
     title: '更新时间',
     key: 'updated_at',
-    dataIndex: 'updated_at'
+    dataIndex: 'updated_at',
+    align: 'center'
   },
   {
     title: '操作',
     key: 'action',
     scopedSlots: { customRender: 'action'},
+    align: 'center'
   }
 ];
 
