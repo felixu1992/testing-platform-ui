@@ -40,7 +40,7 @@
           <a @click="()=>{this.routeTo('/register')}">注册</a>
           一个或者
           <a @click="()=>{this.routeTo('/register')}">点我</a>
-          找回
+          找回！
         </a-form-item>
       </a-form>
     </a-card>
