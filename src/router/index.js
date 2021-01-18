@@ -124,6 +124,11 @@ const routes = [
                 component: () => import('@/views/projects/list/ProjectList')
             },
             {
+                path: 'detail',
+                name: '项目详情',
+                component: () => import('@/views/projects/detail/Project')
+            },
+            {
                 path: 'add-project',
                 name: '项目新增',
                 component: () => import('@/views/projects/add/AddProject')

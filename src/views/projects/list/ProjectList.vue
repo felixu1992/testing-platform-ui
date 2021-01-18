@@ -49,7 +49,7 @@
           用 例
           </a-button>
           <a-divider type="vertical"/>
-          <a-button size='small' type="link" @click="updateProject(record.id)">
+          <a-button size='small' type="link" @click="getProject(record.id)">
           查 看
           </a-button>
           <a-divider type="vertical"/>
@@ -57,16 +57,33 @@
           编 辑
           </a-button>
           <a-divider type="vertical"/>
-          <a-popconfirm title="确认删除?"
-                        ok-text="是"
-                        cancel-text="否"
-                        @confirm="deleteProject(record.id)"
-                        @cancel="cancelDelete"
-          >
-            <a-button size='small' type="link" @click="showConfirmDelete(record)">
-              删 除
-            </a-button>
-          </a-popconfirm>
+          <a-dropdown placement="bottomCenter">
+            <a class="ant-dropdown-link" @click="e => e.preventDefault()">
+              更多 <a-icon type="down" />
+            </a>
+            <template #overlay>
+              <a-menu>
+                <a-menu-item>
+                  <a-popconfirm title="确认删除?"
+                                ok-text="是"
+                                cancel-text="否"
+                                @confirm="deleteProject(record.id)"
+                                @cancel="cancelDelete"
+                  >
+                    <a-button size='small' type="link" @click="showConfirmDelete(record)">
+                    删 除
+                    </a-button>
+                  </a-popconfirm>
+                </a-menu-item>
+                <a-menu-item>
+                  <a-button size="small" type="link" @click="executeCase(record.id)">执行</a-button>
+                </a-menu-item>
+                <a-menu-item>
+                  <a-button size="small" type="link">复制</a-button>
+                </a-menu-item>
+              </a-menu>
+            </template>
+          </a-dropdown>
         </span>
       </a-table>
     </div>
@@ -193,6 +210,14 @@ export default {
         path: '/project/case',
         query: {
           project: id
+        }
+      });
+    },
+    getProject(id) {
+      this.$router.push({
+        path: '/project/detail',
+        query: {
+          id: id
         }
       });
     },

@@ -551,6 +551,7 @@ export default {
       }
     },
     parseExpected(keys, values) {
+      debugger
       for (let i = 0; i < keys.length; i++) {
         let ex =  {
           index: -1,
@@ -598,12 +599,12 @@ export default {
       api.getCase(id, { id: id }, data => {
         this.projectId = data.project_id
         this.form.setFieldsValue(data)
-        this.params = data.params !== undefined ? data.params : {}
-        this.sample = data.sample !== undefined ? data.sample : {}
-        if (data.extend_keys !== undefined && data.extend_keys.length > 0) {
+        this.params = data.params !== null ? data.params : {}
+        this.sample = data.sample !== null ? data.sample : {}
+        if (data.extend_keys !== null && data.extend_keys.length > 0) {
           this.parseExtend(data.extend_keys, data.extend_values)
         }
-        if (data.expected_keys !== undefined && data.expected_keys.length > 0) {
+        if (data.expected_keys !== null && data.expected_keys.length > 0) {
           this.parseExpected(data.expected_keys, data.expected_values)
         }
       });

@@ -86,6 +86,9 @@
                 <a-menu-item>
                   <a-button size="small" type="link">置顶</a-button>
                 </a-menu-item>
+                <a-menu-item>
+                  <a-button size="small" type="link">复制</a-button>
+                </a-menu-item>
               </a-menu>
             </template>
           </a-dropdown>
