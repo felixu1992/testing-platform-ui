@@ -1,0 +1,7 @@
+.abc .ant-form-item {
+    display: flex;
+}
+
+.abc .ant-form-item-control-wrapper {
+    flex: 1;
+}

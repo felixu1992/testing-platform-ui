@@ -27,7 +27,6 @@ export default {
     },
     infoText: function () {
       let userInfo = this.$store.state.loggedInUserInfo;
-      debugger
       this.user = userInfo
       return userInfo.username.length > 10 ? userInfo.username.substr(0, 10) + '...' : userInfo.username;
     }
