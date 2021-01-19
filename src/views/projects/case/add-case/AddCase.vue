@@ -137,14 +137,20 @@
           />
         </a-form-item>
         <a-form-item :label="`请求参数: `">
-          <vue-json-editor :show-btns="false"
-                           :expandedOnStart="true"
-                           style="width: 50%; height: 200px"
-                           lang="zh"
-                           mode="code"
-                           v-model="params"
-          />
+          <div style="width: 40%" >
+<!--            <json-schema-editor :value="tree" />-->
+            <json-param-editor class="json-param" :value="tree" disabled-type/>
+          </div>
         </a-form-item>
+<!--        <a-form-item :label="`请求参数: `">-->
+<!--          <vue-json-editor :show-btns="false"-->
+<!--                           :expandedOnStart="true"-->
+<!--                           style="width: 50%; height: 200px"-->
+<!--                           lang="zh"-->
+<!--                           mode="code"-->
+<!--                           v-model="params"-->
+<!--          />-->
+<!--        </a-form-item>-->
         <a-form-item :label="`参数注入: `">
           <a-table :columns="extendColumns" :data-source="extendData" :pagination="false"
                    style="width: 50%" size="small" bordered tableLayout="fixed">
@@ -360,6 +366,7 @@
 <script>
 import api from '@/plugins/api'
 import vueJsonEditor from 'vue-json-editor'
+import JsonParamEditor from '@/views/common/json-params'
 
 const extendColumns = [
   {
@@ -412,6 +419,35 @@ export default {
   },
   data() {
     return {
+      tree:
+          {
+            "root": {
+              "type": "object",
+              "title": "条件",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "title": "名称",
+                  "maxLength": 10,
+                  "minLength": 2
+                },
+                "appId": {
+                  "type": "integer",
+                  "title": "应用ID"
+                },
+                "credate": {
+                  "type": "string",
+                  "title": "创建日期",
+                  "format": "date"
+                }
+              },
+              "required": [
+                "appId",
+                "credate",
+                "name"
+              ]
+            }
+          },
       params: {},
       sample: {},
       projectId: '',
@@ -836,7 +872,7 @@ export default {
     }
   },
   components: {
-    vueJsonEditor
+    vueJsonEditor, JsonParamEditor
   },
 }
 </script>

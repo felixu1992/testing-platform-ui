@@ -16,8 +16,29 @@
             </a-col>
           </a-card>
         </a-row>
+
         <a-row :gutter="16">
           <a-card>
+            <a-form class="abc" :form="form">
+              <a-col :span="12">
+                <a-form-item :label="`选择项目: `">
+                  <a-select style="width: 20%" @change="value => value"
+                            v-decorator="[
+                    'group_id',
+                    { rules: [{
+                        required: true, message: '文件分组不可为空！' }
+                      ],
+                    initialValue: '--请选择--'
+                    }
+                  ]"
+                  >
+                    <a-select-option v-for="group in groups" :value="group.id">
+                      {{ group.name }}
+                    </a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+            </a-form>
             <a-col :span="16" style="height: 400px">
               <div id="echarts1" style="width: 100%; height: 100%"></div>
             </a-col>
@@ -28,25 +49,7 @@
         </a-row>
         <a-row :gutter="16">
           <a-card>
-          <a-form class="abc" :form="editForm">
-              <a-col :span="12">
-                <a-form-item :label="`名 称: `">
-                  <a-input
-                      placeholder="项目名称"
-                      style="width: 20%"
-                      v-decorator="[
-                        `newName`,
-                        {
-                          rules: [
-                            {
-                              required: true, message: '分组名称不能为空'
-                            },
-                          ],
-                        },
-                      ]"
-                  />
-                </a-form-item>
-              </a-col>
+            <a-form class="abc" :form="form">
               <a-col :span="12">
                 <a-form-item :label="`排序方式: `">
                   <a-select style="width: 20%" @change="value => value"
@@ -63,6 +66,17 @@
                       {{ group.name }}
                     </a-select-option>
                   </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :span="12">
+                <a-form-item :label="`时间范围: `">
+                  <a-range-picker>
+                    <template slot="dateRender" slot-scope="current">
+                      <div class="ant-calendar-date" :style="getCurrentStyle(current)">
+                        {{ current.date() }}
+                      </div>
+                    </template>
+                  </a-range-picker>
                 </a-form-item>
               </a-col>
             </a-form>
@@ -155,6 +169,9 @@ const columns = [
 export default {
   name: 'Home',
   components: {TopNav},
+  beforeCreate() {
+    this.form = this.$form.createForm(this, {name: 'form'});
+  },
   data() {
     return {
       columns,
@@ -165,6 +182,14 @@ export default {
     };
   },
   methods:{
+    getCurrentStyle(current, today) {
+      const style = {};
+      if (current.date() === 1) {
+        style.border = '1px solid #1890ff';
+        style.borderRadius = '50%';
+      }
+      return style;
+    },
     drawLine1() {
       // 基于准备好的dom，初始化echarts实例
       let myChart = window.echarts.init(document.getElementById('echarts1'))
