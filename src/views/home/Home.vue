@@ -80,8 +80,9 @@
                 </a-form-item>
               </a-col>
             </a-form>
-            <a-table :columns="columns" :data-source="data" :pagination="false">
-            </a-table>
+            <a-col :span="24">
+              <a-table :columns="columns" :data-source="data" :pagination="false" />
+            </a-col>
           </a-card>
         </a-row>
       </a-collapse-panel>
@@ -202,7 +203,7 @@ export default {
           trigger: 'axis'
         },
         legend: {
-          data: ['邮件营销', '联盟广告', '视频广告', '直接访问', '搜索引擎']
+          data: ['执行成功', '执行失败', '忽略执行', '接口总数']
         },
         grid: {
           left: '3%',
@@ -227,39 +228,32 @@ export default {
         },
         series: [
           {
-            name: '邮件营销',
+            name: '忽略执行',
             type: 'line',
             smooth: true,
             stack: '总量',
             data: [120, 132, 101, 134, 90, 230, 210]
           },
           {
-            name: '联盟广告',
+            name: '执行失败',
             type: 'line',
             stack: '总量',
             smooth: true,
             data: [220, 182, 191, 234, 290, 330, 310]
           },
           {
-            name: '视频广告',
+            name: '执行成功',
             type: 'line',
             stack: '总量',
             smooth: true,
             data: [150, 232, 201, 154, 190, 330, 410]
           },
           {
-            name: '直接访问',
+            name: '接口总数',
             type: 'line',
             stack: '总量',
             smooth: true,
             data: [320, 332, 301, 334, 390, 330, 320]
-          },
-          {
-            name: '搜索引擎',
-            type: 'line',
-            stack: '总量',
-            smooth: true,
-            data: [820, 932, 901, 934, 1290, 1330, 1320]
           }
         ]
       });
@@ -280,7 +274,7 @@ export default {
         legend: {
           orient: 'vertical',
           left: 'left',
-          data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎']
+          data: ['执行成功', '执行失败', '忽略执行']
         },
         series: [
           {
@@ -289,11 +283,9 @@ export default {
             radius: '55%',
             center: ['50%', '60%'],
             data: [
-              {value: 335, name: '直接访问'},
-              {value: 310, name: '邮件营销'},
-              {value: 234, name: '联盟广告'},
-              {value: 135, name: '视频广告'},
-              {value: 1548, name: '搜索引擎'}
+              {value: 335, name: '执行成功'},
+              {value: 310, name: '执行失败'},
+              {value: 234, name: '忽略执行'}
             ],
             emphasis: {
               itemStyle: {

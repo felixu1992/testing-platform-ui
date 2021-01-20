@@ -1,4 +1,4 @@
-<template>
+<template xmlns="http://www.w3.org/1999/html">
   <div class="add-case" style="padding:30px">
     <a-card title="新增用例">
       <a-modal :visible="extendVisible" :title="extendTitle" @ok="extendHandleOk" @cancel="extendCancelModal">
@@ -137,20 +137,26 @@
           />
         </a-form-item>
         <a-form-item :label="`请求参数: `">
-          <div style="width: 40%" >
-<!--            <json-schema-editor :value="tree" />-->
-            <json-param-editor class="json-param" :value="tree" disabled-type/>
+          <div class="params-form">
+            <span class="switch">
+              JSON <a-switch checked-children="开" un-checked-children="关" default-checked @change="changeJsonSwitch" />
+              <a-popover title="Tips" placement="topLeft">
+                <template #content>
+                  请尽量避免切换<br/>
+                  因为从 JSON 组件回到树形组件时<br/>
+                  所有数组类型的 key 将被重命名<br/>
+                  从树形组件到 JSON 组件时<br/>
+                  所有为空的字段将被忽略<br/>
+                  虽然这无关紧要<br/>
+                  但还是尽量不要花里胡哨
+                </template>
+                <a-icon type="question-circle" style="font-size: 15px; color: #52c41a; padding: 10px" />
+              </a-popover>
+            </span>
+            <vue-json-editor  v-if="jsonSwitch" class="json-editor" :show-btns="false" :expandedOnStart="true" mode="code" v-model="params" />
+            <json-param-editor v-else class="json-param" :value="schemaParams" :files="developTreeData" disabled-type/>
           </div>
         </a-form-item>
-<!--        <a-form-item :label="`请求参数: `">-->
-<!--          <vue-json-editor :show-btns="false"-->
-<!--                           :expandedOnStart="true"-->
-<!--                           style="width: 50%; height: 200px"-->
-<!--                           lang="zh"-->
-<!--                           mode="code"-->
-<!--                           v-model="params"-->
-<!--          />-->
-<!--        </a-form-item>-->
         <a-form-item :label="`参数注入: `">
           <a-table :columns="extendColumns" :data-source="extendData" :pagination="false"
                    style="width: 50%" size="small" bordered tableLayout="fixed">
@@ -328,11 +334,11 @@
                             },
                           ]"
                           placeholder="延迟时长" />
-          <a-popover title="Tips">
+          <a-popover title="Tips" placement="topLeft">
             <template #content>
               单位为秒，最大 300 秒
             </template>
-            <a-icon type="exclamation" />
+            <a-icon type="question-circle" style="font-size: 18px; color: #52c41a; padding: 10px" />
           </a-popover>
         </a-form-item>
         <a-form-item :label="`备 注: `">
@@ -365,8 +371,9 @@
 
 <script>
 import api from '@/plugins/api'
-import vueJsonEditor from 'vue-json-editor'
+import VueJsonEditor from 'vue-json-editor'
 import JsonParamEditor from '@/views/common/json-params'
+import {json2JsonSchema, jsonSchema2Json, json2TreeData} from '@/utils/utils'
 
 const extendColumns = [
   {
@@ -419,36 +426,13 @@ export default {
   },
   data() {
     return {
-      tree:
-          {
-            "root": {
-              "type": "object",
-              "title": "条件",
-              "properties": {
-                "name": {
-                  "type": "string",
-                  "title": "名称",
-                  "maxLength": 10,
-                  "minLength": 2
-                },
-                "appId": {
-                  "type": "integer",
-                  "title": "应用ID"
-                },
-                "credate": {
-                  "type": "string",
-                  "title": "创建日期",
-                  "format": "date"
-                }
-              },
-              "required": [
-                "appId",
-                "credate",
-                "name"
-              ]
-            }
-          },
+      jsonSwitch: true,
       params: {},
+      schemaParams: {
+        root: {
+          'type': 'object',
+        }
+      },
       sample: {},
       projectId: '',
       developTreeData: [],
@@ -520,6 +504,24 @@ export default {
     }
   },
   methods: {
+    changeJsonSwitch(checked, event) {
+      this.jsonSwitch = checked;
+      if (checked) {
+        try {
+          this.params = jsonSchema2Json(this.schemaParams.root)
+        } catch (e) {
+          api.notification(this.$notification, '操作失败', e.message, 'error')
+        }
+      } else {
+        try {
+          let jsonSchema = {};
+          json2JsonSchema(this.params, jsonSchema);
+          this.schemaParams.root = jsonSchema;
+        } catch (e) {
+          api.notification(this.$notification, '操作失败', '请检查 json 是否正确', 'error')
+        }
+      }
+    },
     handleSubmit(e) {
       e.preventDefault();
       this.form.validateFields((err, values) => {
@@ -566,6 +568,14 @@ export default {
       }
     },
     createCase: function (params) {
+      if (!this.jsonSwitch) {
+        try {
+          this.params = jsonSchema2Json(this.schemaParams.root)
+        } catch (e) {
+          api.notification(this.$notification, '操作失败', e.message, 'error')
+          return
+        }
+      }
       if (this.params) {
         params.params = this.params;
       }
@@ -597,7 +607,7 @@ export default {
         }
       }
       if (item && item.sample) {
-        this.verfiedData(item.sample, null, null, this.extendTreeData)
+        json2TreeData(item.sample, null, null, this.extendTreeData)
       } else {
         this.$notification.error({
           message: '错误提示',
@@ -664,7 +674,7 @@ export default {
       this.extendFillCases();
       for (let i = 0; i < this.extendModal.cases.length; i++) {
         if (this.extendModal.cases[i].id === this.extendModal.dep.depend) {
-          this.verfiedData(this.extendModal.cases[i].sample, null, null, this.extendTreeData)
+          json2TreeData(this.extendModal.cases[i].sample, null, null, this.extendTreeData)
           break
         }
       }
@@ -695,7 +705,7 @@ export default {
         }
       }
       if (item && item.sample) {
-        this.verfiedData(item.sample, null, null, this.expectedTreeData)
+        json2TreeData(item.sample, null, null, this.expectedTreeData)
       } else {
         this.$notification.error({
           message: '错误提示',
@@ -770,7 +780,7 @@ export default {
       this.expectedFillCases();
       for (let i = 0; i < this.expectedModal.cases.length; i++) {
         if (this.expectedModal.cases[i].id === this.expectedModal.dep.depend) {
-          this.verfiedData(this.expectedModal.cases[i].sample, null, null, this.expectedTreeData)
+          json2TreeData(this.expectedModal.cases[i].sample, null, null, this.expectedTreeData)
           break
         }
       }
@@ -795,84 +805,9 @@ export default {
         this.backtracking(node.$parent, track, null)
       }
     },
-    // 从普通 json 转换为树需要的数据结构
-    verfiedData(data, _prekey, _tns, _data) {
-      const tns = _tns || _data;
-      // 判断子元素的数据类型
-      let dataType = this.checkDataType(data)
-      switch (dataType) {
-        case 'object':
-          const children = []
-          // 记录key值，目的为了寻找对应的插入位置
-          for (let i in data) {
-            const key = i
-            if (this.checkDataType(data[i]) === 'common' || this.checkDataType(data[i]) === 'null') {
-              tns.push({
-                title: `${key}`,
-                key: key
-              })
-              // 如果没有子元素了，一定要插入一个占位符，不然会错位
-              children.push('noChild')
-            } else {
-              tns.push({
-                title: key,
-                key
-              })
-              children.push(key)
-            }
-          }
-          children.forEach((key, index) => {
-            //寻找对应的插入位置，若没有子元素了，直接返回，如果有，插入key值为children的数组，再次调用函数
-            if (key === 'noChild') {
-              return tns
-            } else {
-              tns[index].children = []
-              this.verfiedData(data[key], key, tns[index].children, null)
-            }
-          })
-          break;
-        case 'array':
-          // 数组以下标作为key
-          data.forEach((value, index) => {
-            tns.push({
-              title: '' + index,
-              key: index
-            })
-            tns[index].children = []
-            this.verfiedData(data[index], index, tns[index].children, null)
-          });
-          break;
-        default:
-          tns.push({
-            title: data,
-            key: _prekey
-          })
-      }
-    },
-    // 判断数据类型
-    checkDataType(data) {
-      let type = null
-      if (typeof data === 'object') {
-        // 对象
-        if (Object.prototype.toString.call(data) === "[object Null]") {
-          // null
-          type = 'null'
-        } else if (Object.prototype.toString.call(data) === "[object Array]") {
-          // []
-          type = 'array'
-        } else if (Object.prototype.toString.call(data) === "[object Object]") {
-          // {}
-          type = 'object'
-        }
-      } else {
-        // 除 null 的基本数据类型
-        type = 'common'
-      }
-      return type
-    }
   },
   components: {
-    vueJsonEditor, JsonParamEditor
+    VueJsonEditor, JsonParamEditor
   },
 }
 </script>

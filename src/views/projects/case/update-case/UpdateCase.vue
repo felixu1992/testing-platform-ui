@@ -137,13 +137,25 @@
           />
         </a-form-item>
         <a-form-item :label="`请求参数: `">
-          <vue-json-editor :show-btns="false"
-                           :expandedOnStart="true"
-                           style="width: 50%; height: 200px"
-                           lang="zh"
-                           mode="code"
-                           v-model="params"
-          />
+          <div class="params-form">
+            <span class="switch">
+              JSON <a-switch checked-children="开" un-checked-children="关" default-checked @change="changeJsonSwitch" />
+              <a-popover title="Tips" placement="topLeft">
+                <template #content>
+                  请尽量避免切换<br/>
+                  因为从 JSON 组件回到树形组件时<br/>
+                  所有数组类型的 key 将被重命名<br/>
+                  从树形组件到 JSON 组件时<br/>
+                  所有为空的字段将被忽略<br/>
+                  虽然这无关紧要<br/>
+                  但还是尽量不要花里胡哨
+                </template>
+                <a-icon type="question-circle" style="font-size: 15px; color: #52c41a; padding: 10px" />
+              </a-popover>
+            </span>
+            <vue-json-editor  v-if="jsonSwitch" class="json-editor" :show-btns="false" :expandedOnStart="true" mode="code" v-model="params" />
+            <json-param-editor v-else class="json-param" :value="schemaParams" :files="developTreeData" disabled-type/>
+          </div>
         </a-form-item>
         <a-form-item :label="`参数注入: `">
           <a-table :columns="extendColumns" :data-source="extendData" :pagination="false"
@@ -322,11 +334,11 @@
                             },
                           ]"
                           placeholder="延迟时长" />
-          <a-popover title="Tips">
+          <a-popover title="Tips" placement="topLeft">
             <template #content>
               单位为秒，最大 300 秒
             </template>
-            <a-icon type="exclamation" />
+            <a-icon type="question-circle" style="font-size: 18px; color: #52c41a; padding: 10px" />
           </a-popover>
         </a-form-item>
         <a-form-item :label="`备 注: `">
@@ -359,7 +371,9 @@
 
 <script>
 import api from '@/plugins/api'
-import vueJsonEditor from 'vue-json-editor'
+import VueJsonEditor from 'vue-json-editor'
+import JsonParamEditor from '@/views/common/json-params'
+import {json2JsonSchema, jsonSchema2Json, json2TreeData} from '@/utils/utils'
 
 const extendColumns = [
   {
@@ -414,7 +428,13 @@ export default {
   data() {
     return {
       id: '',
+      jsonSwitch: true,
       params: {},
+      schemaParams: {
+        root: {
+          'type': 'object',
+        }
+      },
       sample: {},
       projectId: '',
       developTreeData: [],
@@ -485,6 +505,25 @@ export default {
     }
   },
   methods: {
+    changeJsonSwitch(checked, event) {
+      this.jsonSwitch = checked;
+      if (checked) {
+        try {
+          this.params = jsonSchema2Json(this.schemaParams.root)
+        } catch (e) {
+          api.notification(this.$notification, '操作失败', e.message, 'error')
+        }
+      } else {
+        try {
+          let jsonSchema = {};
+          json2JsonSchema(this.params, jsonSchema);
+          this.schemaParams.root = jsonSchema;
+        } catch (e) {
+          debugger
+          api.notification(this.$notification, '操作失败', '请检查 json 是否正确', 'error')
+        }
+      }
+    },
     handleSubmit(e) {
       e.preventDefault();
       this.form.validateFields((err, values) => {
@@ -578,6 +617,14 @@ export default {
       this.expectedIndex = this.expectedData.length
     },
     updateCase: function (params) {
+      if (!this.jsonSwitch) {
+        try {
+          this.params = jsonSchema2Json(this.schemaParams.root)
+        } catch (e) {
+          api.notification(this.$notification, '操作失败', e.message, 'error')
+          return
+        }
+      }
       if (this.params) {
         params.params = this.params;
       }
@@ -899,7 +946,7 @@ export default {
     }
   },
   components: {
-    vueJsonEditor
+    VueJsonEditor, JsonParamEditor
   },
 }
 </script>

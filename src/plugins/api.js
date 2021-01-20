@@ -1,5 +1,4 @@
 import request from './axios.js';
-import notification from 'ant-design-vue';
 
 const USER = '/user/';
 const USER_SIGNIN = `${USER}signin/`;

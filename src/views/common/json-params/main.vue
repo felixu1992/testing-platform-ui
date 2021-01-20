@@ -5,37 +5,22 @@
           <div :style="{marginLeft:`${20*deep}px`}" class="ant-col-name-c">
             <a-button v-if="pickValue.type==='object'" type="link" :icon="hidden?'caret-right':'caret-down'" style="color:rgba(0,0,0,.65)" @click="hidden = !hidden"/>
             <span v-else style="width:32px;display:inline-block"></span>
-            <a-input :disabled="disabled || root" :value="pickKey" class="ant-col-name-input" @blur="onInputName"/>
+            <a-input :disabled="disabled || root" :value="pickKey" class="ant-col-name-input" @blur="onInputName" />
           </div>
-<!--          <a-tooltip v-if="root">-->
-<!--            <span slot="title" v-text="local['checked_all']">全选</span>-->
-<!--            <a-checkbox :disabled="!isObject && !isArray"  class="ant-col-name-required" @change="onRootCheck"/>-->
-<!--          </a-tooltip>-->
-<!--          <a-tooltip v-else>-->
-<!--            <span slot="title" v-text="local['required']">是否必填</span>-->
-<!--            <a-checkbox :disabled="isItem" :checked="checked" class="ant-col-name-required" @change="onCheck"/>-->
-<!--          </a-tooltip>-->
         </a-col>
         <a-col :span="6">
-          <a-select v-model="pickValue.type" :disabled="disabledType" class="ant-col-type" @change="onChangeType" :getPopupContainer="
-          triggerNode => {
-            return triggerNode.parentNode || document.body;
-          }"
-        >
+          <a-select v-model="pickValue.type" :disabled="disabledType" class="ant-col-type" @change="onChangeType" :getPopupContainer="triggerNode => triggerNode.parentNode || document.body" >
             <a-select-option :key="t" v-for="t in TYPE_NAME">
               {{t}}
             </a-select-option>
           </a-select>
         </a-col>
         <a-col>
-          <a-input :disabled="root" v-model="pickValue.title" class="ant-col-title" :placeholder="local['title']"/>
+          <a-tree-select  v-if="pickValue.type === 'file'" v-model="pickValue.title" :dropdown-style="{ maxHeight: '300px', overflow: 'auto' }" :tree-data="files" :placeholder="local['title']" allowClear/>
+          <a-input v-else :disabled="root || isArray || isObject" v-model="pickValue.title" class="ant-col-title" :placeholder="local['title']"/>
         </a-col>
         <a-col :span="6" class="ant-col-setting">
-<!--          <a-tooltip>-->
-<!--            <span slot="title" v-text="local['adv_setting']">高级设置</span>-->
-<!--            <a-button type="link" icon="setting" class="setting-icon" @click="onSetting"/>-->
-<!--          </a-tooltip>-->
-          <a-tooltip v-if="isObject">
+          <a-tooltip v-if="isObject || isArray">
             <span slot="title" v-text="local['add_child_node']">添加子节点</span>
             <a-button type="link" icon="plus" class="plus-icon" @click="addChild"/>
           </a-tooltip>
@@ -49,11 +34,11 @@
           </a-tooltip>
         </a-col>
       </a-row>
-      <template v-if="!hidden&&pickValue.properties && !isArray">
-        <json-param-editor  v-for="(item,key,index) in pickValue.properties" :value="{[key]:item}" :parent="pickValue" :key="index" :deep="deep+1" :root="false" class="children" :lang="lang" :custom="custom"/>
+      <template v-if="!hidden && pickValue.properties && !isArray">
+        <json-param-editor v-for="(item,key,index) in pickValue.properties" :value="{[key]:item}" :parent="pickValue" :key="index" :deep="deep+1" :root="false" class="children" :lang="lang" :custom="custom" :files="files"/>
       </template>
-      <template v-if="isArray">
-        <json-param-editor  :value="{items:pickValue.items}" :deep="deep+1" disabled isItem :root="false" class="children" :lang="lang" :custom="custom"/>
+      <template v-if="!hidden && pickValue.properties && isArray">
+        <json-param-editor v-for="(item,key,index) in pickValue.properties" :value="{[key]: item}" :parent="pickValue" :key="index" :deep="deep+1" :root="false" class="children" :lang="lang" :custom="custom" :files="files"/>
       </template>
       <a-modal v-model="modalVisible" :title="local['adv_setting']" :maskClosable="false" :okText="local['ok']" :cancelText="local['cancel']" width="800px" @ok="handleOk" dialogClass="json-schema-editor-advanced-modal">
 <!--        <h3 v-text="local['base_setting']">基础设置</h3>-->
@@ -173,6 +158,11 @@ export default {
     lang: { // i18n language
       type: String,
       default: 'zh_CN'
+    },
+    files: {
+      type: Array,
+      required: true,
+      default: () => []
     }
   },
   computed: {
@@ -244,7 +234,7 @@ export default {
       this.$delete(this.pickValue,'items')
       this.$delete(this.pickValue,'required')
       if(this.isArray){
-        this.$set(this.pickValue,'items',{type:'string'})
+        this.$set(this.pickValue,'items',{type:'common'})
       }
     },
     onCheck(e){
@@ -278,7 +268,7 @@ export default {
     },
     addChild(){
       const name = this._joinName()
-      const type = 'string'
+      const type = 'common'
       const node = this.pickValue
       node.properties || this.$set(node,'properties',{})
       const props = node.properties

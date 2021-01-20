@@ -14,6 +14,20 @@ div.jsoneditor-menu {
     display: none;
 }
 
-div.jsoneditor  {
-    /*border: rgba(194, 192, 192, 0.65);*/
+.params-form {
+    border: 1px solid rgba(0, 0, 0, .1);
+    width: 50%;
+}
+
+.params-form .switch {
+    padding: 10px;
+}
+
+.params-form .json-editor {
+}
+.params-form div.jsoneditor-outer {
+    height: 300px;
+}
+
+.params-form .json-param {
 }
