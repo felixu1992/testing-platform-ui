@@ -41,8 +41,27 @@
     </div>
     <div>
       <a-table :columns="columns" :data-source="data" :pagination="pagination">
+        <span slot="host" slot-scope="text, record">
+          <a-tooltip v-if="text && text.length > 25" placement="topLeft" :title="text">
+            {{ text.substr(0, 10) + '...' + text.substr(text.length - 10, text.length) }}
+          </a-tooltip>
+          <span v-else>
+            {{ text ? text : '-' }}
+          </span>
+        </span>
+        <span slot="headers" slot-scope="text, record">
+          <a-popover v-if="text" placement="topLeft" disabled="true">
+            <template slot="content">
+              <vue-json-editor :show-btns="false" :expandedOnStart="true" lang="zh" mode="code" :value="text" />
+            </template>
+            <a-button size="small" type="link">查看</a-button>
+          </a-popover>
+          <span v-else>
+            -
+          </span>
+        </span>
         <span slot="notify" slot-scope="text, record">
-          {{record.notify ? '是' : '否'}}
+          {{ record.notify ? '是' : '否' }}
         </span>
         <span slot="action" slot-scope="text, record">
           <a-button size='small' type="link" @click="getCases(record.id)">
@@ -93,6 +112,7 @@
 <script>
 
 import api from '@/plugins/api'
+import VueJsonEditor from 'vue-json-editor'
 
 const columns = [
   {
@@ -105,12 +125,14 @@ const columns = [
     title: '请求地址',
     dataIndex: 'host',
     key: 'host',
+    scopedSlots: { customRender: 'host'},
     align: 'center'
   },
   {
     title: '请求头',
     dataIndex: 'headers',
     key: 'headers',
+    scopedSlots: { customRender: 'headers'},
     align: 'center'
   },
   {
@@ -148,7 +170,7 @@ const columns = [
 const data = [];
 
 export default {
-  components: {},
+  components: { VueJsonEditor },
   beforeMount() {
     this.getListPage(this.pagination.defaultCurrent, this.pagination.defaultPageSize);
   },
@@ -272,5 +294,5 @@ export default {
 </script>
 <style scoped>
 @import '../../../assets/css/common.css';
-@import "list.css";
+@import "project-list.css";
 </style>

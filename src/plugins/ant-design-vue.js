@@ -41,7 +41,8 @@ import {
     Popover,
     Statistic,
     Collapse,
-    Switch
+    Switch,
+    Tooltip
 } from 'ant-design-vue';
 //按需加载 减少资源使用量
 Vue.use(Button);
@@ -82,6 +83,7 @@ Vue.use(Popover);
 Vue.use(Upload);
 Vue.use(Statistic);
 Vue.use(Collapse);
-Vue.use(Switch)
+Vue.use(Switch);
+Vue.use(Tooltip);
 Vue.prototype.$message = message;
 Vue.prototype.$notification = notification;
