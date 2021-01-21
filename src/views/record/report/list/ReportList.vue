@@ -44,9 +44,9 @@
       </a-form>
     </div>
     <div>
-      <a-table :columns="columns" :data-source="data" :pagination="pagination" :customRow="customRow">
-        <span slot="notify" slot-scope="text, record">
-          {{record.notify ? '是' : '否'}}
+      <a-table :columns="columns" :data-source="data" :pagination="pagination">
+        <span slot="run" slot-scope="text, record">
+          {{record.run ? '是' : '否'}}
         </span>
         <span slot="action" slot-scope="text, record">
           <a-button size='small' type="link" @click="updateCase(record.id)">
@@ -189,53 +189,6 @@ export default {
         api.notification(this.$notification, '操作提示', '执行成功，请前往测试记录页面查看结果', 'info')
       })
     },
-    customRow (record) {
-      return {
-        attrs: {
-          draggable: true // 设置拖拽属性
-        },
-        on: {
-          // 鼠标移入，不需要做什么
-          mouseenter: (event) => {
-            // 兼容IE
-            var ev = event || window.event
-          },
-          // 开始拖拽，记录原始坐标
-          dragstart: (event) => {
-            // 兼容IE
-            var ev = event || window.event
-            // 阻止冒泡
-            ev.stopPropagation()
-            // 得到源目标数据
-            this.sourceSort = record.sort
-          },
-          // 拖动元素经过的元素，往经过的数组中 push 坐标
-          dragover: (event) => {
-            // 兼容 IE
-            var ev = event || window.event
-            // 阻止默认行为
-            ev.preventDefault()
-          },
-          // 鼠标松开，根据原坐标和终坐标计算上移还是下移，经过的坐标该加一还是减一，然后重新刷新列表
-          drop: (event) => {
-            // 兼容IE
-            var ev = event || window.event
-            // 阻止冒泡
-            ev.stopPropagation()
-            // 得到目标数据
-            this.targetSort = record.sort
-            this.sort(this.sourceSort, this.targetSort, 'drag')
-          }
-        }
-      };
-    },
-    sort: function (source, target, type) {
-      api.sortCase({
-        source: source,
-        target: target,
-        transfer: type
-      }, (data => this.getListPage(this.pagination.current, this.pagination.pageSize, this.projectId)))
-    },
     getListPage: function (current, pageSize, recordId, name) {
       let params = {
         page: current,
@@ -271,7 +224,7 @@ export default {
     deleteCase(id) {
       api.deleteCase(id, { id: id }, data => {
         api.notification(this.$notification, '操作提示', '删除成功', 'info')
-        this.getListPage(this.pagination.current, this.pagination.pageSize, this.projectId, this.name);
+        this.getListPage(this.pagination.current, this.pagination.pageSize, this.recordId, this.name);
       })
     },
     cancelDelete() {
@@ -282,14 +235,14 @@ export default {
       this.form.validateFields((err, values) => {
         if (!err) {
           this.name = values.name;
-          this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.projectId, this.name);
+          this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.recordId, this.name);
         }
       });
     },
     handleReset() {
       this.form.resetFields();
       this.name = '';
-      this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.projectId, this.name)
+      this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.recordId, this.name)
     },
   },
 }
