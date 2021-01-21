@@ -1,6 +1,6 @@
 <template>
   <div id="top-nav">
-    <a-menu v-model="current" mode="horizontal">
+    <a-menu class="menu" v-model="current" mode="horizontal">
       <a-menu-item @click="()=>this.routeTo('/')">
         <a-icon type="home"/>
         首页
@@ -77,3 +77,7 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+@import "top-nav.css";
+</style>

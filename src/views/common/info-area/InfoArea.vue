@@ -1,10 +1,10 @@
 <template>
   <div class="info-area">
     <div class="logged-in-user-info" v-if="loggedIn">
-      <a-avatar :src="user.avatar" v-if="user.avatar"/>
-      <a-avatar icon="user" style="width: 30px; height: 30px" v-else/>
-      {{ infoText }}
-      <span class="logoff"> <a @click="logoff()">注销</a></span>
+      <a-avatar class="avatar" v-if="user.avatar" :src="user.avatar" />
+      <a-avatar class="avatar" v-else icon="user" />
+       {{ infoText }}
+      <span class="logoff"><a @click="logoff()">注销</a></span>
     </div>
     <div class="two-btns" v-else>
       <a-button @click="()=>this.routeTo('/login')">登陆</a-button>

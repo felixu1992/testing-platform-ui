@@ -21,24 +21,6 @@
               />
             </a-form-item>
           </a-col>
-          <a-col>
-            <a-form-item :label="`i d: `" hidden>
-              <a-input
-                  placeholder="请输入需要复制的用例 id"
-                  style="width: 50%"
-                  v-decorator="[
-                    `id`,
-                    {
-                      rules: [
-                        {
-                          required: true, message: '用例 id 不能为空'
-                        },
-                      ],
-                    },
-                ]"
-              />
-            </a-form-item>
-          </a-col>
         </a-row>
       </a-form>
     </a-modal>
@@ -228,6 +210,7 @@ export default {
       data,
       columns,
       name: '',
+      copy: 0,
       projectId: '',
       targetSort: 0,
       sourceSort: 0,
@@ -373,25 +356,24 @@ export default {
       this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.projectId, this.name)
     },
     copyCase: function (id) {
+      this.copy = id
       this.visible = true;
-      this.copyForm.setFieldsValue({ id: id })
     },
     handleOk(e) {
       e.preventDefault();
       this.copyForm.validateFields((err, values) => {
-        debugger
         if (!err) {
+          values.id = this.copy;
           api.copyCase(values, data => {
-            this.getListPage(current, pageSize, this.projectId, this.name)
+            this.getListPage(this.pagination.current, this.pagination.pageSize, this.projectId, this.name)
           })
           this.cancelModal();
         }
       });
-
     },
     cancelModal() {
       this.visible = false;
-      this.copyForm.setFieldsValue({ id: '', name: '' })
+      this.copyForm.setFieldsValue({ name: '' })
     },
   },
 }

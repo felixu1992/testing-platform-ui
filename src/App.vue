@@ -3,7 +3,7 @@
     <div id="app">
       <div id="test-platform-nav">
         <div id="test-platform-nav-logo" class="float-to-left"v-if="loggedIn">
-          <h1 class="test-platform-nav-title">TP</h1>
+          <img class="logo" src="https://oss-blog.felixu.top/shutup" alt="logo" style="width: 36px;height: 36px; margin-left: 8px; margin-top: 8px">
         </div>
         <div id="test-platform-nav-content" class="float-to-left"  v-if="loggedIn">
           <top-nav/>
