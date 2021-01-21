@@ -40,7 +40,7 @@
       </a-form>
     </div>
     <div>
-      <a-table :columns="columns" :data-source="data" :pagination="pagination">
+      <a-table rowKey="id" :columns="columns" :data-source="data" :pagination="pagination">
         <span slot="host" slot-scope="text, record">
           <a-tooltip v-if="text && text.length > 25" placement="topLeft" :title="text">
             {{ text.substr(0, 10) + '...' + text.substr(text.length - 10, text.length) }}
@@ -50,7 +50,7 @@
           </span>
         </span>
         <span slot="headers" slot-scope="text, record">
-          <a-popover v-if="text" placement="topLeft" disabled="true">
+          <a-popover v-if="text" placement="topLeft">
             <template slot="content">
               <vue-json-editor :show-btns="false" :expandedOnStart="true" lang="zh" mode="code" :value="text" />
             </template>

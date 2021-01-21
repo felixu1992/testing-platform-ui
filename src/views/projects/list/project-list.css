@@ -25,3 +25,12 @@ div.jsoneditor-outer {
     width: 30vmin;
     height: 10vmin;
 }
+
+div.jsoneditor {
+    border: 1px solid gainsboro;
+    pointer-events: none;
+}
+
+.ace_gutter-layer {
+    position: absolute;
+}
