@@ -12,3 +12,11 @@
 .case-search-form .ant-form-item-control-wrapper {
     flex: 1;
 }
+
+.copy-form .ant-form-item {
+    display: flex;
+}
+
+.copy-form .ant-form-item-control-wrapper {
+    flex: 1;
+}

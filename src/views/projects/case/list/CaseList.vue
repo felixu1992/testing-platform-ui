@@ -1,5 +1,47 @@
 <template>
   <div>
+    <a-modal :visible="visible" title="复制用例" @ok="handleOk" @cancel="cancelModal">
+      <a-form class="copy-form" :form="copyForm">
+        <a-row>
+          <a-col>
+            <a-form-item :label="`名 称: `">
+              <a-input
+                  placeholder="请输入新用例名称"
+                  style="width: 50%"
+                  v-decorator="[
+                    `name`,
+                    {
+                      rules: [
+                        {
+                          required: true, message: '用例名称不能为空'
+                        },
+                      ],
+                    },
+                ]"
+              />
+            </a-form-item>
+          </a-col>
+          <a-col>
+            <a-form-item :label="`i d: `" hidden>
+              <a-input
+                  placeholder="请输入需要复制的用例 id"
+                  style="width: 50%"
+                  v-decorator="[
+                    `id`,
+                    {
+                      rules: [
+                        {
+                          required: true, message: '用例 id 不能为空'
+                        },
+                      ],
+                    },
+                ]"
+              />
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-form>
+    </a-modal>
     <div class="case-search-div">
       <a-form class="case-search-form" :form="form" @submit="handleSearch">
         <a-row :gutter="24">
@@ -44,7 +86,7 @@
       </a-form>
     </div>
     <div>
-      <a-table :columns="columns" :data-source="data" :pagination="pagination" :customRow="customRow">
+      <a-table rowKey="id" :columns="columns" :data-source="data" :pagination="pagination" :customRow="customRow">
         <span slot="notify" slot-scope="text, record">
           {{record.notify ? '是' : '否'}}
         </span>
@@ -87,7 +129,7 @@
                   <a-button size="small" type="link">置顶</a-button>
                 </a-menu-item>
                 <a-menu-item>
-                  <a-button size="small" type="link">复制</a-button>
+                  <a-button size="small" type="link" @click="copyCase(record.id)">复制</a-button>
                 </a-menu-item>
               </a-menu>
             </template>
@@ -178,9 +220,11 @@ export default {
   },
   beforeCreate() {
     this.form = this.$form.createForm(this, {name: 'search-form'});
+    this.copyForm = this.$form.createForm(this, {name: 'copy-form'});
   },
   data() {
     return {
+      visible: false,
       data,
       columns,
       name: '',
@@ -250,7 +294,17 @@ export default {
             // 阻止冒泡
             ev.stopPropagation()
             // 得到目标数据
-            this.targetSort = record.sort
+            this.targetSort = record.sort;
+            let source = null;
+            let target = null;
+            this.data.forEach((item, index) => {
+              if (item.sort === this.targetSort)
+                target = item;
+              if (item.sort === this.sourceSort)
+                source = item
+            })
+            this.data.splice(this.data.indexOf(source), 1);
+            this.data.splice(this.data.indexOf(target), 0, source);
             this.sort(this.sourceSort, this.targetSort, 'drag')
           }
         }
@@ -317,6 +371,27 @@ export default {
       this.form.resetFields();
       this.name = '';
       this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.projectId, this.name)
+    },
+    copyCase: function (id) {
+      this.visible = true;
+      this.copyForm.setFieldsValue({ id: id })
+    },
+    handleOk(e) {
+      e.preventDefault();
+      this.copyForm.validateFields((err, values) => {
+        debugger
+        if (!err) {
+          api.copyCase(values, data => {
+            this.getListPage(current, pageSize, this.projectId, this.name)
+          })
+          this.cancelModal();
+        }
+      });
+
+    },
+    cancelModal() {
+      this.visible = false;
+      this.copyForm.setFieldsValue({ id: '', name: '' })
     },
   },
 }

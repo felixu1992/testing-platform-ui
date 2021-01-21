@@ -208,6 +208,10 @@ export default {
     executeCase: function (params, handler) {
         request.post(CASE_EXECUTE, params, handler)
     },
+    // 复制用例
+    copyCase: function (params, handler) {
+        request.post(CASE_COPY, params, handler)
+    },
     /*-------------- 记录 ---------------*/
     // 分页查询记录
     listRecord: function (params, handler) {
