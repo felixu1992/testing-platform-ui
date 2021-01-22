@@ -20,16 +20,17 @@
           />
         </a-form-item>
         <a-form-item :label="`请求地址: `">
-          <a-input class="project-host" style="width: 10%"
-                   v-decorator="[
-                    'host',
-                    { rules: [
-                          { required: false }
-                        ]
-                    },
-                   ]"
-                   placeholder="请输入请求地址"
-          />
+          <vue-json-editor :show-btns="false" :expandedOnStart="true" style="width: 50%; height: 200px" lang="zh" mode="code" v-model="header" />
+<!--          <a-input class="project-host" style="width: 10%"-->
+<!--                   v-decorator="[-->
+<!--                    'host',-->
+<!--                    { rules: [-->
+<!--                          { required: false }-->
+<!--                        ]-->
+<!--                    },-->
+<!--                   ]"-->
+<!--                   placeholder="请输入请求地址"-->
+<!--          />-->
         </a-form-item>
         <a-form-item :label="`请求头: `">
           <a-input class="project-headers" style="width: 10%"
@@ -115,6 +116,7 @@ export default {
   },
   data() {
     return {
+      header: {},
       groups: [],
       notifyData: [
         {
@@ -146,6 +148,9 @@ export default {
       }))
     },
     createProjector: function (params) {
+      if (this.header) {
+        params.headers = this.header
+      }
       api.createProject(params, (data => {
         this.$router.push('/project');
       }));
