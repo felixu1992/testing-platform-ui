@@ -72,6 +72,12 @@
           class="case-form"
           @submit="handleSubmit"
       >
+        <a-form-item :label="`排 序: `" hidden>
+          <a-input class="case-sort" style="width: 10%"
+                   v-decorator="['sort']"
+                   placeholder="请输入用例排序"
+          />
+        </a-form-item>
         <a-form-item :label="`名 称: `">
           <a-input class="case-name" style="width: 10%"
                    v-decorator="[

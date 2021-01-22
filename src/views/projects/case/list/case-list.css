@@ -20,3 +20,20 @@
 .copy-form .ant-form-item-control-wrapper {
     flex: 1;
 }
+
+div.jsoneditor-menu {
+    display: none;
+}
+
+div.jsoneditor {
+    width: 30vmin;
+    border: 1px solid gainsboro;
+}
+
+div.ace_scroller {
+    pointer-events: none;
+}
+
+.ace_gutter-layer {
+    position: absolute;
+}

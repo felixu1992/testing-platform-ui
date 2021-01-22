@@ -13,21 +13,16 @@
     flex: 1;
 }
 
-div.jsoneditor-menu a.jsoneditor-poweredBy {
-    display: none;
-}
-
 div.jsoneditor-menu {
     display: none;
 }
 
-div.jsoneditor-outer {
+div.jsoneditor {
     width: 30vmin;
-    height: 10vmin;
+    border: 1px solid gainsboro;
 }
 
-div.jsoneditor {
-    border: 1px solid gainsboro;
+div.ace_scroller {
     pointer-events: none;
 }
 

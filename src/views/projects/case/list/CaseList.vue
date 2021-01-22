@@ -57,9 +57,9 @@
           <a-button class="add-button" type="primary" @click="createCase">
             新增
           </a-button>
-<!--          <a-button class="batch-delete-button" :style="{ marginLeft: '8px' }" @click="() => console.info('批量删除')">-->
-<!--            批量删除-->
-<!--          </a-button>-->
+          <!--          <a-button class="batch-delete-button" :style="{ marginLeft: '8px' }" @click="() => console.info('批量删除')">-->
+          <!--            批量删除-->
+          <!--          </a-button>-->
           <a-divider type="vertical"/>
           <a-button class="execute-project-button" @click="executeProject">
             执行
@@ -69,8 +69,48 @@
     </div>
     <div>
       <a-table rowKey="id" :columns="columns" :data-source="data" :pagination="pagination" :customRow="customRow">
-        <span slot="notify" slot-scope="text, record">
-          {{record.notify ? '是' : '否'}}
+        <span slot="customHost">
+          请求地址
+          <a-popover placement="topLeft">
+            <template #content>
+              若用例没有单独设<br/>置则继承自项目
+            </template>
+            <a-icon type="exclamation-circle" style="font-size: 12px; color: #ff0000; padding-left: 3px"/>
+          </a-popover>
+        </span>
+        <span slot="customHeaders">
+          请求头
+          <a-popover placement="topLeft">
+            <template #content>
+              显示的请求头合并<br/>了项目和用例自身<br/>设置的
+            </template>
+            <a-icon type="exclamation-circle" style="font-size: 12px; color: #ff0000; padding-left: 3px"/>
+          </a-popover>
+        </span>
+        <span slot="headers" slot-scope="text, record">
+          <a-popover v-if="text || project.headers" placement="topLeft" @visibleChange="mergeHeaders(text)">
+            <template slot="content">
+              <vue-json-editor :show-btns="false" :expandedOnStart="true" lang="zh" mode="code" :value="header"/>
+            </template>
+            <a-button size="small" type="link">查看</a-button>
+          </a-popover>
+          <span v-else>
+            -
+          </span>
+        </span>
+        <span slot="run" slot-scope="text, record">
+          {{ record.run ? '是' : '否' }}
+        </span>
+        <span slot="host" slot-scope="text, record">
+          <a-tooltip v-if="(text && text.length > 25) || (project.host && project.host.length > 25)" placement="topLeft" >
+            <template #title>
+              {{ text ? text : project.host }}
+            </template>
+            {{ text ? text.substr(0, 10) + '...' + text.substr(text.length - 10, text.length) : project.host.substr(0, 10) + '...' + project.host.substr(project.host.length - 10, project.host.length) }}
+          </a-tooltip>
+          <span v-else>
+            {{ text ? text : project.host }}
+          </span>
         </span>
         <span slot="action" slot-scope="text, record">
           <a-button size='small' type="link" @click="updateCase(record.id)">
@@ -94,7 +134,7 @@
           <a-divider type="vertical"/>
           <a-dropdown placement="bottomCenter">
             <a class="ant-dropdown-link" @click="e => e.preventDefault()">
-              更多 <a-icon type="down" />
+              更多 <a-icon type="down"/>
             </a>
             <template #overlay>
               <a-menu>
@@ -123,8 +163,9 @@
 </template>
 
 <script>
-
+import VueJsonEditor from 'vue-json-editor'
 import api from '@/plugins/api'
+import object from "@/views/common/json-params/type/object";
 
 const columns = [
   {
@@ -140,15 +181,17 @@ const columns = [
     align: 'center'
   },
   {
-    title: '请求地址',
     dataIndex: 'host',
     key: 'host',
+    slots: {title: "customHost"},
+    scopedSlots: {customRender: 'host'},
     align: 'center'
   },
   {
-    title: '请求头',
     dataIndex: 'headers',
     key: 'headers',
+    slots: {title: "customHeaders"},
+    scopedSlots: {customRender: 'headers'},
     align: 'center'
   },
   {
@@ -160,7 +203,7 @@ const columns = [
   {
     title: '是否执行',
     key: 'run',
-    scopedSlots: { customRender: 'run' },
+    scopedSlots: {customRender: 'run'},
     align: 'center'
   },
   {
@@ -184,28 +227,35 @@ const columns = [
   {
     title: '操作',
     key: 'action',
-    scopedSlots: { customRender: 'action'},
+    scopedSlots: {customRender: 'action'},
     align: 'center'
   }
 ];
 
 const data = [];
 
+const project = {};
+
 export default {
-  components: {},
+  components: { VueJsonEditor },
+  beforeCreate() {
+    this.form = this.$form.createForm(this, {name: 'search-form'});
+    this.copyForm = this.$form.createForm(this, {name: 'copy-form'});
+  },
   beforeMount() {
     const {
       project
     } = this.$route.query
     this.projectId = project
+    api.getProject(project, {id: project}, data => {
+      this.project = data;
+    });
     this.getListPage(this.pagination.defaultCurrent, this.pagination.defaultPageSize, this.projectId);
-  },
-  beforeCreate() {
-    this.form = this.$form.createForm(this, {name: 'search-form'});
-    this.copyForm = this.$form.createForm(this, {name: 'copy-form'});
   },
   data() {
     return {
+      header: {},
+      project,
       visible: false,
       data,
       columns,
@@ -233,17 +283,28 @@ export default {
     };
   },
   methods: {
+    mergeHeaders(headers) {
+      const parent = Object.assign({}, this.project.headers);
+      if (headers && parent) {
+        for (let key in headers) {
+          parent[key] = headers[key];
+        }
+        this.header = parent;
+        return;
+      }
+      this.header = headers ? headers : parent;
+    },
     executeCase: function (id) {
-      api.executeCase({ id: id }, data => {
+      api.executeCase({id: id}, data => {
         console.info(data)
       })
     },
-    executeProject: function() {
-      api.executeProject({ id: this.projectId }, data => {
+    executeProject: function () {
+      api.executeProject({id: this.projectId}, data => {
         api.notification(this.$notification, '操作提示', '执行成功，请前往测试记录页面查看结果', 'info')
       })
     },
-    customRow (record) {
+    customRow(record) {
       return {
         attrs: {
           draggable: true // 设置拖拽属性
@@ -333,7 +394,7 @@ export default {
       });
     },
     deleteCase(id) {
-      api.deleteCase(id, { id: id }, data => {
+      api.deleteCase(id, {id: id}, data => {
         api.notification(this.$notification, '操作提示', '删除成功', 'info')
         this.getListPage(this.pagination.current, this.pagination.pageSize, this.projectId, this.name);
       })
@@ -373,7 +434,7 @@ export default {
     },
     cancelModal() {
       this.visible = false;
-      this.copyForm.setFieldsValue({ name: '' })
+      this.copyForm.setFieldsValue({name: ''})
     },
   },
 }
