@@ -377,7 +377,6 @@
 
 <script>
 import api from '@/plugins/api'
-import VueJsonEditor from 'vue-json-editor'
 import JsonParamEditor from '@/views/common/json-params'
 import {json2JsonSchema, jsonSchema2Json, json2TreeData} from '@/utils/utils'
 
@@ -950,9 +949,7 @@ export default {
       return type
     }
   },
-  components: {
-    VueJsonEditor, JsonParamEditor
-  },
+  components: { JsonParamEditor },
 }
 </script>
 

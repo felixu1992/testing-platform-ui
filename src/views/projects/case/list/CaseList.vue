@@ -163,9 +163,7 @@
 </template>
 
 <script>
-import VueJsonEditor from 'vue-json-editor'
 import api from '@/plugins/api'
-import object from "@/views/common/json-params/type/object";
 
 const columns = [
   {
@@ -237,7 +235,6 @@ const data = [];
 const project = {};
 
 export default {
-  components: { VueJsonEditor },
   beforeCreate() {
     this.form = this.$form.createForm(this, {name: 'search-form'});
     this.copyForm = this.$form.createForm(this, {name: 'copy-form'});

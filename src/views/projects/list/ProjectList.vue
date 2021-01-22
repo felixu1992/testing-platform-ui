@@ -112,7 +112,6 @@
 <script>
 
 import api from '@/plugins/api'
-import VueJsonEditor from 'vue-json-editor'
 
 const columns = [
   {
@@ -170,7 +169,6 @@ const columns = [
 const data = [];
 
 export default {
-  components: { VueJsonEditor },
   beforeMount() {
     this.getListPage(this.pagination.defaultCurrent, this.pagination.defaultPageSize);
   },
