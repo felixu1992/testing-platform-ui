@@ -20,29 +20,19 @@
           />
         </a-form-item>
         <a-form-item :label="`请求地址: `">
-          <vue-json-editor :show-btns="false" :expandedOnStart="true" style="width: 50%; height: 200px" lang="zh" mode="code" v-model="header" />
-<!--          <a-input class="project-host" style="width: 10%"-->
-<!--                   v-decorator="[-->
-<!--                    'host',-->
-<!--                    { rules: [-->
-<!--                          { required: false }-->
-<!--                        ]-->
-<!--                    },-->
-<!--                   ]"-->
-<!--                   placeholder="请输入请求地址"-->
-<!--          />-->
-        </a-form-item>
-        <a-form-item :label="`请求头: `">
-          <a-input class="project-headers" style="width: 10%"
+          <a-input class="project-host" style="width: 10%"
                    v-decorator="[
-                    'headers',
+                    'host',
                     { rules: [
                           { required: false }
                         ]
                     },
                    ]"
-                   placeholder="请输入请求头"
+                   placeholder="请输入请求地址"
           />
+        </a-form-item>
+        <a-form-item :label="`请求头: `">
+          <vue-json-editor :show-btns="false" :expandedOnStart="true" style="width: 50%; height: 200px" lang="zh" mode="code" v-model="header" />
         </a-form-item>
         <a-form-item :label="`通 知: `">
           <a-select style="width: 120px" @change="value => value"
@@ -79,7 +69,7 @@
         <a-form-item :label="`备 注: `">
           <a-textarea class="project-remark"
                       style="width: 30%"
-                      autosize
+                      :rows="4"
                       v-decorator="[
                         'remark',
                         { rules: [

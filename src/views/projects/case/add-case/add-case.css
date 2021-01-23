@@ -6,10 +6,6 @@
     flex: 1;
 }
 
-div.jsoneditor-menu a.jsoneditor-poweredBy {
-    display: none;
-}
-
 div.jsoneditor-menu {
     display: none;
 }
