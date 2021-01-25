@@ -105,17 +105,7 @@ export default {
   data() {
     return {
       header: {},
-      groups: [],
-      notifyData: [
-        {
-          value: true,
-          text: '是'
-        },
-        {
-          value: false,
-          text: '否'
-        }
-      ]
+      groups: []
     }
   },
   methods: {

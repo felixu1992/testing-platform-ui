@@ -99,14 +99,18 @@
           </span>
         </span>
         <span slot="run" slot-scope="text, record">
-          {{ record.run ? '是' : '否' }}
+          <a-switch checked-children="是" un-checked-children="否" :checked="record.run"
+                    @change="(checked, event) => changeRun(checked, event, record)"/>
         </span>
         <span slot="host" slot-scope="text, record">
-          <a-tooltip v-if="(text && text.length > 25) || (project.host && project.host.length > 25)" placement="topLeft" >
+          <a-tooltip v-if="(text && text.length > 25) || (project.host && project.host.length > 25)"
+                     placement="topLeft">
             <template #title>
               {{ text ? text : project.host }}
             </template>
-            {{ text ? text.substr(0, 10) + '...' + text.substr(text.length - 10, text.length) : project.host.substr(0, 10) + '...' + project.host.substr(project.host.length - 10, project.host.length) }}
+            {{
+              text ? text.substr(0, 10) + '...' + text.substr(text.length - 10, text.length) : project.host.substr(0, 10) + '...' + project.host.substr(project.host.length - 10, project.host.length)
+            }}
           </a-tooltip>
           <span v-else>
             {{ text ? text : project.host }}
@@ -280,6 +284,10 @@ export default {
     };
   },
   methods: {
+    changeRun: function (checked, event, record) {
+      record.run = checked;
+      api.updateCase(record.id, record, data => data);
+    },
     mergeHeaders(headers) {
       const parent = Object.assign({}, this.project.headers);
       if (headers && parent) {

@@ -32,7 +32,7 @@
           />
         </a-form-item>
         <a-form-item :label="`请求头: `">
-          <vue-json-editor :show-btns="false" :expandedOnStart="true" style="width: 50%; height: 200px" lang="zh" mode="code"
+          <vue-json-editor :show-btns="false" :expandedOnStart="true" lang="zh" mode="code"
                            v-decorator="[
                             'headers',
                             {
@@ -120,16 +120,6 @@ export default {
     return {
       groups: [],
       id: '',
-      notifyData: [
-        {
-          value: true,
-          text: '是'
-        },
-        {
-          value: false,
-          text: '否'
-        }
-      ]
     }
   },
   methods: {
