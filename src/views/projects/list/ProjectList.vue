@@ -39,7 +39,7 @@
         </a-row>
       </a-form>
     </div>
-    <div>
+    <div class="project-list-tab">
       <a-table rowKey="id" :columns="columns" :data-source="data" :pagination="pagination">
         <span slot="host" slot-scope="text, record">
           <a-tooltip v-if="text && text.length > 25" placement="topLeft" :title="text">
@@ -50,7 +50,7 @@
           </span>
         </span>
         <span slot="headers" slot-scope="text, record">
-          <a-popover v-if="text" placement="topLeft">
+          <a-popover class="project-list-headers-popover" v-if="text" placement="topLeft">
             <template slot="content">
               <vue-json-editor :show-btns="false" :expandedOnStart="true" lang="zh" mode="code" :value="text" />
             </template>
@@ -61,7 +61,7 @@
           </span>
         </span>
         <span slot="notify" slot-scope="text, record">
-          {{ record.notify ? '是' : '否' }}
+          <a-switch checked-children="是" un-checked-children="否" :checked="record.notify"  @change="(checked, event) => changeNotify(checked, event, record)" />
         </span>
         <span slot="action" slot-scope="text, record">
           <a-button size='small' type="link" @click="getCases(record.id)">
@@ -135,13 +135,13 @@ const columns = [
     align: 'center'
   },
   {
-    title: '是否通知',
+    title: '通知',
     key: 'notify',
     scopedSlots: { customRender: 'notify' },
     align: 'center'
   },
   {
-    title: '所属分组',
+    title: '分组',
     key: 'group_name',
     dataIndex: 'group_name',
     align: 'center'
@@ -201,6 +201,10 @@ export default {
     };
   },
   methods: {
+    changeNotify: function (checked, event, record) {
+      record.notify = checked;
+      api.updateProject(record.id, record, data => data);
+    },
     getListPage: function (current, pageSize, name, phone, email) {
       let params = {
         page: current,

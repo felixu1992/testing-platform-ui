@@ -32,32 +32,30 @@
           />
         </a-form-item>
         <a-form-item :label="`请求头: `">
-          <a-input class="project-headers" style="width: 10%"
-                   v-decorator="[
-                    'headers',
-                    { rules: [
-                          { required: false }
-                        ]
-                    },
-                   ]"
-                   placeholder="请输入请求头"
+          <vue-json-editor :show-btns="false" :expandedOnStart="true" style="width: 50%; height: 200px" lang="zh" mode="code"
+                           v-decorator="[
+                            'headers',
+                            {
+                              rules: [{
+                                required: false
+                              }]
+                            }
+                    ]"
           />
         </a-form-item>
         <a-form-item :label="`通 知: `">
-          <a-select style="width: 120px" @change="value => value"
+          <a-switch checked-children="是" un-checked-children="否"
                     v-decorator="[
-                      'notify',
-                      { rules: [
-                            { required: true, message: '是否通知不可为空！' }
-                          ],
-                        initialValue: false
-                      }
+                        'notify',
+                        {
+                          rules: [{
+                            required: true, message: '是否通知不可为空！'
+                          }],
+                          initialValue: false,
+                          valuePropName: 'checked'
+                        }
                     ]"
-          >
-            <a-select-option v-for="item in notifyData" :value="item.value">
-              {{ item.text }}
-            </a-select-option>
-          </a-select>
+          />
         </a-form-item>
         <a-form-item :label="`分 组: `">
           <a-select style="width: 120px" @change="value => value"
@@ -78,7 +76,7 @@
         <a-form-item :label="`备 注: `">
           <a-textarea class="project-remark"
                       style="width: 30%"
-                      autosize
+                      :rows="4"
                       v-decorator="[
                         'remark',
                         { rules: [

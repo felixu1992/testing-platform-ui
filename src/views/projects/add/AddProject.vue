@@ -35,20 +35,18 @@
           <vue-json-editor :show-btns="false" :expandedOnStart="true" style="width: 50%; height: 200px" lang="zh" mode="code" v-model="header" />
         </a-form-item>
         <a-form-item :label="`通 知: `">
-          <a-select style="width: 120px" @change="value => value"
+          <a-switch checked-children="是" un-checked-children="否"
                     v-decorator="[
-                      'notify',
-                      { rules: [
-                            { required: true, message: '是否通知不可为空！' }
-                          ],
-                        initialValue: false
-                      }
+                        'notify',
+                        {
+                          rules: [{
+                            required: true, message: '是否通知不可为空！'
+                          }],
+                          initialValue: false,
+                          valuePropName: 'checked'
+                        }
                     ]"
-          >
-            <a-select-option v-for="item in notifyData" :value="item.value">
-              {{ item.text }}
-            </a-select-option>
-          </a-select>
+                     />
         </a-form-item>
         <a-form-item :label="`分 组: `">
           <a-select style="width: 120px" @change="value => value"

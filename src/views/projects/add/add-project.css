@@ -6,6 +6,12 @@
     flex: 1;
 }
 
-.add-project .ant-card-body .jsoneditor-menu {
+.add-project div.jsoneditor-menu {
     display: none;
 }
+
+.add-project div.jsoneditor-vue{
+    width: 50%;
+    height: 200px;
+}
+

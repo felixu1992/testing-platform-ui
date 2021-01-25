@@ -13,19 +13,19 @@
     flex: 1;
 }
 
-div.jsoneditor-menu {
+div.ant-popover-inner-content div.jsoneditor-menu {
     display: none;
 }
 
-div.jsoneditor {
+div.ant-popover-inner-content div.jsoneditor {
     width: 30vmin;
     border: 1px solid gainsboro;
 }
 
-div.ace_scroller {
+div.ant-popover-inner-content div.ace_scroller {
     pointer-events: none;
 }
 
-.ace_gutter-layer {
+div.ant-popover-inner-content div.ace_gutter-layer {
     position: absolute;
 }
