@@ -32,7 +32,7 @@
           />
         </a-form-item>
         <a-form-item :label="`请求头: `">
-          <vue-json-editor :show-btns="false" :expandedOnStart="true" lang="zh" mode="code"
+          <json-editor :show-btns="false" :expandedOnStart="true" lang="zh" mode="code"
                            v-decorator="[
                             'headers',
                             {
@@ -103,8 +103,10 @@
 
 <script>
 import api from '@/plugins/api'
+import JsonEditor from "@/components/json-editor";
 
 export default {
+  components: {JsonEditor},
   beforeCreate() {
     this.form = this.$form.createForm(this, {name: 'update-project'});
   },
@@ -120,6 +122,7 @@ export default {
     return {
       groups: [],
       id: '',
+      aaa:''
     }
   },
   methods: {
