@@ -7,6 +7,7 @@ import './plugins/axios.js'
 import './plugins/api.js'
 import './plugins/mavon-enditor.js'
 import './plugins/json-editor-vue.js'
+import './plugins/json-editor.js'
 
 Vue.config.productionTip = false
 

@@ -87,10 +87,36 @@
             <a-icon type="exclamation-circle" style="font-size: 12px; color: #ff0000; padding-left: 3px"/>
           </a-popover>
         </span>
+        <span slot="name" slot-scope="text, record">
+          <a-tooltip v-if="text.length > 10" placement="topLeft">
+            <template #title>
+              {{ text }}
+            </template>
+            {{
+              text.substr(0, 10) + '...'
+            }}
+          </a-tooltip>
+          <span v-else>
+            {{ text }}
+          </span>
+        </span>
+        <span slot="remark" slot-scope="text, record">
+          <a-tooltip v-if="text && text.length > 15" placement="topLeft">
+            <template #title>
+              {{ text }}
+            </template>
+            {{
+              text.substr(0, 15) + '...'
+            }}
+          </a-tooltip>
+          <span v-else>
+            {{ text ? text : '-' }}
+          </span>
+        </span>
         <span slot="headers" slot-scope="text, record">
           <a-popover v-if="text || project.headers" placement="topLeft" @visibleChange="mergeHeaders(text)">
             <template slot="content">
-              <vue-json-editor :show-btns="false" :expandedOnStart="true" lang="zh" mode="code" :value="header"/>
+              <json-editor :show-btns="false" :expandedOnStart="true" lang="zh" mode="code" :value="header"/>
             </template>
             <a-button size="small" type="link">查看</a-button>
           </a-popover>
@@ -114,6 +140,19 @@
           </a-tooltip>
           <span v-else>
             {{ text ? text : project.host }}
+          </span>
+        </span>
+        <span slot="path" slot-scope="text, record">
+          <a-tooltip v-if="text.length > 40" placement="topLeft">
+            <template #title>
+              {{ text }}
+            </template>
+            {{
+              text.substr(0, 40) + '...'
+            }}
+          </a-tooltip>
+          <span v-else>
+            {{ text }}
           </span>
         </span>
         <span slot="action" slot-scope="text, record">
@@ -174,6 +213,14 @@ const columns = [
     title: '名称',
     dataIndex: 'name',
     key: 'name',
+    scopedSlots: {customRender: 'name'},
+    align: 'center'
+  },
+  {
+    title: '备注',
+    dataIndex: 'remark',
+    key: 'remark',
+    scopedSlots: {customRender: 'remark'},
     align: 'center'
   },
   {
@@ -200,6 +247,7 @@ const columns = [
     title: '请求路径',
     dataIndex: 'path',
     key: 'path',
+    scopedSlots: {customRender: 'path'},
     align: 'center'
   },
   {
@@ -220,12 +268,12 @@ const columns = [
     dataIndex: 'created_at',
     align: 'center'
   },
-  {
-    title: '更新时间',
-    key: 'updated_at',
-    dataIndex: 'updated_at',
-    align: 'center'
-  },
+  // {
+  //   title: '更新时间',
+  //   key: 'updated_at',
+  //   dataIndex: 'updated_at',
+  //   align: 'center'
+  // },
   {
     title: '操作',
     key: 'action',

@@ -52,7 +52,7 @@
         <span slot="headers" slot-scope="text, record">
           <a-popover class="project-list-headers-popover" v-if="text" placement="topLeft">
             <template slot="content">
-              <vue-json-editor :show-btns="false" :expandedOnStart="true" lang="zh" mode="code" :value="text" />
+              <json-editor :show-btns="false" :expandedOnStart="true" lang="zh" mode="code" :value="text" />
             </template>
             <a-button size="small" type="link">查看</a-button>
           </a-popover>

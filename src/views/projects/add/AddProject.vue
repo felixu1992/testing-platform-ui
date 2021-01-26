@@ -32,7 +32,17 @@
           />
         </a-form-item>
         <a-form-item :label="`请求头: `">
-          <vue-json-editor :show-btns="false" :expandedOnStart="true" style="width: 50%; height: 200px" lang="zh" mode="code" v-model="header" />
+          <json-editor :show-btns="false" :expandedOnStart="true" lang="zh" mode="code"
+                       v-decorator="[
+                            'headers',
+                            {
+                              rules: [{
+                                required: false
+                              }],
+                              initialValue: null
+                            },
+                    ]"
+          />
         </a-form-item>
         <a-form-item :label="`通 知: `">
           <a-switch checked-children="是" un-checked-children="否"
@@ -104,7 +114,6 @@ export default {
   },
   data() {
     return {
-      header: {},
       groups: []
     }
   },
@@ -126,12 +135,7 @@ export default {
       }))
     },
     createProjector: function (params) {
-      if (this.header) {
-        params.headers = this.header
-      }
-      api.createProject(params, (data => {
-        this.$router.push('/project');
-      }));
+      api.createProject(params, data =>  this.$router.push('/project'));
     },
   }
 }

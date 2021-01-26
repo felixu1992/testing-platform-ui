@@ -38,7 +38,8 @@
                             {
                               rules: [{
                                 required: false
-                              }]
+                              }],
+                              initialValue: null,
                             }
                     ]"
           />
@@ -103,10 +104,8 @@
 
 <script>
 import api from '@/plugins/api'
-import JsonEditor from "@/components/json-editor";
 
 export default {
-  components: {JsonEditor},
   beforeCreate() {
     this.form = this.$form.createForm(this, {name: 'update-project'});
   },
