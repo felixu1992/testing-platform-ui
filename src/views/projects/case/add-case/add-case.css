@@ -6,11 +6,17 @@
     flex: 1;
 }
 
-div.jsoneditor-menu {
-    display: none;
+.params-form {
+    border: 1px solid rgba(0, 0, 0, .1);
+    width: 50%;
 }
 
-.params-form {
+.case-headers {
+    border: 1px solid rgba(0, 0, 0, .1);
+    width: 50%;
+}
+
+.case-sample {
     border: 1px solid rgba(0, 0, 0, .1);
     width: 50%;
 }
@@ -19,11 +25,16 @@ div.jsoneditor-menu {
     padding: 10px;
 }
 
-.params-form .json-editor {
-}
-.params-form div.jsoneditor-outer {
-    height: 300px;
+.add-case div.jsoneditor-vue{
+    /*width: 50%;*/
+    height: 200px;
 }
 
-.params-form .json-param {
+.add-case div.jsoneditor-menu {
+    display: none;
+}
+
+.params-form div.jsoneditor-outer {
+    /*width: 100%;*/
+    height: 300px;
 }

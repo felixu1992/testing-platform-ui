@@ -2,7 +2,7 @@
   <div class="add-case" style="padding:30px">
     <a-card title="新增用例">
       <a-modal :visible="extendVisible" :title="extendTitle" @ok="extendHandleOk" @cancel="extendCancelModal">
-        <a-form id="extend-modal-form" :form="extendModalForm" class="extend-form">
+        <a-form id="extend-modal-form" class="extend-form">
           <a-form-item :label="`注入键: `">
             <div v-for="(item, index) in this.extendModal.ste">
               <a-input :key="`input`+index" v-model="item.value" class="step" placeholder="请输入步骤" style="width: 70%"/>
@@ -66,12 +66,7 @@
           </a-form-item>
         </a-form>
       </a-modal>
-      <a-form
-          id="add-case-form"
-          :form="form"
-          class="case-form"
-          @submit="handleSubmit"
-      >
+      <a-form id="add-case-form" class="case-form" :form="form" @submit="handleSubmit">
         <a-form-item :label="`名 称: `">
           <a-input class="case-name" style="width: 10%"
                    v-decorator="[
@@ -125,22 +120,25 @@
           />
         </a-form-item>
         <a-form-item :label="`请求头: `">
-          <a-input class="case-headers" style="width: 10%"
-                   v-decorator="[
-                    'headers',
-                    { rules: [
-                          { required: false }
-                        ]
-                    },
-                   ]"
-                   placeholder="请输入请求头"
-          />
+          <div class="case-headers">
+            <json-editor :show-btns="false" :expandedOnStart="true" lang="zh" mode="code"
+                         v-decorator="[
+                            'headers',
+                            {
+                              rules: [{
+                                required: false
+                              }],
+                              initialValue: null,
+                            }
+                    ]"
+            />
+          </div>
         </a-form-item>
         <a-form-item :label="`请求参数: `">
           <div class="params-form">
             <span class="switch">
               JSON <a-switch checked-children="开" un-checked-children="关" default-checked @change="changeJsonSwitch" />
-              <a-popover title="Tips" placement="topLeft">
+              <a-popover placement="topLeft">
                 <template #content>
                   请尽量避免切换<br/>
                   因为从 JSON 组件回到树形组件时<br/>
@@ -153,7 +151,7 @@
                 <a-icon type="question-circle" style="font-size: 15px; color: #52c41a; padding: 10px" />
               </a-popover>
             </span>
-            <vue-json-editor  v-if="jsonSwitch" class="json-editor" :show-btns="false" :expandedOnStart="true" mode="code" v-model="params" />
+            <json-editor  v-if="jsonSwitch" class="json-editor" :show-btns="false" :expandedOnStart="true" mode="code" v-model="params" />
             <json-param-editor v-else class="json-param" :value="schemaParams" :files="developTreeData" disabled-type/>
           </div>
         </a-form-item>
@@ -242,61 +240,37 @@
           </a-button>
         </a-form-item>
         <a-form-item :label="`结果示例: `">
-          <vue-json-editor :show-btns="false"
-                           :expandedOnStart="true"
-                           style="width: 50%; height: 200px"
-                           lang="zh"
-                           mode="code"
-                           v-model="sample"
-          />
-        </a-form-item>
-        <a-form-item :label="`通 知: `">
-          <a-select style="width: 120px" @change="value => value"
-                    v-decorator="[
-                      'notify',
-                      { rules: [
-                            { required: true, message: '是否通知不可为空！' }
-                          ],
-                        initialValue: false
-                      }
-                    ]"
-          >
-            <a-select-option v-for="item in notifyData" :value="item.value">
-              {{ item.text }}
-            </a-select-option>
-          </a-select>
+          <div class="case-sample">
+            <json-editor :show-btns="false" :expandedOnStart="true" lang="zh" mode="code" v-model="sample" />
+          </div>
         </a-form-item>
         <a-form-item :label="`运 行: `">
-          <a-select style="width: 120px" @change="value => value"
+          <a-switch checked-children="是" un-checked-children="否"
                     v-decorator="[
-                      'run',
-                      { rules: [
-                            { required: true, message: '是否运行不可为空！' }
-                          ],
-                        initialValue: true
-                      }
+                        'run',
+                        {
+                          rules: [{
+                            required: true, message: '是否运行不可为空！'
+                          }],
+                          initialValue: true,
+                          valuePropName: 'checked'
+                        }
                     ]"
-          >
-            <a-select-option v-for="item in notifyData" :value="item.value">
-              {{ item.text }}
-            </a-select-option>
-          </a-select>
+          />
         </a-form-item>
         <a-form-item :label="`校验 HTTP 状态: `">
-          <a-select style="width: 120px" @change="value => value"
+          <a-switch checked-children="是" un-checked-children="否"
                     v-decorator="[
-                      'check_status',
-                      { rules: [
-                            { required: true, message: '是否校验 HTTP 状态不可为空！' }
-                          ],
-                        initialValue: false
-                      }
+                        'check_status',
+                        {
+                          rules: [{
+                            required: true, message: '是否校验 HTTP 状态不可为空！'
+                          }],
+                          initialValue: false,
+                          valuePropName: 'checked'
+                        }
                     ]"
-          >
-            <a-select-option v-for="item in notifyData" :value="item.value">
-              {{ item.text }}
-            </a-select-option>
-          </a-select>
+          />
         </a-form-item>
         <a-form-item :label="`预期 HTTP 状态码: `">
           <a-input class="case-host" style="width: 10%"
@@ -334,7 +308,7 @@
                             },
                           ]"
                           placeholder="延迟时长" />
-          <a-popover title="Tips" placement="topLeft">
+          <a-popover placement="topLeft">
             <template #content>
               单位为秒，最大 300 秒
             </template>
@@ -344,7 +318,7 @@
         <a-form-item :label="`备 注: `">
           <a-textarea class="case-remark"
                       style="width: 30%"
-                      autosize
+                      :rows="4"
                       v-decorator="[
                         'remark',
                         { rules: [
@@ -435,32 +409,22 @@ export default {
       sample: {},
       projectId: '',
       developTreeData: [],
-      notifyData: [
-        {
-          value: true,
-          text: '是'
-        },
-        {
-          value: false,
-          text: '否'
-        }
-      ],
       requestMethod: [
         {
           value: 'get',
-          text: 'GET'
+          text: 'get'
         },
         {
           value: 'put',
-          text: 'PUT'
+          text: 'put'
         },
         {
           value: 'post',
-          text: 'POST'
+          text: 'post'
         },
         {
           value: 'delete',
-          text: 'DELETE'
+          text: 'delete'
         }
       ],
       extendTitle: '',

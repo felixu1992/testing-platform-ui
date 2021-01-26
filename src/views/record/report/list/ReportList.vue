@@ -29,17 +29,17 @@
             </a-button>
           </a-col>
         </a-row>
-        <a-row>
-          <a-button class="add-button" type="primary" @click="createCase">
-            新增
-          </a-button>
-<!--          <a-button class="batch-delete-button" :style="{ marginLeft: '8px' }" @click="() => console.info('批量删除')">-->
-<!--            批量删除-->
+<!--        <a-row>-->
+<!--          <a-button class="add-button" type="primary" @click="createCase">-->
+<!--            新增-->
 <!--          </a-button>-->
-          <a-divider type="vertical"/>
-          <a-button class="execute-project-button" @click="executeProject">
-            执行
-          </a-button>
+<!--&lt;!&ndash;          <a-button class="batch-delete-button" :style="{ marginLeft: '8px' }" @click="() => console.info('批量删除')">&ndash;&gt;-->
+<!--&lt;!&ndash;            批量删除&ndash;&gt;-->
+<!--&lt;!&ndash;          </a-button>&ndash;&gt;-->
+<!--          <a-divider type="vertical"/>-->
+<!--          <a-button class="execute-project-button" @click="executeProject">-->
+<!--            执行-->
+<!--          </a-button>-->
         </a-row>
       </a-form>
     </div>
