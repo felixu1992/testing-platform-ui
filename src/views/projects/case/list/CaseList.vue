@@ -61,8 +61,8 @@
           <!--            批量删除-->
           <!--          </a-button>-->
           <a-divider type="vertical"/>
-          <a-button class="execute-project-button" @click="executeProject">
-            执行
+          <a-button class="execute-project-button" @click="executeProject" :loading="executing">
+            {{ executing ? '执行中...' : '执行'}}
           </a-button>
         </a-row>
       </a-form>
@@ -303,6 +303,7 @@ export default {
   },
   data() {
     return {
+      executing: false,
       header: {},
       project,
       visible: false,
@@ -353,9 +354,40 @@ export default {
       })
     },
     executeProject: function () {
+      this.executing = true;
       api.executeProject({id: this.projectId}, data => {
-        api.notification(this.$notification, '操作提示', '执行成功，请前往测试记录页面查看结果', 'info')
-      })
+        this.executing = false;
+        const key = `open${Date.now()}`;
+        this.$notification.info({
+          message: '操作提示',
+          description: `共计执行 ${data.total} 条用例，成功 ${data.passed} 条，失败 ${data.failed} 条，忽略 ${data.ignored} 条`,
+          btn: h => {
+            return h(
+                'a-button',
+                {
+                  props: {
+                    type: 'link',
+                    size: 'small',
+                  },
+                  on: {
+                    click: () => {
+                      this.$notification.close(key)
+                      this.$router.push({
+                        path: '/record/report',
+                        query: {
+                          recordId: data.id
+                        }
+                      })
+                    },
+                  },
+                },
+                '查看结果',
+            );
+          },
+          key,
+          onClose: close
+        })
+      }, err => this.executing = false)
     },
     customRow(record) {
       return {

@@ -158,7 +158,7 @@
               </a-popover>
             </span>
             <json-editor  v-if="jsonSwitch" class="json-editor" :show-btns="false" :expandedOnStart="true" mode="code" v-model="params" />
-            <json-param-editor v-else class="json-param" :value="schemaParams" :files="developTreeData" disabled-type/>
+            <json-param-editor v-else class="json-param" :value="schemaParams" :files="fileTreeData" disabled-type/>
           </div>
         </a-form-item>
         <a-form-item :label="`参数注入: `">
@@ -401,7 +401,8 @@ export default {
   beforeMount() {
     const { id } = this.$route.query;
     this.id = id;
-    api.treeContactor({}, (data => this.developTreeData = data));
+    api.treeContactor({}, data => this.developTreeData = data);
+    api.treeFile({}, data => this.fileTreeData = data)
     this.getCase(id);
   },
   data() {
@@ -417,6 +418,7 @@ export default {
       sample: {},
       projectId: '',
       developTreeData: [],
+      fileTreeData: [],
       notifyData: [
         {
           value: true,

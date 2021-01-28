@@ -10,6 +10,7 @@ const CONTACTOR_TREE = `${CONTACTOR}group/tree/`;
 
 const FILE = '/file/';
 const FILE_GROUP = `${FILE}group/`;
+const FILE_TREE = `${FILE}group/tree/`;
 const FILE_DOWNLOAD = `${FILE}download/`;
 
 const PROJECT = '/project/';
@@ -102,6 +103,10 @@ export default {
     listFileGroup: function (params, handler) {
         request.get(FILE_GROUP, params, handler)
     },
+    // 查询文件树
+    treeFile: function (params, handler) {
+        request.get(FILE_TREE, params, handler)
+    },
     // 删除文件分组
     deleteFileGroup: function (id, params, handler) {
         request.delete(`${FILE_GROUP}${id}/`, params, handler)
@@ -177,8 +182,8 @@ export default {
         request.get(`${PROJECT}${id}/`, params, handler)
     },
     // 执行项目
-    executeProject: function (params, handler) {
-        request.post(PROJECT_EXECUTE, params, handler)
+    executeProject: function (params, handler, errHandler) {
+        request.post(PROJECT_EXECUTE, params, handler, null, errHandler)
     },
     /*-------------- 用例 ---------------*/
     // 分页查询用例

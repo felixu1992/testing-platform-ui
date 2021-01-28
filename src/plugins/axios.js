@@ -60,7 +60,7 @@ _axios.interceptors.response.use(
 )
 
 const request = {
-    get: function (url, params, dataHandler) {
+    get: function (url, params, dataHandler, errHandler) {
         let paramEntries = Object.entries(params);
         if (paramEntries.length > 0) {
             url += '?';
@@ -76,37 +76,37 @@ const request = {
 
         return _axios.get(url)
             .then((response) => {
-                responseHandler(response, dataHandler)
+                responseHandler(response, dataHandler, errHandler)
             })
             .catch(errorHandler)
 
     },
-    post: function (url, data, dataHandler, config) {
+    post: function (url, data, dataHandler, config, errHandler) {
         return _axios.post(url, data, config)
             .then((response) => {
-                responseHandler(response, dataHandler)
+                responseHandler(response, dataHandler, errHandler)
             })
             .catch(errorHandler)
 
     },
-    put: function (url, data, dataHandler) {
+    put: function (url, data, dataHandler, errHandler) {
         return _axios.put(url, data)
             .then((response) => {
-                responseHandler(response, dataHandler)
+                responseHandler(response, dataHandler, errHandler)
             })
             .catch(errorHandler)
     },
-    delete: function (url, data, dataHandler) {
+    delete: function (url, data, dataHandler, errHandler) {
         return _axios.delete(url, data)
             .then((response) => {
-                responseHandler(response, dataHandler)
+                responseHandler(response, dataHandler, errHandler)
             })
             .catch(errorHandler)
 
     }
 }
 
-let responseHandler = (response, dataHandler) => {
+let responseHandler = (response, dataHandler, errHandler) => {
     //normal case:200 ~ 299
     const responseData = response.data
     let respCode = responseData.code
@@ -127,6 +127,9 @@ let responseHandler = (response, dataHandler) => {
                 msg += respMsg[key] + '\n'
             }
             message.warn(msg)
+        }
+        if (errHandler) {
+            errHandler(responseData)
         }
     } else {
         // normal case: BS code is 0

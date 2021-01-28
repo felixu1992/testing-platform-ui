@@ -44,14 +44,40 @@
       </a-form>
     </div>
     <div>
-      <a-table :columns="columns" :data-source="data" :pagination="pagination">
+      <a-table :columns="columns" :data-source="data" :pagination="pagination" @change="changeTable">
         <span slot="run" slot-scope="text, record">
-          {{record.run ? '是' : '否'}}
+          <a-switch checked-children="是" un-checked-children="否" :checked="record.run" disabled/>
         </span>
         <span slot="action" slot-scope="text, record">
           <a-button size='small' type="link" @click="updateCase(record.id)">
           查 看
           </a-button>
+        </span>
+        <span slot="name" slot-scope="text, record">
+          <a-tooltip v-if="text.length > 10" placement="topLeft">
+            <template #title>
+              {{ text }}
+            </template>
+            {{
+              text.substr(0, 10) + '...'
+            }}
+          </a-tooltip>
+          <span v-else>
+            {{ text }}
+          </span>
+        </span>
+        <span slot="remark" slot-scope="text, record">
+          <a-tooltip v-if="text && text.length > 15" placement="topLeft">
+            <template #title>
+              {{ text }}
+            </template>
+            {{
+              text.substr(0, 15) + '...'
+            }}
+          </a-tooltip>
+          <span v-else>
+            {{ text ? text : '-' }}
+          </span>
         </span>
         <span slot="status" slot-scope="text, record">
           <a-icon type="check-circle" style="font-size: 20px; color: #52c41a" v-if="record.status === 'PASSED'"/>
@@ -71,6 +97,14 @@ const columns = [
     title: '名称',
     dataIndex: 'name',
     key: 'name',
+    scopedSlots: {customRender: 'name'},
+    align: 'center'
+  },
+  {
+    title: '备注',
+    dataIndex: 'remark',
+    key: 'remark',
+    scopedSlots: {customRender: 'remark'},
     align: 'center'
   },
   {
@@ -112,7 +146,14 @@ const columns = [
   {
     title: '执行结果',
     key: 'status',
+    dataIndex: 'status',
     scopedSlots: { customRender: 'status' },
+    filterMultiple: false,
+    filters: [
+      { text: '成功', value: 'PASSED' },
+      { text: '失败', value: 'FAILED' },
+      { text: '忽略', value: 'IGNORED' },
+    ],
     align: 'center',
 
   },
@@ -167,29 +208,25 @@ export default {
         current: 1,
         onShowSizeChange: (current, pageSize) => {
           this.pageSize = pageSize;
-          this.getListPage(current, pageSize, this.projectId, this.name);
+          this.getListPage(current, pageSize, this.recordId, this.name);
         },
         showTotal: total => `共 ${total} 条数据`,
         showSizeChanger: true,
         pageSizeOptions: ['10', '20', '30', '40', '50'],
-        onChange: (current, pageSize) => {
-          this.getListPage(current, pageSize, this.projectId, this.name)
-        }
       }
     };
   },
   methods: {
+    changeTable(pagination, filters) {
+      console.log(filters)
+      this.getListPage(pagination.current, pagination.pageSize, this.recordId, this.name, filters.status ? filters.status[0]: undefined)
+    },
     executeCase: function (id) {
       api.executeCase({ id: id }, data => {
         console.info(data)
       })
     },
-    executeProject: function() {
-      api.executeProject({ id: this.projectId }, data => {
-        api.notification(this.$notification, '操作提示', '执行成功，请前往测试记录页面查看结果', 'info')
-      })
-    },
-    getListPage: function (current, pageSize, recordId, name) {
+    getListPage: function (current, pageSize, recordId, name, status) {
       let params = {
         page: current,
         page_size: pageSize,
@@ -198,34 +235,15 @@ export default {
       if (name) {
         params.name = name
       }
+      if (status) {
+        params.status = status
+      }
       api.listReport(params, (data => {
         this.data = data.records;
         this.pagination.pageSize = pageSize;
         this.pagination.current = current;
         this.pagination.total = data.total;
       }));
-    },
-    createCase() {
-      this.$router.push({
-        path: '/project/case/add-case',
-        query: {
-          projectId: this.projectId
-        }
-      })
-    },
-    updateCase(id) {
-      this.$router.push({
-        path: '/project/case/update-case',
-        query: {
-          id: id
-        }
-      });
-    },
-    deleteCase(id) {
-      api.deleteCase(id, { id: id }, data => {
-        api.notification(this.$notification, '操作提示', '删除成功', 'info')
-        this.getListPage(this.pagination.current, this.pagination.pageSize, this.recordId, this.name);
-      })
     },
     cancelDelete() {
       api.notification(this.$notification, '操作提示', '已取消操作', 'info')
