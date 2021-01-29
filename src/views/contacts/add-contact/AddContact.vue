@@ -1,12 +1,20 @@
 <template>
   <div class="add-contact" style="padding:30px">
+    <a-modal :visible="visible" title="编辑联系人分组" @ok="() => visible = false" @cancel="() => visible = false">
+      <a-table :rowKey="record => record.id + record.name" bordered :data-source="groups" :columns="columns" :pagination="false" size="small">
+        <template slot="name" slot-scope="text, record">
+          <editable-cell :text="text" :edited="!record.id" @change="onCellChange(record, 'name', $event)" @edit="() => plusBtnDisable = true"/>
+        </template>
+        <template slot="operation" slot-scope="text, record">
+          <a-popconfirm v-if="groups.length" title="确认要删除该分组吗?" @confirm="() => onDelete(record)">
+            <a-button size='small' type="link">删 除</a-button>
+          </a-popconfirm>
+        </template>
+      </a-table>
+      <a-button class="editable-add-btn" type="link" @click="handleAdd" :disabled="plusBtnDisable"><a-icon type="plus" />新增分组</a-button>
+    </a-modal>
     <a-card title="新增联系人">
-      <a-form
-          id="add-contact-form"
-          :form="form"
-          class="contact-form"
-          @submit="handleSubmit"
-      >
+      <a-form id="add-contact-form" :form="form" class="contact-form" @submit="handleSubmit">
         <a-form-item>
           名  称：
           <a-input class="contact-name" style="width: 10%"
@@ -42,16 +50,23 @@
         </a-form-item>
         <a-form-item>
           分  组：
-          <a-select style="width: 120px" @change="value => value"
+          <a-select style="width: 200px" @change="value => value"
                     v-decorator="[
                       'group_id',
                       { rules: [{
                           required: true, message: '联系人分组不可为空！' }
                         ],
-                      initialValue: '--请选择--'
+                      initialValue: null
                       }
                     ]"
           >
+            <div slot="dropdownRender" slot-scope="menu">
+              <v-nodes :vnodes="menu" />
+              <a-divider style="margin: 4px 0;" />
+              <div style="padding: 4px 4px; cursor: pointer; text-align:center" @mousedown="e => e.preventDefault()">
+                <a-button type="link" size="small" @click="() => visible = true">编辑分组</a-button>
+              </div>
+            </div>
             <a-select-option v-for="group in groups" :value="group.id">
               {{ group.name }}
             </a-select-option>
@@ -72,24 +87,90 @@
 </template>
 
 <script>
+import api from "@/plugins/api";
+
 export default {
-  name: "AddContact",
+  components: {
+    VNodes: {
+      functional: true,
+      render: (h, ctx) => ctx.props.vnodes,
+    },
+  },
   beforeCreate() {
     this.form = this.$form.createForm(this, {name: 'add-contact'});
   },
   beforeMount() {
-    this.getGroups()
+    this.getGroups();
   },
   data() {
     return {
+      visible: false,
       name: '',
       email: '',
       phone: '',
       groupId: '',
       groups: [],
+      count: 0,
+      plusBtnDisable: false,
+      columns: [
+        {
+          title: '序号',
+          dataIndex: 'index',
+          customRender: (text, row, index) => index + 1,
+          align: 'center'
+        },
+        {
+          title: '分组名称',
+          dataIndex: 'name',
+          scopedSlots: { customRender: 'name' },
+          align: 'center',
+        },
+        {
+          title: '操作',
+          dataIndex: 'operation',
+          scopedSlots: { customRender: 'operation' },
+          align: 'center',
+        },
+      ],
     }
   },
   methods: {
+    onCellChange(record, dataIndex, value) {
+      const groups = [...this.groups];
+      const handler = data => {
+        const index = groups.indexOf(record);
+        groups.splice(index, 1, data);
+        this.groups = groups;
+      };
+      if (record.id) {
+        const id = record.id
+        api.updateContactGroup(id, { id: id, name: value }, handler);
+      } else {
+        api.createContactGroup({ name: value }, handler);
+      }
+      this.plusBtnDisable = false;
+    },
+    onDelete(record) {
+      const groups = [...this.groups];
+      const index = groups.indexOf(record);
+      groups.splice(index, 1)
+      this.groups = groups;
+      if (record.id) {
+        const id = record.id
+        api.deleteContactGroup(id, {
+          id: id
+        }, data => api.notification(this.$notification, '操作提示', '删除成功', 'info'));
+      }
+    },
+    handleAdd() {
+      const { count, groups } = this;
+      const newData = {
+        name: `联系人分组${count + 1}`,
+      };
+      this.groups = [...groups, newData];
+      this.count = count + 1;
+      this.plusBtnDisable = true;
+    },
     handleSubmit(e) {
       e.preventDefault();
       this.form.validateFields((err, values) => {
@@ -101,9 +182,10 @@ export default {
     getGroups: function () {
       this.request.get('/contactor/group/', {
         page: 1,
-        page_size: 999
+        page_size: 9999
       }, (data => {
         this.groups = data.records;
+        this.count = data.total;
       }));
     },
     createContactor: function (params) {
@@ -111,6 +193,14 @@ export default {
         this.$router.push('/contact');
       }))
     },
+  },
+  watch: {
+    groups: {
+     handler(newV, oldV) {
+       const editing = newV.filter(group => !group.id)
+       this.plusBtnDisable = editing.length !== 0
+     }, immediate: true
+    }
   }
 }
 </script>

@@ -74,21 +74,13 @@
       </a-form>
     </div>
     <div>
-      <a-table :columns="columns"
-               :data-source="data"
-               :pagination="pagination"
-      >
+      <a-table rowKey="id" :columns="columns" :data-source="data" :pagination="pagination">
       <span slot="action" slot-scope="text, record">
         <a-button size='small' type="link" @click="updateContact(record.id)">
         编 辑
         </a-button>
         <a-divider type="vertical"/>
-        <a-popconfirm title="确认删除?"
-                      ok-text="是"
-                      cancel-text="否"
-                      @confirm="deleteContact(record.id)"
-                      @cancel="cancelDelete"
-        >
+        <a-popconfirm title="确认删除?" ok-text="是" cancel-text="否" @confirm="deleteContact(record.id)" @cancel="cancelDelete">
         <a-button size='small' type="link" @click="showConfirmDelete(record)">
           删 除
         </a-button>

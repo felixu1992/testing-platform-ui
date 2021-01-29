@@ -8,6 +8,7 @@ import './plugins/api.js'
 import './plugins/mavon-enditor.js'
 import './plugins/json-editor-vue.js'
 import './plugins/json-editor.js'
+import './plugins/editable-cell.js'
 
 Vue.config.productionTip = false
 
