@@ -24,49 +24,76 @@
         </a-row>
       </a-form>
     </a-modal>
-    <div class="case-search-div">
-      <a-form class="case-search-form" :form="form" @submit="handleSearch">
-        <a-row :gutter="24">
-          <a-col :span=4>
-            <a-form-item :label="`名 称: `">
-              <a-input
-                  v-decorator="[
-                  `name`,
-                  {
-                    rules: [
-                      {
-                        required: false
-                      },
-                    ],
-                  },
-                ]"
-                  placeholder="用例名称"
-              />
-            </a-form-item>
-          </a-col>
-          <a-col :span="12" :style="{ textAlign: 'right' }">
-            <a-button class="search-button" type="primary" html-type="submit">
-              搜索
-            </a-button>
-            <a-button class="reset-button" :style="{ marginLeft: '8px' }" @click="handleReset">
-              重置
-            </a-button>
-          </a-col>
-        </a-row>
-        <a-row>
-          <a-button class="add-button" type="primary" @click="createCase">
-            新增
-          </a-button>
-          <!--          <a-button class="batch-delete-button" :style="{ marginLeft: '8px' }" @click="() => console.info('批量删除')">-->
-          <!--            批量删除-->
-          <!--          </a-button>-->
-          <a-divider type="vertical"/>
-          <a-button class="execute-project-button" @click="executeProject" :loading="executing">
-            {{ executing ? '执行中...' : '执行'}}
-          </a-button>
-        </a-row>
-      </a-form>
-    </div>
+    <a-page-header
+        style="border: 1px solid rgb(235, 237, 240)"
+        :breadcrumb="{ props: { routes } }"
+    >
+
+      <template #title>
+        <span>用例管理</span>
+      </template>
+      <template #subTitle>
+        <span>用例列表</span>
+      </template>
+      <template #extra>
+        <a-input-search placeholder="用例名称" v-model="name" @search="handleSearch" />
+      </template>
+      <div class="options" style="padding-top: 20px">
+        <a-button class="add-button" type="primary" @click="createCase">
+          新增
+        </a-button>
+        <!--          <a-button class="batch-delete-button" :style="{ marginLeft: '8px' }" @click="() => console.info('批量删除')">-->
+        <!--            批量删除-->
+        <!--          </a-button>-->
+        <a-divider type="vertical"/>
+        <a-button class="execute-project-button" @click="executeProject" :loading="executing" :style="{marginRight: '8px'}">
+          {{ executing ? '执行中...' : '执行'}}
+        </a-button>
+      </div>
+    </a-page-header>
+<!--    <div class="case-search-div">-->
+<!--      <a-form class="case-search-form" :form="form" @submit="handleSearch">-->
+<!--        <a-row :gutter="24">-->
+<!--          <a-col :span=4>-->
+<!--            <a-form-item :label="`名 称: `">-->
+<!--              <a-input-->
+<!--                  v-decorator="[-->
+<!--                  `name`,-->
+<!--                  {-->
+<!--                    rules: [-->
+<!--                      {-->
+<!--                        required: false-->
+<!--                      },-->
+<!--                    ],-->
+<!--                  },-->
+<!--                ]"-->
+<!--                  placeholder="用例名称"-->
+<!--              />-->
+<!--            </a-form-item>-->
+<!--          </a-col>-->
+<!--          <a-col :span="12" :style="{ textAlign: 'right' }">-->
+<!--            <a-button class="search-button" type="primary" html-type="submit">-->
+<!--              搜索-->
+<!--            </a-button>-->
+<!--            <a-button class="reset-button" :style="{ marginLeft: '8px' }" @click="handleReset">-->
+<!--              重置-->
+<!--            </a-button>-->
+<!--          </a-col>-->
+<!--        </a-row>-->
+<!--        <a-row>-->
+<!--          <a-button class="add-button" type="primary" @click="createCase">-->
+<!--            新增-->
+<!--          </a-button>-->
+<!--          &lt;!&ndash;          <a-button class="batch-delete-button" :style="{ marginLeft: '8px' }" @click="() => console.info('批量删除')">&ndash;&gt;-->
+<!--          &lt;!&ndash;            批量删除&ndash;&gt;-->
+<!--          &lt;!&ndash;          </a-button>&ndash;&gt;-->
+<!--          <a-divider type="vertical"/>-->
+<!--          <a-button class="execute-project-button" @click="executeProject" :loading="executing">-->
+<!--            {{ executing ? '执行中...' : '执行'}}-->
+<!--          </a-button>-->
+<!--        </a-row>-->
+<!--      </a-form>-->
+<!--    </div>-->
     <div>
       <a-table rowKey="id" :columns="columns" :data-source="data" :pagination="pagination" :customRow="customRow">
         <span slot="customHost">
@@ -210,6 +237,13 @@ import api from '@/plugins/api'
 
 const columns = [
   {
+    title: '序号',
+    dataIndex: 'index',
+    key: 'index',
+    customRender: (text, row, index) => index + 1,
+    align: 'center'
+  },
+  {
     title: '名称',
     dataIndex: 'name',
     key: 'name',
@@ -268,12 +302,12 @@ const columns = [
     dataIndex: 'created_at',
     align: 'center'
   },
-  // {
-  //   title: '更新时间',
-  //   key: 'updated_at',
-  //   dataIndex: 'updated_at',
-  //   align: 'center'
-  // },
+  {
+    title: '更新时间',
+    key: 'updated_at',
+    dataIndex: 'updated_at',
+    align: 'center'
+  },
   {
     title: '操作',
     key: 'action',
@@ -303,6 +337,7 @@ export default {
   },
   data() {
     return {
+      routes: [],
       executing: false,
       header: {},
       project,
@@ -487,14 +522,8 @@ export default {
     cancelDelete() {
       api.notification(this.$notification, '操作提示', '已取消操作', 'info')
     },
-    handleSearch(e) {
-      e.preventDefault();
-      this.form.validateFields((err, values) => {
-        if (!err) {
-          this.name = values.name;
-          this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.projectId, this.name);
-        }
-      });
+    handleSearch(value, event) {
+      this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.projectId, this.name);
     },
     handleReset() {
       this.form.resetFields();

@@ -42,7 +42,8 @@ import {
     Statistic,
     Collapse,
     Switch,
-    Tooltip
+    Tooltip,
+    PageHeader,
 } from 'ant-design-vue';
 //按需加载 减少资源使用量
 Vue.use(Button);
@@ -85,5 +86,6 @@ Vue.use(Statistic);
 Vue.use(Collapse);
 Vue.use(Switch);
 Vue.use(Tooltip);
+Vue.use(PageHeader)
 Vue.prototype.$message = message;
 Vue.prototype.$notification = notification;
