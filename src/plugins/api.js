@@ -17,6 +17,7 @@ const PROJECT = '/project/';
 const PROJECT_COPY = `${PROJECT}copy/`;
 const PROJECT_EXECUTE = `${PROJECT}execute/`;
 const PROJECT_GROUP = `${PROJECT}group/`;
+const PROJECT_STATISTICS = `${PROJECT}statistics/`;
 
 
 const CASE = '/case/';
@@ -184,6 +185,10 @@ export default {
     // 执行项目
     executeProject: function (params, handler, errHandler) {
         request.post(PROJECT_EXECUTE, params, handler, null, errHandler)
+    },
+    // 项目统计数据
+    statisticsProject: function (params, handler) {
+        request.get(PROJECT_STATISTICS, params, handler)
     },
     /*-------------- 用例 ---------------*/
     // 分页查询用例
