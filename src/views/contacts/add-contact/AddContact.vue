@@ -1,7 +1,7 @@
 <template>
   <div class="add-contact" style="padding:30px">
-    <a-modal :visible="visible" title="编辑联系人分组" @ok="dealModal" @cancel="dealModal">
-      <a-table :rowKey="record => record.id + record.name" bordered :data-source="tabGroups" :columns="columns" :pagination="false" size="small">
+    <a-modal :visible="visible" title="编辑联系人分组" @ok="dealModal" @cancel="dealModal" destroyOnClose>
+      <a-table :rowKey="record => record.id + record.name" bordered :data-source="tabGroups" :columns="columns" :pagination="false" size="small" :scroll="{ y: 240 }">
         <template slot="name" slot-scope="text, record">
           <editable-cell :text="text" :edited="!record.id" @change="onCellChange(record, 'name', $event)" @edit="() => plusBtnDisable = true"/>
         </template>
