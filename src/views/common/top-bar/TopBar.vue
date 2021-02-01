@@ -7,19 +7,10 @@
           <a-icon type="home"/>
           首页
         </a-menu-item>
-        <a-sub-menu>
-        <span slot="title" class="submenu-title-wrapper">
-          <a-icon type="contacts"/>联系人管理
-        </span>
-          <a-menu-item-group>
-            <a-menu-item key="contact-grp" @click="()=>this.routeTo('/contact-group')">
-              联系人分组
-            </a-menu-item>
-            <a-menu-item key="contact-itm" @click="()=>this.routeTo('/contact')">
-              联系人
-            </a-menu-item>
-          </a-menu-item-group>
-        </a-sub-menu>
+        <a-menu-item @click="() => $router.push('/contact')">
+          <a-icon type="contacts"/>
+          联系人管理
+        </a-menu-item>
         <a-sub-menu>
         <span slot="title" class="submenu-title-wrapper">
           <a-icon type="file"/>文件管理
@@ -46,16 +37,10 @@
             </a-menu-item>
           </a-menu-item-group>
         </a-sub-menu>
-        <a-sub-menu>
-        <span slot="title" class="submenu-title-wrapper">
-          <a-icon type="dashboard"/>测试记录
-        </span>
-          <a-menu-item-group>
-            <a-menu-item key="test-recs" @click="()=> $router.push('/record')">
-              测试记录
-            </a-menu-item>
-          </a-menu-item-group>
-        </a-sub-menu>
+        <a-menu-item @click="() => $router.push('/record')">
+          <a-icon type="dashboard"/>
+          测试记录
+        </a-menu-item>
       </a-menu>
     </div>
     <div class="top-info">

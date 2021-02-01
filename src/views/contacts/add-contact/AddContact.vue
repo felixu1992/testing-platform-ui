@@ -1,7 +1,7 @@
 <template>
   <div class="add-contact" style="padding:30px">
-    <a-modal :visible="visible" title="编辑联系人分组" @ok="() => visible = false" @cancel="() => visible = false">
-      <a-table :rowKey="record => record.id + record.name" bordered :data-source="groups" :columns="columns" :pagination="false" size="small">
+    <a-modal :visible="visible" title="编辑联系人分组" @ok="dealModal" @cancel="dealModal">
+      <a-table :rowKey="record => record.id + record.name" bordered :data-source="tabGroups" :columns="columns" :pagination="false" size="small">
         <template slot="name" slot-scope="text, record">
           <editable-cell :text="text" :edited="!record.id" @change="onCellChange(record, 'name', $event)" @edit="() => plusBtnDisable = true"/>
         </template>
@@ -110,6 +110,7 @@ export default {
       phone: '',
       groupId: '',
       groups: [],
+      tabGroups: [],
       count: 0,
       plusBtnDisable: false,
       columns: [
@@ -135,12 +136,20 @@ export default {
     }
   },
   methods: {
+    dealModal: function () {
+      const tabGroups = [...this.tabGroups];
+      const groups = tabGroups.filter(item => item.id);
+      this.groups = groups;
+      this.tabGroups = groups;
+      this.count = groups.length;
+      this.visible = false;
+    },
     onCellChange(record, dataIndex, value) {
-      const groups = [...this.groups];
+      const tabGroups = [...this.tabGroups];
       const handler = data => {
-        const index = groups.indexOf(record);
-        groups.splice(index, 1, data);
-        this.groups = groups;
+        const index = tabGroups.indexOf(record);
+        tabGroups.splice(index, 1, data);
+        this.tabGroups = tabGroups;
       };
       if (record.id) {
         const id = record.id
@@ -151,10 +160,10 @@ export default {
       this.plusBtnDisable = false;
     },
     onDelete(record) {
-      const groups = [...this.groups];
-      const index = groups.indexOf(record);
-      groups.splice(index, 1)
-      this.groups = groups;
+      const tabGroups = [...this.tabGroups];
+      const index = tabGroups.indexOf(record);
+      tabGroups.splice(index, 1)
+      this.tabGroups = tabGroups;
       if (record.id) {
         const id = record.id
         api.deleteContactGroup(id, {
@@ -163,11 +172,11 @@ export default {
       }
     },
     handleAdd() {
-      const { count, groups } = this;
+      const { count, tabGroups } = this;
       const newData = {
         name: `联系人分组${count + 1}`,
       };
-      this.groups = [...groups, newData];
+      this.tabGroups = [...tabGroups, newData];
       this.count = count + 1;
       this.plusBtnDisable = true;
     },
@@ -185,6 +194,7 @@ export default {
         page_size: 9999
       }, (data => {
         this.groups = data.records;
+        this.tabGroups = data.records;
         this.count = data.total;
       }));
     },
@@ -195,7 +205,7 @@ export default {
     },
   },
   watch: {
-    groups: {
+    tabGroups: {
      handler(newV, oldV) {
        const editing = newV.filter(group => !group.id)
        this.plusBtnDisable = editing.length !== 0
