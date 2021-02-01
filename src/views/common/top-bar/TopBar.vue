@@ -16,19 +16,10 @@
           <a-icon type="file"/>
           文件管理
         </a-menu-item>
-        <a-sub-menu>
-        <span slot="title" class="submenu-title-wrapper">
-          <a-icon type="project"/>项目管理
-        </span>
-          <a-menu-item-group>
-            <a-menu-item key="project-grp" @click="() => this.$router.push('/project-group')">
-              项目分组
-            </a-menu-item>
-            <a-menu-item key="project-itm" @click="() => this.routeTo('/project')">
-              项目
-            </a-menu-item>
-          </a-menu-item-group>
-        </a-sub-menu>
+        <a-menu-item @click="() => $router.push('/project')">
+          <a-icon type="project"/>
+          项目管理
+        </a-menu-item>
         <a-menu-item @click="() => $router.push('/record')">
           <a-icon type="dashboard"/>
           测试记录

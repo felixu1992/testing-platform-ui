@@ -137,6 +137,7 @@ export default {
           title: '序号',
           dataIndex: 'index',
           customRender: (text, row, index) => index + 1,
+          width: 60,
           align: 'center'
         },
         {
@@ -149,6 +150,7 @@ export default {
           title: '操作',
           dataIndex: 'operation',
           scopedSlots: { customRender: 'operation' },
+          width: 60,
           align: 'center',
         },
       ],
