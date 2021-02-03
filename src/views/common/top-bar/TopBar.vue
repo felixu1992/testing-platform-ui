@@ -1,8 +1,8 @@
 <template>
   <div class="top-bar">
-    <img class="top-logo" src="https://oss-blog.felixu.top/shutup" alt="logo"
+    <img class="top-logo" src="https://oss-blog.felixu.top/shutup" alt="logo" v-if="loggedIn"
          style="width: 36px;height: 36px; margin-left: 8px; margin-top: 8px">
-    <div class="top-menu">
+    <div class="top-menu" v-if="loggedIn">
       <a-menu class="menu" mode="horizontal">
         <a-menu-item @click="() => $router.push('/')">
           <a-icon type="home"/>
