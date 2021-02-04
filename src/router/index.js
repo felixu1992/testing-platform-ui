@@ -185,6 +185,11 @@ const routes = [
                         name: '报告列表',
                         component: () => import('@/views/record/report/list/ReportList')
                     },
+                    {
+                        path: 'detail',
+                        name: '执行详情',
+                        component: () => import('@/views/record/report/detail/Report')
+                    }
                 ]
             }
         ]

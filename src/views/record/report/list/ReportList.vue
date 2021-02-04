@@ -49,7 +49,7 @@
           <a-switch checked-children="是" un-checked-children="否" :checked="record.run" disabled/>
         </span>
         <span slot="action" slot-scope="text, record">
-          <a-button size='small' type="link" @click="updateCase(record.id)">
+          <a-button size='small' type="link" @click="detail(record)">
           查 看
           </a-button>
         </span>
@@ -217,6 +217,14 @@ export default {
     };
   },
   methods: {
+    detail: function (record) {
+      this.$router.push({
+        path: '/record/report/detail',
+        query: {
+          id: record.id
+        }
+      })
+    },
     changeTable(pagination, filters) {
       console.log(filters)
       this.getListPage(pagination.current, pagination.pageSize, this.recordId, this.name, filters.status ? filters.status[0]: undefined)
