@@ -397,9 +397,11 @@ export default {
     this.projectId = projectId;
     api.treeContactor({}, data => this.developTreeData = data)
     api.treeFile({}, data => this.fileTreeData = data)
+    api.listCase({ page: 1, page_size: 9999, project_id: this.projectId }, data => this.cases = data.records);
   },
   data() {
     return {
+      cases: [],
       jsonSwitch: true,
       params: {},
       schemaParams: {
@@ -649,11 +651,7 @@ export default {
       this.extendData.splice(record.index - 1, 1)
     },
     extendFillCases() {
-      api.listCase({
-        page: 1,
-        page_size: 999,
-        project_id: this.projectId
-      }, (data => this.extendModal.cases = data.records));
+      this.extendModal.cases = this.cases;
     },
     // expected modal
     expectedAdd() {
@@ -755,11 +753,7 @@ export default {
       this.expectedData.splice(record.index - 1, 1)
     },
     expectedFillCases() {
-      api.listCase({
-        page: 1,
-        page_size: 999,
-        project_id: this.projectId
-      }, (data => this.expectedModal.cases = data.records));
+      this.expectedModal.cases = this.cases;
     },
     // 计算链路
     backtracking(node, _track, sourceTrack) {

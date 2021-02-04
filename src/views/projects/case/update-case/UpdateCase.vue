@@ -407,6 +407,7 @@ export default {
   },
   data() {
     return {
+      cases: [],
       id: '',
       jsonSwitch: true,
       params: {},
@@ -634,6 +635,8 @@ export default {
         if (data.expected_keys !== null && data.expected_keys.length > 0) {
           this.parseExpected(data.expected_keys, data.expected_values)
         }
+        id = Number(id)
+        api.listCase({ page: 1, page_size: 9999, project_id: this.projectId }, data => this.cases = data.records.filter(item => item.id !== id));
       });
     },
     // extend modal
@@ -728,11 +731,7 @@ export default {
       this.extendData.splice(record.index - 1, 1)
     },
     extendFillCases() {
-      api.listCase({
-        page: 1,
-        page_size: 999,
-        project_id: this.projectId
-      }, (data => this.extendModal.cases = data.records));
+      this.extendModal.cases = this.cases;
     },
     // expected modal
     expectedAdd() {
@@ -834,11 +833,7 @@ export default {
       this.expectedData.splice(record.index - 1, 1)
     },
     expectedFillCases() {
-      api.listCase({
-        page: 1,
-        page_size: 999,
-        project_id: this.projectId
-      }, (data => this.expectedModal.cases = data.records));
+      this.expectedModal.cases = this.cases;
     },
     // 计算链路
     backtracking(node, _track, sourceTrack) {
