@@ -18,8 +18,13 @@
           </a-form-item>
           <a-form-item :label="`注入值: `">
             <div>
-              <a-select style="width: 50%" @change="value => extendSelectChange(value)"
-                        v-model="extendModal.dep.depend" allowClear>
+              <a-select style="width: 50%"
+                        show-search
+                        placeholder="请输入用例名称"
+                        option-filter-prop="children"
+                        :filter-option="filterOption"
+                        @change="value => extendSelectChange(value)"
+                        v-model="extendModal.dep.depend">
                 <a-select-option v-for="item in extendModal.cases" :value="item.id">
                   {{ item.name }}
                 </a-select-option>
@@ -53,7 +58,12 @@
               <a-input v-model="expectedModal.dep.value" placeholder="请输入预期值" style="width: 70%"/>
             </div>
             <div v-if="expectedModal.valueOrDepend === 2">
-              <a-select style="width: 50%" @change="value => expectedSelectChange(value)"
+              <a-select style="width: 50%"
+                        show-search
+                        placeholder="请输入用例名称"
+                        option-filter-prop="children"
+                        :filter-option="filterOption"
+                        @change="value => expectedSelectChange(value)"
                         v-model="expectedModal.dep.depend" allowClear>
                 <a-select-option v-for="item in expectedModal.cases" :value="item.id">
                   {{ item.name }}
@@ -456,7 +466,7 @@ export default {
         index: -1,
         ste: [],
         dep: {
-          depend: '--请选择--',
+          depend: null,
           steps: []
         },
         cases: []
@@ -476,7 +486,7 @@ export default {
           }
         ],
         dep: {
-          depend: '--请选择--',
+          depend: null,
           steps: [],
           value: ''
         },
@@ -487,6 +497,11 @@ export default {
     }
   },
   methods: {
+    filterOption(input, option) {
+      return (
+          option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      );
+    },
     changeJsonSwitch(checked, event) {
       this.jsonSwitch = checked;
       if (checked) {
@@ -544,7 +559,7 @@ export default {
           index: -1,
           ste: [],
           dep: {
-            depend: '--请选择--',
+            depend: null,
             steps: []
           }
         }
@@ -582,7 +597,7 @@ export default {
             }
           ],
           dep: {
-            depend: '--请选择--',
+            depend: null,
             steps: [],
             value: ''
           },
@@ -592,7 +607,7 @@ export default {
           return { value: t }
         })
         ex.dep = values[i]
-        ex.valueOrDepend = (ex.dep.depend === undefined || ex.dep.depend === '--请选择--') ? 1 : 2
+        ex.valueOrDepend = (ex.dep.depend === undefined || ex.dep.depend === null) ? 1 : 2
         this.expectedData.push(ex)
       }
       this.expectedIndex = this.expectedData.length
@@ -666,7 +681,7 @@ export default {
     extendHandleOk(e) {
       e.preventDefault();
       if (this.extendModal.ste.length === 0
-          || this.extendModal.dep.depend === '--请选择--'
+          || this.extendModal.dep.depend === null
           || this.extendModal.dep.depend === undefined
           || this.extendModal.dep.steps.length === 0) {
         this.$notification.warn({
@@ -696,7 +711,7 @@ export default {
         index: -1,
         ste: [],
         dep: {
-          depend: '--请选择--',
+          depend: null,
           steps: []
         },
         cases: []
@@ -761,14 +776,14 @@ export default {
       e.preventDefault();
       if (this.expectedModal.valueOrDepend === 1) {
         this.expectedModal.dep.steps = this.expectedModal.ste;
-        this.expectedModal.dep.depend = '--请选择--';
+        this.expectedModal.dep.depend = null;
       } else {
         this.expectedModal.dep.value = ''
       }
       if (this.expectedModal.ste.length === 0
           || (this.expectedModal.valueOrDepend === 1 && (this.expectedModal.dep.value === ''
               || this.expectedModal.dep.value === undefined))
-          || (this.expectedModal.valueOrDepend === 2 && (this.expectedModal.dep.depend === '--请选择--'
+          || (this.expectedModal.valueOrDepend === 2 && (this.expectedModal.dep.depend === null
               || this.expectedModal.dep.depend === undefined))
           || this.expectedModal.dep.steps.length === 0) {
         this.$notification.warn({
@@ -803,7 +818,7 @@ export default {
           }
         ],
         dep: {
-          depend: '--请选择--',
+          depend: null,
           steps: [],
           value: ''
         },

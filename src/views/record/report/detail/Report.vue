@@ -218,7 +218,7 @@ export default {
           index: -1,
           ste: [],
           dep: {
-            depend: '--请选择--',
+            depend: null,
             steps: []
           }
         }
@@ -241,7 +241,7 @@ export default {
             }
           ],
           dep: {
-            depend: '--请选择--',
+            depend: null,
             steps: [],
             value: ''
           },
@@ -251,7 +251,7 @@ export default {
           return { value: t }
         })
         ex.dep = values[i]
-        ex.valueOrDepend = (ex.dep.depend === undefined || ex.dep.depend === '--请选择--') ? 1 : 2
+        ex.valueOrDepend = (ex.dep.depend === undefined || ex.dep.depend === null) ? 1 : 2
         this.expectedData.push(ex)
       }
     },
