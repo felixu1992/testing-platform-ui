@@ -189,9 +189,9 @@ export default {
       };
       if (record.id) {
         const id = record.id
-        api.updateContactGroup(id, { id: id, name: value }, handler);
+        api.updateProjectGroup(id, { id: id, name: value }, handler);
       } else {
-        api.createContactGroup({ name: value }, handler);
+        api.createProjectGroup({ name: value }, handler);
       }
       this.plusBtnDisable = false;
     },
@@ -202,7 +202,7 @@ export default {
       this.tabGroups = tabGroups;
       if (record.id) {
         const id = record.id
-        api.deleteContactGroup(id, {
+        api.deleteProjectGroup(id, {
           id: id
         }, data => api.notification(this.$notification, '操作提示', '删除成功', 'info'));
       }
