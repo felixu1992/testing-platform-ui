@@ -403,8 +403,10 @@ export default {
     this.form = this.$form.createForm(this, {name: 'add-case'});
   },
   beforeMount() {
-    const {projectId} = this.$route.query;
+    const { projectId , page, pageSize } = this.$route.query;
     this.projectId = projectId;
+    this.page = page;
+    this.pageSize = pageSize;
     api.treeContactor({}, data => this.developTreeData = data)
     api.treeFile({}, data => this.fileTreeData = data)
     api.listCase({ page: 1, page_size: 9999, project_id: this.projectId }, data => this.cases = data.records);
@@ -421,6 +423,8 @@ export default {
       },
       sample: {},
       projectId: '',
+      page: '',
+      pageSize: '',
       developTreeData: [],
       fileTreeData: [],
       requestMethod: [
@@ -515,11 +519,18 @@ export default {
       });
     },
     cancelSubmit() {
+      let query = {
+        project: this.projectId
+      };
+      if (this.page) {
+        query.page = this.page;
+      }
+      if (this.pageSize) {
+        query.pageSize = this.pageSize;
+      }
       this.$router.push({
         path: '/project/case',
-        query: {
-          project: this.projectId
-        }
+        query: query
       });
     },
     buildExtend(value) {
@@ -566,11 +577,18 @@ export default {
       }
       params.project_id = this.projectId;
       api.createCase(params, (data => {
+        let query = {
+          project: this.projectId
+        };
+        if (this.page) {
+          query.page = this.page;
+        }
+        if (this.pageSize) {
+          query.pageSize = this.pageSize;
+        }
         this.$router.push({
           path: '/project/case',
-          query: {
-            project: this.projectId
-          }
+          query: query
         });
       }));
     },

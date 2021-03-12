@@ -327,9 +327,15 @@ export default {
   },
   beforeMount() {
     const {
-      project
+      project, page, pageSize
     } = this.$route.query
     this.projectId = project
+    if (page) {
+      this.pagination.defaultCurrent = page;
+    }
+    if (pageSize) {
+      this.pagination.defaultPageSize = pageSize;
+    }
     api.getProject(project, {id: project}, data => {
       this.project = data;
     });
@@ -501,7 +507,9 @@ export default {
       this.$router.push({
         path: '/project/case/add-case',
         query: {
-          projectId: this.projectId
+          projectId: this.projectId,
+          page: this.pagination.current,
+          pageSize: this.pagination.pageSize
         }
       })
     },
@@ -509,7 +517,9 @@ export default {
       this.$router.push({
         path: '/project/case/update-case',
         query: {
-          id: id
+          id: id,
+          page: this.pagination.current,
+          pageSize: this.pagination.pageSize
         }
       });
     },
