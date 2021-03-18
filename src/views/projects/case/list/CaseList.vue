@@ -221,7 +221,7 @@
                   <a-button size="small" type="link">置顶</a-button>
                 </a-menu-item>
                 <a-menu-item>
-                  <a-button size="small" type="link" @click="copyCase(record.id)">复制</a-button>
+                  <a-button size="small" type="link" @click="copyCase(record.id, record.name)">复制</a-button>
                 </a-menu-item>
               </a-menu>
             </template>
@@ -325,7 +325,7 @@ export default {
     this.form = this.$form.createForm(this, {name: 'search-form'});
     this.copyForm = this.$form.createForm(this, {name: 'copy-form'});
   },
-  beforeMount() {
+  created() {
     const {
       project, page, pageSize
     } = this.$route.query
@@ -540,9 +540,15 @@ export default {
       this.name = '';
       this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.projectId, this.name)
     },
-    copyCase: function (id) {
+    copyCase: function (id, name) {
       this.copy = id
+
       this.visible = true;
+      setTimeout(()=>{
+        if (name) {
+          this.copyForm.setFieldsValue({name: name + '_copy'})
+        }
+      },100);
     },
     handleOk(e) {
       e.preventDefault();
