@@ -254,7 +254,7 @@ export default {
       });
     },
     deleteProject(id) {
-      this.request.delete('/projector/' + projectorId + "/", {
+      this.request.delete('/projector/' + id + "/", {
         id: id
       }, data => {
         this.$notification.info({
