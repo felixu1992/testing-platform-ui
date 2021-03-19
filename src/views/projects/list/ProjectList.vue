@@ -254,9 +254,7 @@ export default {
       });
     },
     deleteProject(id) {
-      this.request.delete('/projector/' + id + "/", {
-        id: id
-      }, data => {
+      api.deleteProject(id, { id: id }, data => {
         this.$notification.info({
           message: '操作提示',
           description: '删除成功',
