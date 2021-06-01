@@ -1,5 +1,8 @@
 <template>
   <div>
+    <a-modal :visible="confirmModal" title="请确认要删除项目的名称" @ok="confirmDel" @cancel="confirmCancel">
+      <a-input placeholder="请输入项目名称" v-model="confirmName"/>
+    </a-modal>
     <div class="project-search-div">
       <a-form class="project-search-form" :form="form" @submit="handleSearch">
         <a-row :gutter="24">
@@ -86,10 +89,10 @@
                   <a-popconfirm title="确认删除?"
                                 ok-text="是"
                                 cancel-text="否"
-                                @confirm="deleteProject(record.id)"
+                                @confirm="showConfirmDelete(record)"
                                 @cancel="cancelDelete"
                   >
-                    <a-button size='small' type="link" @click="showConfirmDelete(record)">
+                    <a-button size='small' type="link">
                     删 除
                     </a-button>
                   </a-popconfirm>
@@ -182,6 +185,9 @@ export default {
       name: '',
       email: '',
       phone: '',
+      confirmName: '',
+      confirmModal: false,
+      waitingDel: {},
       pagination: {
         total: 0,
         defaultCurrent: 1,
@@ -227,7 +233,22 @@ export default {
       }));
     },
     showConfirmDelete(rowRecord) {
-
+      this.confirmModal = true;
+      this.waitingDel = rowRecord;
+    },
+    confirmDel() {
+      debugger
+      if (this.confirmName === this.waitingDel.name) {
+        this.deleteProject(this.waitingDel.id)
+        this.confirmCancel()
+      } else {
+        api.notification(this.$notification, '操作提示', '名称校验失败已放弃删除', 'info')
+      }
+    },
+    confirmCancel() {
+      this.waitingDel = {};
+      this.confirmName = '';
+      this.confirmModal = false;
     },
     getCases(id) {
       this.$router.push({
