@@ -237,7 +237,6 @@ export default {
       this.waitingDel = rowRecord;
     },
     confirmDel() {
-      debugger
       if (this.confirmName === this.waitingDel.name) {
         this.deleteProject(this.waitingDel.id)
         this.confirmCancel()

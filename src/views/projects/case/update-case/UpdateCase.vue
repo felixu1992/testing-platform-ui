@@ -520,7 +520,6 @@ export default {
           json2JsonSchema(this.params, jsonSchema);
           this.schemaParams.root = jsonSchema;
         } catch (e) {
-          debugger
           api.notification(this.$notification, '操作失败', '请检查 json 是否正确', 'error')
         }
       }
