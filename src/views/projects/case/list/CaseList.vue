@@ -47,7 +47,7 @@
               <p class="ant-upload-drag-icon">
                 <a-icon type="inbox"/>
               </p>
-              点击或者将文件拖入框内上传
+              点击选择或者将文件拖入框内
             </a-upload-dragger>
           </div>
         </a-form-item>
