@@ -18,6 +18,7 @@ const PROJECT_COPY = `${PROJECT}copy/`;
 const PROJECT_EXECUTE = `${PROJECT}execute/`;
 const PROJECT_GROUP = `${PROJECT}group/`;
 const PROJECT_STATISTICS = `${PROJECT}statistics/`;
+const PROJECT_TEMP_IMPORT = `${PROJECT}temp-import/`
 
 
 const CASE = '/case/';
@@ -189,6 +190,10 @@ export default {
     // 项目统计数据
     statisticsProject: function (params, handler) {
         request.get(PROJECT_STATISTICS, params, handler)
+    },
+    // 旧版本 Excel 导入
+    tempImportProject: function (params, handler, config) {
+        request.post(PROJECT_TEMP_IMPORT, params, handler, config)
     },
     /*-------------- 用例 ---------------*/
     // 分页查询用例

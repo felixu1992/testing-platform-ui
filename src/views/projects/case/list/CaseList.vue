@@ -24,6 +24,35 @@
         </a-row>
       </a-form>
     </a-modal>
+    <a-modal :visible="importVisible" title="导入旧版用例" @ok="handleImport" @cancel="cancelImport">
+      <a-form id="add-file-form" :form="importForm" class="import-form">
+        <a-form-item>
+          <div>
+            <a-upload-dragger
+                name="file"
+                accept=".xls,.xlsx"
+                @change="importFilesChange"
+                :before-upload="file => false"
+                :file-list="importFiles"
+                v-decorator="[
+                    'files',
+                    { rules: [
+                        {
+                          required: true, message: '文件不可为空！'
+                        }
+                      ]
+                    }
+                  ]"
+            >
+              <p class="ant-upload-drag-icon">
+                <a-icon type="inbox"/>
+              </p>
+              点击或者将文件拖入框内上传
+            </a-upload-dragger>
+          </div>
+        </a-form-item>
+      </a-form>
+    </a-modal>
     <a-page-header
         style="border: 1px solid rgb(235, 237, 240)"
         :breadcrumb="{ props: { routes } }"
@@ -36,7 +65,7 @@
         <span>用例列表</span>
       </template>
       <template #extra>
-        <a-input-search placeholder="用例名称" v-model="name" @search="handleSearch" />
+        <a-input-search placeholder="用例名称" v-model="name" @search="handleSearch"/>
       </template>
       <div class="options" style="padding-top: 20px">
         <a-button class="add-button" type="primary" @click="createCase">
@@ -46,54 +75,16 @@
         <!--            批量删除-->
         <!--          </a-button>-->
         <a-divider type="vertical"/>
-        <a-button class="execute-project-button" @click="executeProject" :loading="executing" :style="{marginRight: '8px'}">
-          {{ executing ? '执行中...' : '执行'}}
+        <a-button class="execute-project-button" @click="executeProject" :loading="executing"
+                  :style="{marginRight: '8px'}">
+          {{ executing ? '执行中...' : '执行' }}
+        </a-button>
+        <a-divider type="vertical"/>
+        <a-button class="import" @click="importCase">
+          导入旧版用例
         </a-button>
       </div>
     </a-page-header>
-<!--    <div class="case-search-div">-->
-<!--      <a-form class="case-search-form" :form="form" @submit="handleSearch">-->
-<!--        <a-row :gutter="24">-->
-<!--          <a-col :span=4>-->
-<!--            <a-form-item :label="`名 称: `">-->
-<!--              <a-input-->
-<!--                  v-decorator="[-->
-<!--                  `name`,-->
-<!--                  {-->
-<!--                    rules: [-->
-<!--                      {-->
-<!--                        required: false-->
-<!--                      },-->
-<!--                    ],-->
-<!--                  },-->
-<!--                ]"-->
-<!--                  placeholder="用例名称"-->
-<!--              />-->
-<!--            </a-form-item>-->
-<!--          </a-col>-->
-<!--          <a-col :span="12" :style="{ textAlign: 'right' }">-->
-<!--            <a-button class="search-button" type="primary" html-type="submit">-->
-<!--              搜索-->
-<!--            </a-button>-->
-<!--            <a-button class="reset-button" :style="{ marginLeft: '8px' }" @click="handleReset">-->
-<!--              重置-->
-<!--            </a-button>-->
-<!--          </a-col>-->
-<!--        </a-row>-->
-<!--        <a-row>-->
-<!--          <a-button class="add-button" type="primary" @click="createCase">-->
-<!--            新增-->
-<!--          </a-button>-->
-<!--          &lt;!&ndash;          <a-button class="batch-delete-button" :style="{ marginLeft: '8px' }" @click="() => console.info('批量删除')">&ndash;&gt;-->
-<!--          &lt;!&ndash;            批量删除&ndash;&gt;-->
-<!--          &lt;!&ndash;          </a-button>&ndash;&gt;-->
-<!--          <a-divider type="vertical"/>-->
-<!--          <a-button class="execute-project-button" @click="executeProject" :loading="executing">-->
-<!--            {{ executing ? '执行中...' : '执行'}}-->
-<!--          </a-button>-->
-<!--        </a-row>-->
-<!--      </a-form>-->
-<!--    </div>-->
     <div>
       <a-table rowKey="id" :columns="columns" :data-source="data" :pagination="pagination" :customRow="customRow">
         <span slot="customHost">
@@ -324,6 +315,7 @@ export default {
   beforeCreate() {
     this.form = this.$form.createForm(this, {name: 'search-form'});
     this.copyForm = this.$form.createForm(this, {name: 'copy-form'});
+    this.importForm = this.$form.createForm(this, {name: 'import-form'})
   },
   created() {
     const {
@@ -343,6 +335,8 @@ export default {
   },
   data() {
     return {
+      importVisible: false,
+      importFiles: [],
       routes: [],
       executing: false,
       header: {},
@@ -542,13 +536,12 @@ export default {
     },
     copyCase: function (id, name) {
       this.copy = id
-
       this.visible = true;
-      setTimeout(()=>{
+      setTimeout(() => {
         if (name) {
           this.copyForm.setFieldsValue({name: name + '_copy'})
         }
-      },100);
+      }, 100);
     },
     handleOk(e) {
       e.preventDefault();
@@ -566,6 +559,38 @@ export default {
       this.visible = false;
       this.copyForm.setFieldsValue({name: ''})
     },
+    importCase() {
+      this.importVisible = true;
+    },
+    handleImport(e) {
+      e.preventDefault();
+      this.importForm.validateFields((err, values) => {
+        if (!err) {
+          let formData = new FormData();
+          let config = {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          };
+          formData.append('project_id', this.projectId);
+          formData.append('files', values.files.fileList[0].originFileObj);
+          api.tempImportProject(formData, (data => {
+            this.getListPage(this.pagination.defaultCurrent, this.pagination.pageSize, this.projectId, this.name)
+          }), config)
+        }
+      });
+      this.cancelImport();
+    },
+    cancelImport() {
+      this.importVisible = false;
+    },
+    importFilesChange: function (info) {
+      if (info.file.status !== 'removed'){
+        let file = info.fileList[info.fileList.length - 1]
+        this.importFiles.splice(0, this.importFiles.length)
+        this.importFiles.push(file)
+      }
+    }
   },
 }
 </script>
