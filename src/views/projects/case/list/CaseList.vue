@@ -80,8 +80,12 @@
           {{ executing ? '执行中...' : '执行' }}
         </a-button>
         <a-divider type="vertical"/>
-        <a-button class="import" @click="importCase">
-          导入旧版用例
+        <a-button icon="upload" class="import" @click="importCase">
+          导入旧版
+        </a-button>
+        <a-divider type="vertical"/>
+        <a-button icon="download" class="export" @click="exportCase">
+          导出旧版
         </a-button>
       </div>
     </a-page-header>
@@ -225,6 +229,7 @@
 
 <script>
 import api from '@/plugins/api'
+import Consts from "@/consts/consts";
 
 const columns = [
   {
@@ -590,6 +595,16 @@ export default {
         this.importFiles.splice(0, this.importFiles.length)
         this.importFiles.push(file)
       }
+    },
+    exportCase() {
+      const eleLink = document.createElement('a');
+      // eleLink.download = this.projectId;
+      eleLink.style.display = 'none';
+      const userInfo = JSON.parse(localStorage.getItem(Consts.USER_INFO_LOCAL_STORAGE_KEY))
+      eleLink.href = `/project/temp-export/?project_id=${this.projectId}&auth=token ${userInfo.token}`;
+      document.body.appendChild(eleLink);
+      eleLink.click();
+      document.body.removeChild(eleLink);
     }
   },
 }
