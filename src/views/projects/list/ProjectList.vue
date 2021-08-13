@@ -70,10 +70,10 @@
           <a-button size='small' type="link" @click="getCases(record.id)">
           用 例
           </a-button>
-          <a-divider type="vertical"/>
-          <a-button size='small' type="link" @click="getProject(record.id)">
-          查 看
-          </a-button>
+<!--          <a-divider type="vertical"/>-->
+<!--          <a-button size='small' type="link" @click="getProject(record.id)">-->
+<!--          查 看-->
+<!--          </a-button>-->
           <a-divider type="vertical"/>
           <a-button size='small' type="link" @click="updateProject(record.id)">
           编 辑

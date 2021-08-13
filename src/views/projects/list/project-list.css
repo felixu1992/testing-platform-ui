@@ -23,7 +23,7 @@ div.ant-popover-inner-content div.jsoneditor {
 }
 
 div.ant-popover-inner-content div.ace_scroller {
-    pointer-events: none;
+    /*pointer-events: none;*/
 }
 
 div.ant-popover-inner-content div.ace_gutter-layer {

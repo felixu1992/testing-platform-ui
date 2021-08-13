@@ -11,7 +11,6 @@ module.exports = {
                 // target: 'http://platform.felixu.top:7600',
                 target: 'http://localhost:20000',
                 changeOrigin: true,
-                logLevel:'debug',
                 pathRewrite: {
                     '^/testing-platform-api/': '/'
                 }
@@ -19,7 +18,6 @@ module.exports = {
             '/project/temp-export/': {
                 // target: 'http://platform.felixu.top:7600',
                 target: 'http://localhost:20000',
-                logLevel:'debug',
                 changeOrigin: true,
             }
         },

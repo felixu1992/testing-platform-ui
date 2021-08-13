@@ -95,7 +95,7 @@
           请求地址
           <a-popover placement="topLeft">
             <template #content>
-              若用例没有单独设<br/>置则继承自项目
+              自身设置的优先于项目设置的生效
             </template>
             <a-icon type="exclamation-circle" style="font-size: 12px; color: #ff0000; padding-left: 3px"/>
           </a-popover>
@@ -104,7 +104,7 @@
           请求头
           <a-popover placement="topLeft">
             <template #content>
-              显示的请求头合并<br/>了项目和用例自身<br/>设置的
+              合并显示项目与自身设置的请求头
             </template>
             <a-icon type="exclamation-circle" style="font-size: 12px; color: #ff0000; padding-left: 3px"/>
           </a-popover>
@@ -178,10 +178,10 @@
           </span>
         </span>
         <span slot="action" slot-scope="text, record">
-          <a-button size='small' type="link" @click="updateCase(record.id)">
-          查 看
-          </a-button>
-          <a-divider type="vertical"/>
+<!--          <a-button size='small' type="link" @click="updateCase(record.id)">-->
+<!--          查 看-->
+<!--          </a-button>-->
+<!--          <a-divider type="vertical"/>-->
           <a-button size='small' type="link" @click="updateCase(record.id)">
           编 辑
           </a-button>
