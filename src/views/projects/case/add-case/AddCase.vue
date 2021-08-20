@@ -76,6 +76,19 @@
           </a-form-item>
         </a-form>
       </a-modal>
+      <a-modal :visible="categoryVisible" title="编辑用例分类" @ok="dealModal" @cancel="dealModal" destroyOnClose>
+        <a-table :rowKey="record => record.id + record.name" bordered :data-source="tabGroups" :columns="columns" :pagination="false" size="small" :scroll="{ y: 240 }">
+          <template slot="name" slot-scope="text, record">
+            <editable-cell :text="text" :edited="!record.id" @change="onCellChange(record, 'name', $event)" @edit="() => plusBtnDisable = true"/>
+          </template>
+          <template slot="operation" slot-scope="text, record">
+            <a-popconfirm v-if="groups.length" title="确认要删除该分类吗?" @confirm="() => onDelete(record)">
+              <a-button size='small' type="link">删 除</a-button>
+            </a-popconfirm>
+          </template>
+        </a-table>
+        <a-button class="editable-add-btn" type="link" @click="handleAdd" :disabled="plusBtnDisable"><a-icon type="plus" />新增分组</a-button>
+      </a-modal>
       <a-form id="add-case-form" class="case-form" :form="form" @submit="handleSubmit">
         <a-form-item :label="`名 称: `">
           <a-input class="case-name" style="width: 10%"
@@ -325,6 +338,29 @@
             <a-icon type="question-circle" style="font-size: 18px; color: #52c41a; padding: 10px" />
           </a-popover>
         </a-form-item>
+        <a-form-item :label="`分 类: `">
+          <a-select style="width: 200px" @change="value => value"
+                    v-decorator="[
+                      'group_id',
+                      { rules: [{
+                          required: true, message: '用例分类不可为空！' }
+                        ],
+                      initialValue: null
+                      }
+                    ]"
+          >
+            <div slot="dropdownRender" slot-scope="menu">
+              <v-nodes :vnodes="menu" />
+              <a-divider style="margin: 4px 0;" />
+              <div style="padding: 4px 4px; cursor: pointer; text-align:center" @mousedown="e => e.preventDefault()">
+                <a-button type="link" size="small" @click="() => categoryVisible = true">编辑分类</a-button>
+              </div>
+            </div>
+            <a-select-option v-for="category in categories" :value="category.id">
+              {{ category.name }}
+            </a-select-option>
+          </a-select>
+        </a-form-item>
         <a-form-item :label="`备 注: `">
           <a-textarea class="case-remark"
                       style="width: 30%"
@@ -481,7 +517,34 @@ export default {
         cases: []
       },
       expectedData: [],
-      expectedIndex: 0
+      expectedIndex: 0,
+      tabGroups: [],
+      categoryVisible: false,
+      categories: [],
+      count: 0,
+      plusBtnDisable: false,
+      columns: [
+        {
+          title: '序号',
+          dataIndex: 'index',
+          customRender: (text, row, index) => index + 1,
+          width: 60,
+          align: 'center'
+        },
+        {
+          title: '分类名称',
+          dataIndex: 'name',
+          scopedSlots: { customRender: 'name' },
+          align: 'center',
+        },
+        {
+          title: '操作',
+          dataIndex: 'operation',
+          scopedSlots: { customRender: 'operation' },
+          width: 60,
+          align: 'center',
+        },
+      ],
     }
   },
   methods: {
@@ -796,6 +859,50 @@ export default {
         track.push(key)
         this.backtracking(node.$parent, track, null)
       }
+    },
+    dealModal: function () {
+      const tabGroups = [...this.tabGroups];
+      const categories = tabGroups.filter(item => item.id);
+      this.categories = categories;
+      this.tabGroups = categories;
+      this.count = categories.length;
+      this.categoryVisible = false;
+    },
+    onCellChange(record, dataIndex, value) {
+      const tabGroups = [...this.tabGroups];
+      const handler = data => {
+        const index = tabGroups.indexOf(record);
+        tabGroups.splice(index, 1, data);
+        this.tabGroups = tabGroups;
+      };
+      if (record.id) {
+        const id = record.id
+        // api.updateContactGroup(id, { id: id, name: value }, handler);
+      } else {
+        // api.createContactGroup({ name: value }, handler);
+      }
+      this.plusBtnDisable = false;
+    },
+    onDelete(record) {
+      const tabGroups = [...this.tabGroups];
+      const index = tabGroups.indexOf(record);
+      tabGroups.splice(index, 1)
+      this.tabGroups = tabGroups;
+      if (record.id) {
+        const id = record.id
+        // api.deleteContactGroup(id, {
+        //   id: id
+        // }, data => api.notification(this.$notification, '操作提示', '删除成功', 'info'));
+      }
+    },
+    handleAdd() {
+      const { count, tabGroups } = this;
+      const newData = {
+        name: `分类${count + 1}`,
+      };
+      this.tabGroups = [...tabGroups, newData];
+      this.count = count + 1;
+      this.plusBtnDisable = true;
     },
   },
   components: { JsonParamEditor },
