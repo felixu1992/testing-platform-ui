@@ -92,8 +92,8 @@ const columns = [
   },
   {
     title: '所属分组',
-    key: 'group_name',
-    dataIndex: 'group_name',
+    key: 'groupName',
+    dataIndex: 'groupName',
     align: 'center'
   },
   {
@@ -111,14 +111,14 @@ const columns = [
   },
   {
     title: '创建时间',
-    key: 'created_at',
-    dataIndex: 'created_at',
+    key: 'createdAt',
+    dataIndex: 'createdAt',
     align: 'center'
   },
   {
     title: '更新时间',
-    key: 'updated_at',
-    dataIndex: 'updated_at',
+    key: 'updatedAt',
+    dataIndex: 'updatedAt',
     align: 'center'
   },
   {
@@ -166,18 +166,18 @@ export default {
   methods: {
     getListPage: function (current, pageSize, name) {
       let params = {
-        page: current,
-        page_size: pageSize
+        current: current,
+        size: pageSize
       }
       if (name) {
         params.name = name
       }
-      api.listFile(params, (data => {
+      api.listFile(params, data => {
         this.data = data.records;
         this.pagination.pageSize = pageSize;
         this.pagination.current = current;
         this.pagination.total = data.total;
-      }));
+      });
     },
     showConfirmDelete(rowRecord) {
 

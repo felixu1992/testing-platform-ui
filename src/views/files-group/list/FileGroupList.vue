@@ -99,14 +99,14 @@ const columns = [
   },
   {
     title: '创建时间',
-    key: 'created_at',
-    dataIndex: 'created_at',
+    key: 'createdAt',
+    dataIndex: 'createdAt',
     align: 'center'
   },
   {
     title: '更新时间',
-    key: 'updated_at',
-    dataIndex: 'updated_at',
+    key: 'updatedAt',
+    dataIndex: 'updatedAt',
     align: 'center'
   },
   {
@@ -157,8 +157,8 @@ export default {
   methods: {
     getListPage: function (current, pageSize, name) {
       let params = {
-        page: current,
-        page_size: pageSize
+        current: current,
+        size: pageSize
       }
       if (name) {
         params.name = name
@@ -171,14 +171,14 @@ export default {
       })
     },
     deleteFile(id) {
-      api.deleteFileGroup(id, {id: id}, (data => {
+      api.deleteFileGroup(id, {id: id}, data => {
         this.$notification.info({
           message: '操作提示',
           description: '删除成功',
           duration: 2
         });
         this.getListPage(this.pagination.current, this.pagination.pageSize, this.name);
-      }));
+      });
     },
     cancelDelete() {
       this.$notification.open({

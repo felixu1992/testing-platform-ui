@@ -29,7 +29,7 @@
         <a-form-item :label="`分 组: `">
           <a-select style="width: 200px" @change="value => value"
                     v-decorator="[
-                      'group_id',
+                      'groupId',
                       { rules: [{
                           required: true, message: '文件分组不可为空！' }
                         ],
@@ -174,9 +174,9 @@ export default {
       };
       if (record.id) {
         const id = record.id
-        api.updateContactGroup(id, { id: id, name: value }, handler);
+        api.updateFileGroup(id, { id: id, name: value }, handler);
       } else {
-        api.createContactGroup({ name: value }, handler);
+        api.createFileGroup({ name: value }, handler);
       }
       this.plusBtnDisable = false;
     },
@@ -187,7 +187,7 @@ export default {
       this.tabGroups = tabGroups;
       if (record.id) {
         const id = record.id
-        api.deleteContactGroup(id, {
+        api.deleteFileGroup(id, {
           id: id
         }, data => api.notification(this.$notification, '操作提示', '删除成功', 'info'));
       }
@@ -195,7 +195,7 @@ export default {
     handleAdd() {
       const { count, tabGroups } = this;
       const newData = {
-        name: `联系人分组${count + 1}`,
+        name: `文件分组${count + 1}`,
       };
       this.tabGroups = [...tabGroups, newData];
       this.count = count + 1;
@@ -213,7 +213,7 @@ export default {
           };
           formData.append('id', this.id)
           formData.append('name', values.name);
-          formData.append('group_id', values.group_id);
+          formData.append('groupId', values.groupId);
           formData.append('remark', values.remark);
           if (values.files !== undefined) {
             formData.append('files', values.files.fileList[0].originFileObj);
@@ -230,7 +230,7 @@ export default {
       }));
     },
     getGroups: function () {
-      api.listFileGroup({ page: 1, page_size: 9999 }, data => {
+      api.listFileGroup({ current: 1, size: 9999 }, data => {
         this.groups = data.records;
         this.tabGroups = data.records;
         this.count = data.total;

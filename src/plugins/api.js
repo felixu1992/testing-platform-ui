@@ -8,9 +8,9 @@ const CONTACTOR = '/contactor';
 const CONTACTOR_GROUP = `${CONTACTOR}-group`;
 const CONTACTOR_TREE = `/${CONTACTOR}-group/tree`;
 
-const FILE = '/file/';
-const FILE_GROUP = `${FILE}group/`;
-const FILE_TREE = `${FILE}group/tree/`;
+const FILE = '/file';
+const FILE_GROUP = `${FILE}-group`;
+const FILE_TREE = `${FILE}-group/tree`;
 const FILE_DOWNLOAD = `${FILE}download/`;
 
 const PROJECT = '/project/';
@@ -122,7 +122,7 @@ export default {
     },
     // 删除文件分组
     deleteFileGroup: function (id, params, handler) {
-        request.delete(`${FILE_GROUP}${id}/`, params, handler)
+        request.delete(`${FILE_GROUP}/${id}`, params, handler)
     },
     // 新增文件分组
     createFileGroup: function (params, handler) {
@@ -130,7 +130,7 @@ export default {
     },
     // 更新文件分组
     updateFileGroup: function (id, params, handler) {
-        request.put(`${FILE_GROUP}${id}/`, params, handler)
+        request.put(FILE_GROUP, params, handler)
     },
     // 新增文件
     createFile: function (params, handler, config) {
@@ -138,18 +138,18 @@ export default {
     },
     // 更新文件
     updateFile: function (id, params, handler) {
-        request.put(`${FILE}${id}/`, params, handler)
+        request.put(FILE, params, handler)
     },
     // 删除文件
     deleteFile: function (id, params, handler) {
-        request.delete(`${FILE}${id}/`, params, handler)
+        request.delete(`${FILE}/${id}`, params, handler)
     },
     // 分页查询文件
     listFile: function (params, handler) {
         request.get(FILE, params, handler)
     },
     getFile: function (id, params, handler) {
-        request.get(`${FILE}${id}/`, params, handler)
+        request.get(`${FILE}/${id}`, params, handler)
     },
     // 文件下载
     downloadFile: function (id, params, handler) {
