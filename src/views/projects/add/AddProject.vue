@@ -70,7 +70,7 @@
         <a-form-item :label="`分 组: `">
           <a-select style="width: 200px" @change="value => value"
                     v-decorator="[
-                      'group_id',
+                      'groupId',
                       { rules: [{
                           required: true, message: '项目分组不可为空！' }
                         ],
@@ -204,7 +204,7 @@ export default {
     handleAdd() {
       const { count, tabGroups } = this;
       const newData = {
-        name: `联系人分组${count + 1}`,
+        name: `项目分组${count + 1}`,
       };
       this.tabGroups = [...tabGroups, newData];
       this.count = count + 1;
@@ -219,7 +219,7 @@ export default {
       });
     },
     getGroups: function () {
-      api.listProjectGroup({ page: 1, page_size: 9999 }, data => {
+      api.listProjectGroup({ current: 1, size: 9999 }, data => {
         this.groups = data.records;
         this.tabGroups = data.records;
         this.count = data.total;

@@ -70,7 +70,7 @@
         <a-form-item :label="`分 组: `">
           <a-select style="width: 200px" @change="value => value"
                     v-decorator="[
-                      'group_id',
+                      'groupId',
                       { rules: [{
                           required: true, message: '项目分组不可为空！' }
                         ],

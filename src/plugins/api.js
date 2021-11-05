@@ -13,12 +13,12 @@ const FILE_GROUP = `${FILE}-group`;
 const FILE_TREE = `${FILE}-group/tree`;
 const FILE_DOWNLOAD = `${FILE}download/`;
 
-const PROJECT = '/project/';
-const PROJECT_COPY = `${PROJECT}copy/`;
-const PROJECT_EXECUTE = `${PROJECT}execute/`;
-const PROJECT_GROUP = `${PROJECT}group/`;
-const PROJECT_STATISTICS = `${PROJECT}statistics/`;
-const PROJECT_TEMP_IMPORT = `${PROJECT}temp-import/`
+const PROJECT = '/project';
+const PROJECT_COPY = `${PROJECT}/copy`;
+const PROJECT_EXECUTE = `${PROJECT}/execute`;
+const PROJECT_GROUP = `${PROJECT}-group`;
+const PROJECT_STATISTICS = `${PROJECT}/statistics`;
+const PROJECT_TEMP_IMPORT = `${PROJECT}/temp-import`
 
 
 const CASE = '/case/';
@@ -162,7 +162,7 @@ export default {
     },
     // 删除项目分组
     deleteProjectGroup: function (id, params, handler) {
-        request.delete(`${PROJECT_GROUP}${id}/`, params, handler)
+        request.delete(`${PROJECT_GROUP}/${id}`, params, handler)
     },
     // 新增项目分组
     createProjectGroup: function (params, handler) {
@@ -170,7 +170,7 @@ export default {
     },
     // 更新项目分组
     updateProjectGroup: function (id, params, handler) {
-        request.put(`${PROJECT_GROUP}${id}/`, params, handler)
+        request.put(PROJECT_GROUP, params, handler)
     },
 
     /*-------------- 项目 ---------------*/
@@ -188,11 +188,11 @@ export default {
     },
     // 更新项目
     updateProject: function (id, params, handler) {
-        request.put(`${PROJECT}${id}/`, params, handler)
+        request.put(PROJECT, params, handler)
     },
     // 查询项目
     getProject: function (id, params, handler) {
-        request.get(`${PROJECT}${id}/`, params, handler)
+        request.get(`${PROJECT}/${id}`, params, handler)
     },
     // 执行项目
     executeProject: function (params, handler, errHandler) {

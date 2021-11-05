@@ -145,20 +145,20 @@ const columns = [
   },
   {
     title: '分组',
-    key: 'group_name',
-    dataIndex: 'group_name',
+    key: 'groupName',
+    dataIndex: 'groupName',
     align: 'center'
   },
   {
     title: '创建时间',
-    key: 'created_at',
-    dataIndex: 'created_at',
+    key: 'createdAt',
+    dataIndex: 'createdAt',
     align: 'center'
   },
   {
     title: '更新时间',
-    key: 'updated_at',
-    dataIndex: 'updated_at',
+    key: 'updatedAt',
+    dataIndex: 'updatedAt',
     align: 'center'
   },
   {
