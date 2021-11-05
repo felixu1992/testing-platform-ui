@@ -12,7 +12,7 @@ module.exports = {
                 target: 'http://localhost:20000',
                 changeOrigin: true,
                 pathRewrite: {
-                    '^/testing-platform-api/': '/'
+                    '^/testing-platform-api/': '/api/'
                 }
             },
             '/project/temp-export/': {

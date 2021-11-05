@@ -57,7 +57,7 @@
           分 组：
           <a-select style="width: 200px" @change="value => value"
                     v-decorator="[
-                      'group_id',
+                      'groupId',
                       { rules: [{
                           required: true, message: '联系人分组不可为空！' }
                         ],
@@ -206,10 +206,10 @@ export default {
       });
     },
     getContact(id) {
-      this.request.get('/contactor/' + id + '/', {}, data => this.form.setFieldsValue(data));
+      api.getContactor(id, {}, data => this.form.setFieldsValue(data));
     },
     updateContact(id, params) {
-      this.request.put('/contactor/' + id + '/', params, data => this.$router.push('/contact'));
+      api.updateContactor(id, params, data => this.$router.push('/contact'));
     }
   },
   watch: {

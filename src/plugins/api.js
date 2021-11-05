@@ -1,12 +1,12 @@
 import request from './axios.js';
 
 const USER = '/user/';
-const USER_SIGNIN = `${USER}signin/`;
-const USER_SIGNOUT = `${USER}signout/`;
+const USER_SIGNIN = `${USER}login`;
+const USER_SIGNOUT = `${USER}logout/`;
 
-const CONTACTOR = '/contactor/';
-const CONTACTOR_GROUP = `${CONTACTOR}group/`;
-const CONTACTOR_TREE = `${CONTACTOR}group/tree/`;
+const CONTACTOR = '/contactor';
+const CONTACTOR_GROUP = `${CONTACTOR}-group`;
+const CONTACTOR_TREE = `/${CONTACTOR}-group/tree`;
 
 const FILE = '/file/';
 const FILE_GROUP = `${FILE}group/`;
@@ -77,7 +77,7 @@ export default {
     },
     // 删除联系人分组
     deleteContactGroup: function (id, params, handler) {
-        request.delete(`${CONTACTOR_GROUP}${id}/`, params, handler)
+        request.delete(`${CONTACTOR_GROUP}/${id}/`, params, handler)
     },
     // 新增联系人分组
     createContactGroup: function (params, handler) {
@@ -85,20 +85,31 @@ export default {
     },
     // 更新联系人分组
     updateContactGroup: function (id, params, handler) {
-        request.put(`${CONTACTOR_GROUP}${id}/`, params, handler)
+        request.put(CONTACTOR_GROUP, params, handler)
     },
     // 查询联系人树
     treeContactor: function (params, handler) {
         request.get(CONTACTOR_TREE, params, handler)
     },
+    // 分页查询联系人
     listContactor: function (param, handler) {
         request.get(CONTACTOR, param, handler);
     },
-    saveContactor: function (param, handler) {
+    // 新增联系人
+    createContactor: function (param, handler) {
         request.post(CONTACTOR, param, handler);
     },
+    // 更新联系人
     updateContactor: function (id, param, handler) {
-        request.put(`${CONTACTOR}${id}/`, param, handler);
+        request.put(CONTACTOR, param, handler);
+    },
+    // 删除联系人
+    deleteContactor: function (id, params, handler) {
+        request.delete(`${CONTACTOR}/${id}`, params, handler)
+    },
+    // 查询联系人
+    getContactor: function (id, params, handler) {
+        request.get(`${CONTACTOR}/${id}`, params, handler)
     },
     /*-------------- 文件 ---------------*/
     // 分页查询文件分组

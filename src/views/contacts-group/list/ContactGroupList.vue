@@ -157,8 +157,8 @@ export default {
   methods: {
     getListPage: function (current, pageSize, name) {
       let params = {
-        page: current,
-        page_size: pageSize
+        current: current,
+        size: pageSize
       }
       if (name) {
         params.name = name

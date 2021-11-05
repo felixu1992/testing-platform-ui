@@ -67,9 +67,9 @@
           <a-button class="add-button" type="primary" @click="() => this.routeTo('/contact/add-contact')">
             新增
           </a-button>
-          <a-button class="batch-delete-button" :style="{ marginLeft: '8px' }" @click="() => console.info('批量删除')">
-            批量删除
-          </a-button>
+<!--          <a-button class="batch-delete-button" :style="{ marginLeft: '8px' }" @click="() => console.info('批量删除')">-->
+<!--            批量删除-->
+<!--          </a-button>-->
         </a-row>
       </a-form>
     </div>
@@ -93,6 +93,8 @@
 
 <script>
 
+import api from "@/plugins/api";
+
 const columns = [
   {
     title: '名称',
@@ -114,20 +116,20 @@ const columns = [
   },
   {
     title: '所属分组',
-    key: 'group_name',
-    dataIndex: 'group_name',
+    key: 'groupName',
+    dataIndex: 'groupName',
     align: 'center'
   },
   {
     title: '创建时间',
-    key: 'created_at',
-    dataIndex: 'created_at',
+    key: 'createdAt',
+    dataIndex: 'createdAt',
     align: 'center'
   },
   {
     title: '更新时间',
-    key: 'updated_at',
-    dataIndex: 'updated_at',
+    key: 'updatedAt',
+    dataIndex: 'updatedAt',
     align: 'center'
   },
   {
@@ -218,8 +220,8 @@ export default {
     },
     getListPage: function (current, pageSize, name, phone, email) {
       let params = {
-        page: current,
-        page_size: pageSize
+        current: current,
+        size: pageSize
       }
       if (name) {
         params.name = name
@@ -230,7 +232,7 @@ export default {
       if (email) {
         params.email = email
       }
-      this.request.get('/contactor/', params, (data => {
+      api.listContactor(params, (data => {
         this.data = data.records;
         this.pagination.pageSize = pageSize;
         this.pagination.current = current;
@@ -249,7 +251,7 @@ export default {
       });
     },
     deleteContact(contactorId) {
-      this.request.delete('/contactor/' + contactorId + "/", {
+      api.deleteContactor(contactorId, {
         id: contactorId
       }, data => {
         this.$notification.info({

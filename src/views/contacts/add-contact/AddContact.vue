@@ -52,7 +52,7 @@
           分  组：
           <a-select style="width: 200px" @change="value => value"
                     v-decorator="[
-                      'group_id',
+                      'groupId',
                       { rules: [{
                           required: true, message: '联系人分组不可为空！' }
                         ],
@@ -191,19 +191,16 @@ export default {
       });
     },
     getGroups: function () {
-      this.request.get('/contactor/group/', {
-        page: 1,
-        page_size: 9999
-      }, (data => {
+      api.listContactorGroup({current: 1, size: 9999}, (data => {
         this.groups = data.records;
         this.tabGroups = data.records;
         this.count = data.total;
       }));
     },
     createContactor: function (params) {
-      this.request.post('/contactor/', params, (data => {
+      api.createContactor(params, data => {
         this.$router.push('/contact');
-      }))
+      })
     },
   },
   watch: {
