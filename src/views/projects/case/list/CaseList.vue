@@ -207,13 +207,16 @@
                   <a-button size="small" type="link" @click="executeCase(record.id)">执行</a-button>
                 </a-menu-item>
                 <a-menu-item>
-                  <a-button size="small" type="link">上移</a-button>
+                  <a-button size="small" type="link" @click="sort(record.id, null, 'UP')">上移</a-button>
                 </a-menu-item>
                 <a-menu-item>
-                  <a-button size="small" type="link">下移</a-button>
+                  <a-button size="small" type="link" @click="sort(record.id, null, 'DOWN')">下移</a-button>
                 </a-menu-item>
                 <a-menu-item>
-                  <a-button size="small" type="link">置顶</a-button>
+                  <a-button size="small" type="link" @click="sort(record.id, null, 'TOP')">置顶</a-button>
+                </a-menu-item>
+                <a-menu-item>
+                  <a-button size="small" type="link" @click="sort(record.id, null, 'BOTTOM')">置底</a-button>
                 </a-menu-item>
                 <a-menu-item>
                   <a-button size="small" type="link" @click="copyCase(record.id, record.name)">复制</a-button>
@@ -447,7 +450,7 @@ export default {
             // 阻止冒泡
             ev.stopPropagation()
             // 得到源目标数据
-            this.sourceSort = record.sort
+            this.sourceSort = record.id
           },
           // 拖动元素经过的元素，往经过的数组中 push 坐标
           dragover: (event) => {
@@ -463,18 +466,18 @@ export default {
             // 阻止冒泡
             ev.stopPropagation()
             // 得到目标数据
-            this.targetSort = record.sort;
+            this.targetSort = record.id;
             let source = null;
             let target = null;
             this.data.forEach((item, index) => {
-              if (item.sort === this.targetSort)
+              if (item.id === this.targetSort)
                 target = item;
-              if (item.sort === this.sourceSort)
+              if (item.id === this.sourceSort)
                 source = item
             })
             this.data.splice(this.data.indexOf(source), 1);
             this.data.splice(this.data.indexOf(target), 0, source);
-            this.sort(this.sourceSort, this.targetSort, 'drag')
+            this.sort(this.sourceSort, this.targetSort, 'DRAG')
           }
         }
       };
@@ -483,8 +486,8 @@ export default {
       api.sortCase({
         source: source,
         target: target,
-        transfer: type
-      }, (data => this.getListPage(this.pagination.current, this.pagination.pageSize, this.projectId)))
+        operation: type
+      }, data => this.getListPage(this.pagination.current, this.pagination.pageSize, this.projectId))
     },
     getListPage: function (current, pageSize, projectId, name) {
       let params = {
