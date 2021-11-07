@@ -69,14 +69,14 @@ import api from "@/plugins/api";
 const columns = [
   {
     title: '项目名称',
-    dataIndex: 'project_name',
-    key: 'project_name',
+    dataIndex: 'projectName',
+    key: 'projectName',
     align: 'center'
   },
   {
     title: '项目分组',
-    dataIndex: 'group_name',
-    key: 'group_name',
+    dataIndex: 'groupName',
+    key: 'groupName',
     align: 'center'
   },
   {
@@ -105,8 +105,8 @@ const columns = [
   },
   {
     title: '执行时间',
-    key: 'created_at',
-    dataIndex: 'created_at',
+    key: 'createAt',
+    dataIndex: 'createAt',
     align: 'center'
   },
   {
@@ -165,8 +165,8 @@ export default {
     },
     getListPage: function (current, pageSize, name) {
       let params = {
-        page: current,
-        page_size: pageSize
+        current: current,
+        size: pageSize
       }
       if (name) {
         params.name = name
