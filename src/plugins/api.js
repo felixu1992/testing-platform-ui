@@ -6,7 +6,7 @@ const USER_SIGNOUT = `${USER}logout/`;
 
 const CONTACTOR = '/contactor';
 const CONTACTOR_GROUP = `${CONTACTOR}-group`;
-const CONTACTOR_TREE = `/${CONTACTOR}-group/tree`;
+const CONTACTOR_TREE = `${CONTACTOR}-group/tree`;
 
 const FILE = '/file';
 const FILE_GROUP = `${FILE}-group`;
@@ -21,13 +21,14 @@ const PROJECT_STATISTICS = `${PROJECT}/statistics`;
 const PROJECT_TEMP_IMPORT = `${PROJECT}/temp-import`
 
 
-const CASE = '/case/';
-const CASE_COMPATIBLE = `${CASE}compatible/`;
-const CASE_COPY = `${CASE}copy/`;
-const CASE_EXECUTE = `${CASE}execute/`;
-const CASE_EXPORT = `${CASE}export/`;
-const CASE_IMPORT = `${CASE}import/`;
-const CASE_SORT = `${CASE}sort/`;
+const CASE = '/case';
+const CASE_GROUP = `${CASE}-group`;
+const CASE_COMPATIBLE = `${CASE}/compatible/`;
+const CASE_COPY = `${CASE}/copy/`;
+const CASE_EXECUTE = `${CASE}/execute/`;
+const CASE_EXPORT = `${CASE}/export/`;
+const CASE_IMPORT = `${CASE}/import/`;
+const CASE_SORT = `${CASE}/sort/`;
 
 const RECORD = '/record/';
 const RECORD_EXPORT = `${RECORD}export/`;
@@ -180,7 +181,7 @@ export default {
     },
     // 删除项目
     deleteProject: function (id, params, handler) {
-        request.delete(`${PROJECT}${id}/`, params, handler)
+        request.delete(`${PROJECT}/${id}`, params, handler)
     },
     // 新增项目
     createProject: function (params, handler) {
@@ -207,12 +208,32 @@ export default {
         request.post(PROJECT_TEMP_IMPORT, params, handler, config)
     },
     /*-------------- 用例 ---------------*/
+    // 分页查询用例分组
+    listCaseGroup: function (params, handler) {
+        request.get(CASE_GROUP, params, handler)
+    },
+    // 查询用例树
+    // treeFile: function (params, handler) {
+    //     request.get(FILE_TREE, params, handler)
+    // },
+    // 删除用例分组
+    deleteCaseGroup: function (id, params, handler) {
+        request.delete(`${CASE_GROUP}/${id}`, params, handler)
+    },
+    // 新增用例分组
+    createCaseGroup: function (params, handler) {
+        request.post(CASE_GROUP, params, handler)
+    },
+    // 更新用例分组
+    updateCaseGroup: function (id, params, handler) {
+        request.put(CASE_GROUP, params, handler)
+    },
     // 分页查询用例
     listCase: function (params, handler) {
         request.get(CASE, params, handler)
     },
     getCase: function (id, params, handler) {
-        request.get(`${CASE}${id}/`, params, handler)
+        request.get(`${CASE}/${id}`, params, handler)
     },
     // 创建用例
     createCase: function (params, handler) {
@@ -220,7 +241,7 @@ export default {
     },
     // 更新用例
     updateCase: function (id, params, handler) {
-        request.put(`${CASE}${id}/`, params, handler)
+        request.put(CASE, params, handler)
     },
     // 用例排序
     sortCase: function (params, handler) {
@@ -228,7 +249,7 @@ export default {
     },
     // 删除用例
     deleteCase: function (id, params, handler) {
-        request.delete(`${CASE}${id}/`, params, handler)
+        request.delete(`${CASE}/${id}`, params, handler)
     },
     // 执行用例
     executeCase: function (params, handler) {

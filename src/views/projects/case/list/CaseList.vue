@@ -288,20 +288,20 @@ const columns = [
   },
   {
     title: '所属项目',
-    key: 'project_name',
-    dataIndex: 'project_name',
+    key: 'projectName',
+    dataIndex: 'projectName',
     align: 'center'
   },
   {
     title: '创建时间',
-    key: 'created_at',
-    dataIndex: 'created_at',
+    key: 'createdAt',
+    dataIndex: 'createdAt',
     align: 'center'
   },
   {
     title: '更新时间',
-    key: 'updated_at',
-    dataIndex: 'updated_at',
+    key: 'updatedAt',
+    dataIndex: 'updatedAt',
     align: 'center'
   },
   {
@@ -488,9 +488,9 @@ export default {
     },
     getListPage: function (current, pageSize, projectId, name) {
       let params = {
-        page: current,
-        page_size: pageSize,
-        project_id: projectId,
+        current: current,
+        size: pageSize,
+        projectId: projectId,
       }
       if (name) {
         params.name = name
@@ -523,7 +523,7 @@ export default {
       });
     },
     deleteCase(id) {
-      api.deleteCase(id, {id: id}, data => {
+      api.deleteCase(id, {}, data => {
         api.notification(this.$notification, '操作提示', '删除成功', 'info')
         this.getListPage(this.pagination.current, this.pagination.pageSize, this.projectId, this.name);
       })

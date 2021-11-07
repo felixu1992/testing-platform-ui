@@ -3,7 +3,7 @@
     <a-card title="更新用例">
       <a-modal :visible="extendVisible" :title="extendTitle" @ok="extendHandleOk" @cancel="extendCancelModal">
         <a-form id="extend-modal-form" :form="extendModalForm" class="extend-form">
-          <a-form-item :label="`注入键: `">
+          <a-form-item :label="`插入位置: `">
             <div v-for="(item, index) in this.extendModal.ste">
               <a-input :key="`input`+index" v-model="item.value" class="step" placeholder="请输入步骤" style="width: 70%"/>
               <a-button :key="`button`+index" size='small' type="link" @click="extendDropInp(index)">
@@ -16,7 +16,7 @@
               新增步骤
             </a-button>
           </a-form-item>
-          <a-form-item :label="`注入值: `">
+          <a-form-item :label="`取值过程: `">
             <div>
               <a-select style="width: 50%"
                         show-search
@@ -40,24 +40,32 @@
         <a-form id="expected-modal-form" class="expected-form">
           <a-form-item :label="`预期字段: `">
             <div v-for="(item, index) in this.expectedModal.ste">
-              <a-input :key="`input`+index" v-model="item.value" class="step" placeholder="请输入预期字段" style="width: 70%"/>
+              <a-input :key="`input`+index" v-model="item.value" class="step" placeholder="请输入步骤" style="width: 70%"/>
+              <a-button :key="`button`+index" size='small' type="link" @click="expectedDropInp(index)">
+                <a-icon type="minus"/>
+                删除此步
+              </a-button>
             </div>
+            <a-button size='small' type="link" @click="expectedAddInp">
+              <a-icon type="plus"/>
+              新增步骤
+            </a-button>
           </a-form-item>
           <a-form-item :label="`预期值: `">
             <div>
-              <a-radio-group v-model:value="expectedModal.valueOrDepend">
-                <a-radio :value="1">
+              <a-radio-group v-model:value="expectedModal.dep.fixed">
+                <a-radio :value="true">
                   固定值
                 </a-radio>
-                <a-radio :value="2">
+                <a-radio :value="false">
                   依赖值
                 </a-radio>
               </a-radio-group>
             </div>
-            <div v-if="expectedModal.valueOrDepend === 1">
+            <div v-if="expectedModal.dep.fixed">
               <a-input v-model="expectedModal.dep.value" placeholder="请输入预期值" style="width: 70%"/>
             </div>
-            <div v-if="expectedModal.valueOrDepend === 2">
+            <div v-if="!expectedModal.dep.fixed">
               <a-select style="width: 50%"
                         show-search
                         placeholder="请输入用例名称"
@@ -75,6 +83,19 @@
             </div>
           </a-form-item>
         </a-form>
+      </a-modal>
+      <a-modal :visible="categoryVisible" title="编辑用例分类" @ok="dealModal" @cancel="dealModal" destroyOnClose>
+        <a-table :rowKey="record => record.id + record.name" bordered :data-source="tabGroups" :columns="columns" :pagination="false" size="small" :scroll="{ y: 240 }">
+          <template slot="name" slot-scope="text, record">
+            <editable-cell :text="text" :edited="!record.id" @change="onCellChange(record, 'name', $event)" @edit="() => plusBtnDisable = true"/>
+          </template>
+          <template slot="operation" slot-scope="text, record">
+            <a-popconfirm v-if="categories.length" title="确认要删除该分类吗?" @confirm="() => onDelete(record)">
+              <a-button size='small' type="link">删 除</a-button>
+            </a-popconfirm>
+          </template>
+        </a-table>
+        <a-button class="editable-add-btn" type="link" @click="handleAdd" :disabled="plusBtnDisable"><a-icon type="plus" />新增分组</a-button>
       </a-modal>
       <a-form id="add-case-form" :form="form" class="case-form" @submit="handleSubmit">
         <a-form-item :label="`排 序: `" hidden>
@@ -171,7 +192,7 @@
             <json-param-editor v-else class="json-param" :value="schemaParams" :files="fileTreeData" disabled-type/>
           </div>
         </a-form-item>
-        <a-form-item :label="`参数注入: `">
+        <a-form-item :label="`动态参数: `">
           <a-table :columns="extendColumns" :data-source="extendData" :pagination="false"
                    style="width: 50%" size="small" bordered tableLayout="fixed">
             <span slot="extend_key" slot-scope="text, record">
@@ -180,6 +201,11 @@
                 <span :key="index" v-if="index + 1 < record.ste.length">
                    >
                 </span>
+              </span>
+            </span>
+            <span slot="extend_depend" slot-scope="text, record">
+              <span v-for="(item, index) in record.dep.depend">
+                {{ getCaseName(item) }}
               </span>
             </span>
             <span slot="extend_value" slot-scope="text, record">
@@ -219,13 +245,24 @@
             <span slot="expected_key" slot-scope="text, record">
               <span v-for="(item, index) in record.ste">
                 {{ item.value }}
+                <span :key="index" v-if="index + 1 < record.ste.length">
+                   >
+                </span>
+              </span>
+            </span>
+            <span slot="expected_depend" slot-scope="text, record">
+              <span v-if="record.dep.fixed">
+                -
+              </span>
+              <span v-if="!record.dep.fixed" v-for="(item, index) in record.dep.depend">
+                {{ getCaseName(item) }}
               </span>
             </span>
             <span slot="expected_value" slot-scope="text, record">
-              <span v-if="record.valueOrDepend === 1">
+              <span v-if="record.dep.fixed">
                 {{ record.dep.value }}
               </span>
-              <span v-if="record.valueOrDepend === 2" v-for="(item, index) in record.dep.steps">
+              <span v-if="!record.dep.fixed" v-for="(item, index) in record.dep.steps">
                 {{ item }}
                 <span :key="index" v-if="index + 1 < record.dep.steps.length">
                    >
@@ -277,7 +314,7 @@
         <a-form-item :label="`校验 HTTP 状态: `">
           <a-switch checked-children="是" un-checked-children="否"
                     v-decorator="[
-                        'check_status',
+                        'checkStatus',
                         {
                           rules: [{
                             required: true, message: '是否校验 HTTP 状态不可为空！'
@@ -291,7 +328,7 @@
         <a-form-item :label="`预期 HTTP 状态码: `">
           <a-input class="case-host" style="width: 10%"
                    v-decorator="[
-                    'expected_http_status',
+                    'expectedHttpStatus',
                     { rules: [
                           { required: false }
                         ]
@@ -331,6 +368,29 @@
             <a-icon type="question-circle" style="font-size: 18px; color: #52c41a; padding: 10px" />
           </a-popover>
         </a-form-item>
+        <a-form-item :label="`分 组: `">
+          <a-select style="width: 200px" @change="value => value"
+                    v-decorator="[
+                      'groupId',
+                      { rules: [{
+                          required: true, message: '用例分类不可为空！' }
+                        ],
+                      initialValue: null
+                      }
+                    ]"
+          >
+            <div slot="dropdownRender" slot-scope="menu">
+              <v-nodes :vnodes="menu" />
+              <a-divider style="margin: 4px 0;" />
+              <div style="padding: 4px 4px; cursor: pointer; text-align:center" @mousedown="e => e.preventDefault()">
+                <a-button type="link" size="small" @click="() => categoryVisible = true">编辑分组</a-button>
+              </div>
+            </div>
+            <a-select-option v-for="group in categories" :value="group.id">
+              {{ group.name }}
+            </a-select-option>
+          </a-select>
+        </a-form-item>
         <a-form-item :label="`备 注: `">
           <a-textarea class="case-remark"
                       style="width: 30%"
@@ -366,13 +426,19 @@ import {json2JsonSchema, jsonSchema2Json, json2TreeData} from '@/utils/utils'
 
 const extendColumns = [
   {
-    title: '注入键',
+    title: '插入位置',
     key: 'extend_key',
     scopedSlots: {customRender: 'extend_key'},
     align: 'center'
   },
   {
-    title: '注入值',
+    title: '取值依赖',
+    key: 'extend_depend',
+    scopedSlots: {customRender: 'extend_depend'},
+    align: 'center'
+  },
+  {
+    title: '取值过程',
     key: 'extend_value',
     scopedSlots: {customRender: 'extend_value'},
     align: 'center'
@@ -386,9 +452,15 @@ const extendColumns = [
 ];
 const expectedColumns = [
   {
-    title: '预期字段',
+    title: '校验字段',
     key: 'expected_key',
     scopedSlots: {customRender: 'expected_key'},
+    align: 'center'
+  },
+  {
+    title: '预期依赖',
+    key: 'expected_depend',
+    scopedSlots: {customRender: 'expected_depend'},
     align: 'center'
   },
   {
@@ -417,6 +489,7 @@ export default {
     api.treeFile({}, data => this.fileTreeData = data);
     this.getCase(id);
   },
+
   data() {
     return {
       cases: [],
@@ -483,13 +556,9 @@ export default {
       expectedTreeData: [],
       expectedModal: {
         index: -1,
-        valueOrDepend: 1,
-        ste: [
-          {
-            value: ''
-          }
-        ],
+        ste: [],
         dep: {
+          fixed: true,
           depend: null,
           steps: [],
           value: ''
@@ -497,10 +566,40 @@ export default {
         cases: []
       },
       expectedData: [],
-      expectedIndex: 0
+      expectedIndex: 0,
+      tabGroups: [],
+      categoryVisible: false,
+      categories: [],
+      count: 0,
+      plusBtnDisable: false,
+      columns: [
+        {
+          title: '序号',
+          dataIndex: 'index',
+          customRender: (text, row, index) => index + 1,
+          width: 60,
+          align: 'center'
+        },
+        {
+          title: '分类名称',
+          dataIndex: 'name',
+          scopedSlots: { customRender: 'name' },
+          align: 'center',
+        },
+        {
+          title: '操作',
+          dataIndex: 'operation',
+          scopedSlots: { customRender: 'operation' },
+          width: 60,
+          align: 'center',
+        },
+      ],
     }
   },
   methods: {
+    getCaseName(id) {
+      return this.cases.filter(item => item.id === id)[0].name;
+    },
     filterOption(input, option) {
       return (
           option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
@@ -549,22 +648,21 @@ export default {
         query: query
       });
     },
-    buildExtend(value) {
+    buildExtend(params) {
       if (this.extendData.length > 0) {
-        let extend_keys = [];
-        let extend_values = [];
+        let dependencies = [];
         for (let i = 0; i < this.extendData.length; i++) {
           let data = this.extendData[i];
-          let steps = data.ste.map(t => t.value);
-          extend_keys.push(steps);
-          extend_values.push(data.dep);
+          let dependency = {};
+          dependency.dependKey = data.ste.map(t => t.value);
+          dependency.dependValue = data.dep;
+          dependencies.push(dependency)
         }
-        value.extend_keys = extend_keys;
-        value.extend_values = extend_values;
+        params.dependencies = dependencies;
       }
     },
-    parseExtend(keys, values) {
-      for (let i = 0; i < keys.length; i++) {
+    parseExtend(dependencies) {
+      for (let i = 0; i < dependencies.length; i++) {
         let ex =  {
           index: -1,
           ste: [],
@@ -572,52 +670,51 @@ export default {
             depend: null,
             steps: []
           }
-        }
-        ex.index = i + 1
-        ex.ste = keys[i].map(t => {
+        };
+        ex.index = i + 1;
+        let dependency = dependencies[i];
+        ex.ste = dependency.dependKey.map(t => {
           return { value: t }
-        })
-        ex.dep = values[i]
-        this.extendData.push(ex)
+        });
+        ex.dep = dependency.dependValue;
+        this.extendData.push(ex);
       }
       this.extendIndex = this.extendData.length
       console.info(this.extendData)
     },
     buildExpected(value) {
       if (this.expectedData.length > 0) {
-        let expected_keys = [];
-        let expected_values = [];
+        let expects = [];
         for (let i = 0; i < this.expectedData.length; i++) {
           let data = this.expectedData[i];
-          expected_keys.push(data.ste.map(t => t.value));
-          expected_values.push(data.dep);
+          let expect = {};
+          expect.expectKey = data.ste.map(t => t.value);
+          let dep = data.dep;
+          dep.fixed = !dep.depend;
+          expect.expectValue = dep;
+          expects.push(expect);
         }
-        value.expected_keys = expected_keys;
-        value.expected_values = expected_values;
+        value.expects = expects;
       }
     },
-    parseExpected(keys, values) {
-      for (let i = 0; i < keys.length; i++) {
+    parseExpected(expects) {
+      for (let i = 0; i < expects.length; i++) {
         let ex =  {
           index: -1,
-          valueOrDepend: 1,
-          ste: [
-            {
-              value: ''
-            }
-          ],
+          ste: [],
           dep: {
+            fixed: true,
             depend: null,
             steps: [],
             value: ''
           },
         }
         ex.index = i + 1
-        ex.ste = keys[i].map(t => {
+        let expect = expects[i];
+        ex.ste = expect.expectKey.map(t => {
           return { value: t }
         })
-        ex.dep = values[i]
-        ex.valueOrDepend = (ex.dep.depend === undefined || ex.dep.depend === null) ? 1 : 2
+        ex.dep = expect.expectValue
         this.expectedData.push(ex)
       }
       this.expectedIndex = this.expectedData.length
@@ -637,7 +734,7 @@ export default {
       if (this.sample) {
         params.sample = this.sample;
       }
-      params.project_id = this.projectId;
+      params.projectId = this.projectId;
       params.id = this.id
       api.updateCase(this.id, params, (data => {
         let query = {
@@ -656,24 +753,29 @@ export default {
       }));
     },
     getCase: function (id) {
-      api.getCase(id, { id: id }, data => {
-        this.projectId = data.project_id
+      api.getCase(id, {}, data => {
+        this.projectId = data.projectId
         this.form.setFieldsValue(data)
         this.params = data.params !== null ? data.params : {}
         this.sample = data.sample !== null ? data.sample : {}
-        if (data.extend_keys !== null && data.extend_keys.length > 0) {
-          this.parseExtend(data.extend_keys, data.extend_values)
+        if (data.dependencies && data.dependencies.length > 0) {
+          this.parseExtend(data.dependencies)
         }
-        if (data.expected_keys !== null && data.expected_keys.length > 0) {
-          this.parseExpected(data.expected_keys, data.expected_values)
+        if (data.expects && data.expects.length > 0) {
+          this.parseExpected(data.expects)
         }
         id = Number(id)
-        api.listCase({ page: 1, page_size: 9999, project_id: this.projectId }, data => this.cases = data.records.filter(item => item.id !== id));
+        api.listCase({ current: 1, size: 9999, projectId: this.projectId }, data => this.cases = data.records.filter(item => item.id !== id));
+        api.listCaseGroup({ current: 1, size: 9999, projectId: this.projectId }, data => {
+          this.tabGroups = data.records;
+          this.categories = data.records;
+          this.count = data.total;
+        });
       });
     },
     // extend modal
     extendAdd() {
-      this.extendTitle = '新增参数注入';
+      this.extendTitle = '新增动态参数';
       this.extendFillCases();
       this.extendVisible = true;
     },
@@ -791,18 +893,17 @@ export default {
     },
     expectedHandleOk(e) {
       e.preventDefault();
-      if (this.expectedModal.valueOrDepend === 1) {
-        this.expectedModal.dep.steps = this.expectedModal.ste;
+      // 固定值，steps 和 depend 应该是 null，非固定值，value 应该是 null
+      if (this.expectedModal.dep.fixed) {
+        this.expectedModal.dep.steps = null;
         this.expectedModal.dep.depend = null;
       } else {
-        this.expectedModal.dep.value = ''
+        this.expectedModal.dep.value = null;
       }
-      if (this.expectedModal.ste.length === 0
-          || (this.expectedModal.valueOrDepend === 1 && (this.expectedModal.dep.value === ''
-              || this.expectedModal.dep.value === undefined))
-          || (this.expectedModal.valueOrDepend === 2 && (this.expectedModal.dep.depend === null
-              || this.expectedModal.dep.depend === undefined))
-          || this.expectedModal.dep.steps.length === 0) {
+      if (this.expectedModal.ste.length === 0 // 没有输入步骤
+          || (this.expectedModal.dep.fixed && !this.expectedModal.dep.value) // 选择了固定值，但是没有输入值
+          || (!this.expectedModal.dep.fixed && (!this.expectedModal.dep.depend
+              || (!this.expectedModal.dep.steps || this.expectedModal.dep.steps.length === 0)))) { // 选择依赖值，但是没有选择依赖项
         this.$notification.warn({
           message: '警告',
           description: '预期字段和预期值不匹配，将被忽略',
@@ -828,12 +929,7 @@ export default {
       this.expectedTitle = '';
       this.expectedModal = {
         index: -1,
-        valueOrDepend: 1,
-        ste: [
-          {
-            value: ''
-          }
-        ],
+        ste: [],
         dep: {
           depend: null,
           steps: [],
@@ -843,6 +939,12 @@ export default {
       };
       this.expectedTreeData = [];
       this.expectedVisible = false;
+    },
+    expectedAddInp() {
+      this.expectedModal.ste.push({value: ''})
+    },
+    expectedDropInp(index) {
+      this.expectedModal.ste.splice(index, 1)
     },
     expectedSelect: function (selectedKeys, e) {
       this.expectedModal.dep.steps = [];
@@ -950,9 +1052,59 @@ export default {
         type = 'common'
       }
       return type
-    }
+    },
+    dealModal: function () {
+      const tabGroups = [...this.tabGroups];
+      const categories = tabGroups.filter(item => item.id);
+      this.categories = categories;
+      this.tabGroups = categories;
+      this.count = categories.length;
+      this.categoryVisible = false;
+    },
+    onCellChange(record, dataIndex, value) {
+      const tabGroups = [...this.tabGroups];
+      const handler = data => {
+        const index = tabGroups.indexOf(record);
+        tabGroups.splice(index, 1, data);
+        this.tabGroups = tabGroups;
+      };
+      if (record.id) {
+        const id = record.id
+        api.updateCaseGroup(id, { id: id, name: value }, handler);
+      } else {
+        api.createCaseGroup({ name: value, projectId: this.projectId }, handler);
+      }
+      this.plusBtnDisable = false;
+    },
+    onDelete(record) {
+      const tabGroups = [...this.tabGroups];
+      const index = tabGroups.indexOf(record);
+      tabGroups.splice(index, 1)
+      this.tabGroups = tabGroups;
+      if (record.id) {
+        const id = record.id
+        api.deleteCaseGroup(id, {
+          id: id
+        }, data => api.notification(this.$notification, '操作提示', '删除成功', 'info'));
+      }
+    },
+    handleAdd() {
+      const { count, tabGroups } = this;
+      const newData = {
+        name: `分类${count + 1}`,
+      };
+      this.tabGroups = [...tabGroups, newData];
+      this.count = count + 1;
+      this.plusBtnDisable = true;
+    },
   },
-  components: { JsonParamEditor },
+  components: {
+    VNodes: {
+      functional: true,
+      render: (h, ctx) => ctx.props.vnodes,
+    },
+    JsonParamEditor
+  },
 }
 </script>
 
