@@ -1,8 +1,8 @@
 import request from './axios.js';
 
-const USER = '/user/';
-const USER_SIGNIN = `${USER}login`;
-const USER_SIGNOUT = `${USER}logout/`;
+const USER = '/user';
+const USER_SIGNIN = `${USER}/login`;
+const USER_SIGNOUT = `${USER}/logout`;
 
 const CONTACTOR = '/contactor';
 const CONTACTOR_GROUP = `${CONTACTOR}-group`;
@@ -37,11 +37,46 @@ const REPORT = '/report/';
 const REPORT_PAGE = `${REPORT}page/`
 
 export default {
-    signin: function (param, handler) {
-        request.post(USER_SIGNIN, param, handler);
+    /*-------------- 用户管理 ---------------*/
+    // 登录
+    signin: function (params, handler) {
+        request.post(USER_SIGNIN, params, handler);
     },
+    // 登出
     signout: function (handler) {
         request.post(USER_SIGNOUT, {}, handler);
+    },
+    // 分页查询用户
+    listUser: function (params, handler) {
+        request.get(USER, params, handler);
+    },
+    // 新增用户
+    createUser: function (param, handler) {
+        request.post(USER, param, handler);
+    },
+    // 更新用户
+    updateUser: function (id, param, handler) {
+        request.put(USER, param, handler);
+    },
+    // 删除用户
+    deleteUser: function (id, params, handler) {
+        request.delete(`${USER}/${id}`, params, handler);
+    },
+    // 查询联系人
+    getUser: function (id, params, handler) {
+        request.get(`${USER}/${id}`, params, handler);
+    },
+    // 重置 Secret
+    resetSecret(id, params, handler) {
+        request.put(`${USER}/reset/${id}/secret`, params, handler);
+    },
+    // 重置密码
+    resetPassword(id, params, handler) {
+        request.put(`${USER}/reset/${id}/password`, params, handler);
+    },
+    // 修改密码
+    changePassword(id, params, handler) {
+        request.put(`${USER}/change/${id}/password`, params, handler);
     },
     notification: function (notification, msg, desc, type) {
         switch (type) {

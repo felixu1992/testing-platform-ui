@@ -24,6 +24,10 @@
           <a-icon type="dashboard"/>
           测试记录
         </a-menu-item>
+        <a-menu-item v-if="admin" @click="() => $router.push('/user')">
+          <a-icon type="user"/>
+          用户管理
+        </a-menu-item>
       </a-menu>
     </div>
     <div class="top-info">
@@ -37,7 +41,6 @@
         <a-button @click="() => $router.push('/login')">登陆</a-button>
         <a-button @click="() => $router.push('/register')">注册</a-button>
       </div>
-
     </div>
   </div>
 
@@ -62,6 +65,9 @@ export default {
       let userInfo = this.$store.state.loggedInUserInfo;
       this.user = userInfo
       return userInfo.username.length > 10 ? userInfo.username.substr(0, 10) + '...' : userInfo.username;
+    },
+    admin: function () {
+      return this.user.role !== "ORDINARY"
     }
   },
   methods: {

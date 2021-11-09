@@ -197,9 +197,9 @@ export default {
     },
     statistics: function () {
       api.statisticsProject({}, data => {
-        this.count.projectNum = data.project;
-        this.count.caseNum = data.case;
-        this.count.recordNum = data.record;
+        this.count.projectNum = data.projectNum;
+        this.count.caseNum = data.caseNum;
+        this.count.recordNum = data.recordNum;
       })
     },
     getCurrentStyle(current, today) {

@@ -195,6 +195,29 @@ const routes = [
         ]
     },
     {
+        path: '/user',
+        name: '用户管理',
+        component: () => import('@/views/user/index'),
+        redirect: '/user/list',
+        children: [
+            {
+                path: 'list',
+                name: '用户列表',
+                component: () => import('@/views/user/list/UserList')
+            },
+            {
+                path: 'add-user',
+                name: '用户新增',
+                component: () => import('@/views/user/add/UserAdd')
+            },
+            {
+                path: 'update-user',
+                name: '用户编辑',
+                component: () => import('@/views/user/update/UserUpdate')
+            },
+        ]
+    },
+    {
         path: '/errors',
         name: 'ErrorsPage',
         component: ErrorsPage
