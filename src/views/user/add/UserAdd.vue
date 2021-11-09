@@ -81,56 +81,7 @@ export default {
   },
   data() {
     return {
-      visible: false,
-      name: '',
-      email: '',
-      phone: '',
-      projectTreeData: [
-        {
-          title: "node1",
-          value: "node1",
-          key: "node1",
-          disable: true,
-          children: []
-        },
-        {
-          title: "node2",
-          value: "node2",
-          key: "node2",
-          disable: true,
-          children: [
-            {
-              title: "node2-1",
-              value: "node2-1",
-              key: "node2-1",
-              disable: true,
-              children: []
-            }
-          ]
-        },
-        {
-          title: "node3",
-          value: "node3",
-          key: "node3",
-          disable: true,
-          children: [
-            {
-              title: "node3-1",
-              value: "node3-1",
-              key: "node3-1",
-              disable: true,
-              children: []
-            },
-            {
-              title: "node3-2",
-              value: "node3-2",
-              key: "node3-2",
-              disable: true,
-              children: []
-            }
-          ]
-        }
-      ]
+      projectTreeData: []
     }
   },
   methods: {
@@ -138,7 +89,7 @@ export default {
       e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
-          this.createUser(values)
+          this.createUser(values);
         }
       });
     },
@@ -149,8 +100,8 @@ export default {
     },
     createUser: function (params) {
       api.createUser(params, data => {
-        this.$router.push('/contact');
-      })
+        this.$router.push('/user');
+      });
     },
   },
   computed: {
