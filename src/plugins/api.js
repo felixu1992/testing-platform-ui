@@ -17,6 +17,7 @@ const PROJECT = '/project';
 const PROJECT_COPY = `${PROJECT}/copy`;
 const PROJECT_EXECUTE = `${PROJECT}/execute`;
 const PROJECT_GROUP = `${PROJECT}-group`;
+const PROJECT_GROUP_TREE = `${PROJECT_GROUP}/tree`
 const PROJECT_STATISTICS = `${PROJECT}/statistics`;
 const PROJECT_TEMP_IMPORT = `${PROJECT}/temp-import`
 
@@ -207,7 +208,9 @@ export default {
     updateProjectGroup: function (id, params, handler) {
         request.put(PROJECT_GROUP, params, handler)
     },
-
+    treeProject: function (params, handler) {
+        request.get(PROJECT_GROUP_TREE, params, handler);
+    },
     /*-------------- 项目 ---------------*/
     // 分页查询项目
     listProject: function (params, handler) {
