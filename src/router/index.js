@@ -215,6 +215,11 @@ const routes = [
                 name: '用户编辑',
                 component: () => import('@/views/user/update/UserUpdate')
             },
+            {
+                path: 'change-password',
+                name: '修改密码',
+                component: () => import('@/views/user/change-password/ChangePassword')
+            }
         ]
     },
     {

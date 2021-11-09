@@ -1105,6 +1105,14 @@ export default {
     },
     JsonParamEditor
   },
+  watch: {
+    tabGroups: {
+      handler(newV, oldV) {
+        const editing = newV.filter(group => !group.id)
+        this.plusBtnDisable = editing.length !== 0
+      }, immediate: true
+    }
+  }
 }
 </script>
 
