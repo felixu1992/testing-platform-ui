@@ -74,11 +74,11 @@ export default {
       });
     },
     doLogin: function (params) {
-      api.signin(params, (data => {
+      api.signin(params, data => {
         this.$message.info("登陆成功");
         this.$store.commit('doLogin', data);
         this.routeTo('/');
-      }));
+      });
     }
   }
 }

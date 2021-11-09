@@ -79,6 +79,10 @@ export default {
     changePassword(id, params, handler) {
         request.put(`${USER}/change/${id}/password`, params, handler);
     },
+    // 修改默认密码
+    changeDefaultPassword(id, params, handler) {
+        request.put(`${USER}/change/${id}/default/password`, params, handler);
+    },
     notification: function (notification, msg, desc, type) {
         switch (type) {
             case 'info':

@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import store from '../store/index.js'
 import Home from '../views/home/Home.vue'
 import Login from '../views/login/Login'
+import ChangeDefault from '../views/user/change-default/ChangeDefault'
 import Register from '../views/register/Register'
 import ErrorsPage from "../views/common/errors-page/ErrorsPage";
 import UpdateContact from "@/views/contacts/update-contact/UpdateContact";
@@ -21,6 +22,11 @@ const routes = [
         path: '/login',
         name: '登陆',
         component: Login
+    },
+    {
+        path: '/change-default',
+        name: '修改默认密码',
+        component: ChangeDefault
     },
     {
         path: '/register',

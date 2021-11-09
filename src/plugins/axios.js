@@ -118,6 +118,14 @@ let responseHandler = (response, dataHandler, errHandler) => {
         store.commit("doLogoff");
         //跳转到登陆页
         router.push("/login")
+    } else if (respCode === 1004) {
+        console.log(responseData)
+        router.push({
+            path: "/change-default",
+            query: {
+                id: responseData.data.id
+            }
+        })
     } else if (respCode !== 0) {
         if (typeof respMsg === "string") {
             message.warn(respMsg)
