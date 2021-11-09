@@ -46,6 +46,7 @@
 
 <script>
 import api from "@/plugins/api";
+import store from "@/store";
 export default {
   name: "ChangePassword",
   beforeCreate() {
@@ -62,7 +63,11 @@ export default {
       this.form.validateFields((err, values) => {
         if (!err) {
           let user = this.$store.state.loggedInUserInfo;
-          api.changePassword(user.id, values, data => this.$router.push('/login'))
+          api.changePassword(user.id, values, data => {
+            store.commit("doLogoff");
+            this.$router.push('/login');
+            api.notification(this.$notification, '操作提示', '密码修改成功，请重新登录', 'info')
+          })
         }
       });
     },

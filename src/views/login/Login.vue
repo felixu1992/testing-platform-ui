@@ -36,9 +36,7 @@
           </a-button>
 
           <br/>
-          没有账号或者忘记密码？可以
-          <a @click="()=>{this.routeTo('/register')}">注册</a>
-          一个或者
+          没有账号或者忘记密码？请联系管理员创建一个或者
           <a @click="()=>{this.routeTo('/register')}">点我</a>
           找回！
         </a-form-item>

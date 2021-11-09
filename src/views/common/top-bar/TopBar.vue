@@ -37,10 +37,10 @@
         {{ infoText }}
         <span class="logoff"><a @click="logoff()">注销</a></span>
       </div>
-      <div class="two-btns" v-else>
-        <a-button @click="() => $router.push('/login')">登陆</a-button>
-        <a-button @click="() => $router.push('/register')">注册</a-button>
-      </div>
+<!--      <div class="two-btns" v-else>-->
+<!--        <a-button @click="() => $router.push('/login')">登陆</a-button>-->
+<!--        <a-button @click="() => $router.push('/register')">注册</a-button>-->
+<!--      </div>-->
     </div>
   </div>
 
