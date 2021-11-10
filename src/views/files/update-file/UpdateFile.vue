@@ -214,7 +214,9 @@ export default {
           formData.append('id', this.id)
           formData.append('name', values.name);
           formData.append('groupId', values.groupId);
-          formData.append('remark', values.remark);
+          if (values.remark) {
+            formData.append('remark', values.remark);
+          }
           if (values.files !== undefined) {
             formData.append('files', values.files.fileList[0].originFileObj);
           }

@@ -105,8 +105,8 @@ const columns = [
   },
   {
     title: '执行时间',
-    key: 'createAt',
-    dataIndex: 'createAt',
+    key: 'createdAt',
+    dataIndex: 'createdAt',
     align: 'center'
   },
   {
@@ -166,7 +166,8 @@ export default {
     getListPage: function (current, pageSize, name) {
       let params = {
         current: current,
-        size: pageSize
+        size: pageSize,
+        orders: 'created_at.desc'
       }
       if (name) {
         params.name = name

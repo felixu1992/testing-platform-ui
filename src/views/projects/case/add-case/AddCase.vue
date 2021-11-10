@@ -483,7 +483,7 @@ export default {
     this.pageSize = pageSize;
     api.treeContactor({}, data => this.developTreeData = data);
     api.treeFile({}, data => this.fileTreeData = data);
-    api.listCase({ current: 1, size: 9999, project_id: this.projectId }, data => this.cases = data.records);
+    api.listCase({ current: 1, size: 9999, projectId: this.projectId }, data => this.cases = data.records);
     api.listCaseGroup({ current: 1, size: 9999, projectId: projectId}, data => {
       this.tabGroups = data.records;
       this.categories = data.records;

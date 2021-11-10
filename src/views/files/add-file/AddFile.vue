@@ -207,7 +207,9 @@ export default {
           };
           formData.append('name', values.name);
           formData.append('groupId', values.groupId);
-          formData.append('remark', values.remark);
+          if (values.remark) {
+            formData.append('remark', values.remark);
+          }
           formData.append('files', values.files.fileList[0].originFileObj);
           api.createFile(formData, (data => {
             this.$router.push('/file')

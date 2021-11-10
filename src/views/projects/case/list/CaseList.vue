@@ -398,7 +398,7 @@ export default {
     },
     executeProject: function () {
       this.executing = true;
-      api.executeProject({id: this.projectId}, data => {
+      api.executeProject({ projectId: this.projectId }, data => {
         this.executing = false;
         const key = `open${Date.now()}`;
         this.$notification.info({

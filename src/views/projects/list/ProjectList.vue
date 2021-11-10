@@ -213,8 +213,9 @@ export default {
     },
     getListPage: function (current, pageSize, name, phone, email) {
       let params = {
-        page: current,
-        page_size: pageSize
+        current: current,
+        size: pageSize,
+        orders: 'created_at.desc'
       }
       if (name) {
         params.name = name
