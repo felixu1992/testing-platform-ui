@@ -31,10 +31,10 @@ const CASE_EXPORT = `${CASE}/export/`;
 const CASE_IMPORT = `${CASE}/import/`;
 const CASE_SORT = `${CASE}/sort`;
 
-const RECORD = '/record';
+const RECORD = '/report';
 const RECORD_EXPORT = `${RECORD}/export`;
 
-const REPORT = '/report/';
+const REPORT = '/record';
 const REPORT_PAGE = `${REPORT}page/`
 
 export default {
