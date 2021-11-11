@@ -21,10 +21,10 @@
                 <a-switch checked-children="是" un-checked-children="否" :checked="detail.run" disabled/>
               </a-form-item>
               <a-form-item :label="`校验 HTTP 状态: `">
-                <a-switch checked-children="是" un-checked-children="否" :checked="detail.check_status" disabled/>
+                <a-switch checked-children="是" un-checked-children="否" :checked="detail.checkStatus" disabled/>
               </a-form-item>
               <a-form-item :label="`预期 HTTP 状态码: `">
-                {{ detail.expected_http_status }}
+                {{ detail.expectedHttpStatus }}
               </a-form-item>
               <a-form-item :label="`开发者: `">
                 <a-tree-select
@@ -35,6 +35,7 @@
                     placeholder="选择开发者"
                     allowClear
                     tree-default-expand-all
+                    disabled
                 >
                 </a-tree-select>
               </a-form-item>
@@ -59,7 +60,7 @@
                   <json-editor class="json-editor" :show-btns="false" :expandedOnStart="true" mode="code" v-model="detail.params"/>
                 </div>
               </a-form-item>
-              <a-form-item :label="`参数注入: `">
+              <a-form-item :label="`动态参数: `">
                 <a-table :columns="extendColumns" :data-source="extendData" :pagination="false" size="small" bordered tableLayout="fixed">
                   <span slot="extend_key" slot-scope="text, record">
                     <span v-for="(item, index) in record.ste">
@@ -67,6 +68,11 @@
                       <span :key="index" v-if="index + 1 < record.ste.length">
                          >
                       </span>
+                    </span>
+                  </span>
+                  <span slot="extend_depend" slot-scope="text, record">
+                    <span>
+                      {{ getCaseName(record.dep.depend) }}
                     </span>
                   </span>
                   <span slot="extend_value" slot-scope="text, record">
@@ -85,19 +91,30 @@
                   <span slot="expected_key" slot-scope="text, record">
                     <span v-for="(item, index) in record.ste">
                       {{ item.value }}
+                      <span :key="index" v-if="index + 1 < record.ste.length">
+                         >
+                      </span>
+                    </span>
+                  </span>
+                  <span slot="expected_depend" slot-scope="text, record">
+                    <span v-if="record.dep.fixed">
+                      -
+                    </span>
+                    <span v-if="!record.dep.fixed">
+                      {{ getCaseName(record.dep.depend) }}
                     </span>
                   </span>
                   <span slot="expected_value" slot-scope="text, record">
-                    <span v-if="record.valueOrDepend === 1">
+                    <span v-if="record.dep.fixed">
                       {{ record.dep.value }}
                     </span>
-                    <span v-if="record.valueOrDepend === 2" v-for="(item, index) in record.dep.steps">
+                    <span v-if="!record.dep.fixed" v-for="(item, index) in record.dep.steps">
                       {{ item }}
                       <span :key="index" v-if="index + 1 < record.dep.steps.length">
                         >
                       </span>
                     </span>
-                    <a-button v-if="record.valueOrDepend === 2" type="link" size="small" @click="dependDetail(record.dep.depend)"><a-icon type="eye" /></a-button>
+                    <a-button v-if="!record.dep.fixed" type="link" size="small" @click="dependDetail(record.dep.depend)"><a-icon type="eye" /></a-button>
                   </span>
                 </a-table>
               </a-form-item>
@@ -112,7 +129,7 @@
             </a-col>
             <a-col :span="7">
               <a-form-item :label="`请求耗时: `">
-                {{ `${detail.time_used}ms` }}
+                {{ `${detail.timeUsed}ms` }}
               </a-form-item>
               <a-form-item :label="`请求结果: `">
                 <a-icon type="check-circle" style="font-size: 20px; color: #52c41a" v-if="detail.status === 'PASSED'"/>
@@ -121,7 +138,7 @@
               </a-form-item>
               <a-form-item :label="`接口返回: `">
                 <div class="case-sample">
-                  <json-editor :show-btns="false" :expandedOnStart="true" lang="zh" mode="code" v-model="detail.response_content" />
+                  <json-editor :show-btns="false" :expandedOnStart="true" lang="zh" mode="code" v-model="detail.responseContent" />
                 </div>
               </a-form-item>
             </a-col>
@@ -139,13 +156,19 @@
 import api from "@/plugins/api";
 const extendColumns = [
   {
-    title: '注入参数',
+    title: '插入位置',
     key: 'extend_key',
     scopedSlots: {customRender: 'extend_key'},
     align: 'center'
   },
   {
-    title: '依赖步骤',
+    title: '取值依赖',
+    key: 'extend_depend',
+    scopedSlots: {customRender: 'extend_depend'},
+    align: 'center'
+  },
+  {
+    title: '取值过程',
     key: 'extend_value',
     scopedSlots: {customRender: 'extend_value'},
     align: 'center'
@@ -153,9 +176,15 @@ const extendColumns = [
 ];
 const expectedColumns = [
   {
-    title: '预期字段',
+    title: '校验字段',
     key: 'expected_key',
     scopedSlots: {customRender: 'expected_key'},
+    align: 'center'
+  },
+  {
+    title: '预期依赖',
+    key: 'expected_depend',
+    scopedSlots: {customRender: 'expected_depend'},
     align: 'center'
   },
   {
@@ -172,6 +201,7 @@ export default {
   },
   data() {
     return {
+      cases: [],
       detail: {},
       extendData: [],
       expectedData: [],
@@ -191,6 +221,12 @@ export default {
     }
   },
   methods: {
+    getCaseName(id) {
+      console.log(id)
+      console.log(this.cases)
+      console.log(this.extendData)
+      return this.cases.filter(item => item.id === id)[0].name;
+    },
     dependDetail: function (caseId) {
       this.$router.push({
         path: '/project/case/update-case',
@@ -204,16 +240,17 @@ export default {
         this.detail = data;
         this.detail.params = data.params !== null ? data.params : {}
         this.detail.sample = data.sample !== null ? data.sample : {}
-        if (data.extend_keys !== null && data.extend_keys.length > 0) {
-          this.parseExtend(data.extend_keys, data.extend_values)
+        if (data.dependencies && data.dependencies.length > 0) {
+          this.parseExtend(data.dependencies)
         }
-        if (data.expected_keys !== null && data.expected_keys.length > 0) {
-          this.parseExpected(data.expected_keys, data.expected_values)
+        if (data.expects && data.expects.length > 0) {
+          this.parseExpected(data.expects)
         }
+        api.listCase({ current: 1, size: 9999, projectId: data.projectId }, data => this.cases = data.records.filter(item => item.id !== id));
       });
     },
-    parseExtend(keys, values) {
-      for (let i = 0; i < keys.length; i++) {
+    parseExtend(dependencies) {
+      for (let i = 0; i < dependencies.length; i++) {
         let ex =  {
           index: -1,
           ste: [],
@@ -221,39 +258,38 @@ export default {
             depend: null,
             steps: []
           }
-        }
-        ex.index = i + 1
-        ex.ste = keys[i].map(t => {
+        };
+        ex.index = i + 1;
+        let dependency = dependencies[i];
+        ex.ste = dependency.dependKey.map(t => {
           return { value: t }
-        })
-        ex.dep = values[i]
-        this.extendData.push(ex)
+        });
+        ex.dep = dependency.dependValue;
+        this.extendData.push(ex);
       }
+      this.extendIndex = this.extendData.length
     },
-    parseExpected(keys, values) {
-      for (let i = 0; i < keys.length; i++) {
+    parseExpected(expects) {
+      for (let i = 0; i < expects.length; i++) {
         let ex =  {
           index: -1,
-          valueOrDepend: 1,
-          ste: [
-            {
-              value: ''
-            }
-          ],
+          ste: [],
           dep: {
+            fixed: true,
             depend: null,
             steps: [],
             value: ''
           },
-        };
+        }
         ex.index = i + 1
-        ex.ste = keys[i].map(t => {
+        let expect = expects[i];
+        ex.ste = expect.expectKey.map(t => {
           return { value: t }
         })
-        ex.dep = values[i]
-        ex.valueOrDepend = (ex.dep.depend === undefined || ex.dep.depend === null) ? 1 : 2
+        ex.dep = expect.expectValue
         this.expectedData.push(ex)
       }
+      this.expectedIndex = this.expectedData.length
     },
   }
 }

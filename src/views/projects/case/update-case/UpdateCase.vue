@@ -204,8 +204,8 @@
               </span>
             </span>
             <span slot="extend_depend" slot-scope="text, record">
-              <span v-for="(item, index) in record.dep.depend">
-                {{ getCaseName(item) }}
+              <span>
+                {{ getCaseName(record.dep.depend) }}
               </span>
             </span>
             <span slot="extend_value" slot-scope="text, record">
@@ -254,8 +254,8 @@
               <span v-if="record.dep.fixed">
                 -
               </span>
-              <span v-if="!record.dep.fixed" v-for="(item, index) in record.dep.depend">
-                {{ getCaseName(item) }}
+              <span v-if="!record.dep.fixed">
+                {{ getCaseName(record.dep.depend) }}
               </span>
             </span>
             <span slot="expected_value" slot-scope="text, record">
@@ -680,7 +680,6 @@ export default {
         this.extendData.push(ex);
       }
       this.extendIndex = this.extendData.length
-      console.info(this.extendData)
     },
     buildExpected(value) {
       if (this.expectedData.length > 0) {

@@ -20,7 +20,6 @@
 
 .report-info-form div.jsoneditor {
     border: 1px solid white;
-    /*pointer-events: none;*/
 }
 
 .report-info-form [class~='col-divider'] > div {
