@@ -19,7 +19,7 @@
           </a-input>
         </a-form-item>
         <a-form-item>
-          <a-input class="login-password"
+          <a-input-password class="login-password"
                    v-decorator="[
           'password',
           { rules: [{ required: true, message: '密码不可以为空！' }] },
@@ -28,7 +28,7 @@
                    placeholder="请输入密码"
           >
             <a-icon slot="prefix" type="lock" style="color: rgba(0,0,0,.25)"/>
-          </a-input>
+          </a-input-password>
         </a-form-item>
         <a-form-item>
           <a-button type="primary" html-type="submit" class="login-form-button">

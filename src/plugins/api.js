@@ -315,6 +315,6 @@ export default {
     },
     // 查询报告详情
     getReport: function (id, params, handler) {
-        request.get(`${REPORT}${id}/`, params, handler)
+        request.get(`${REPORT}/${id}`, params, handler)
     }
 }

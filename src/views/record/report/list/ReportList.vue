@@ -29,22 +29,10 @@
             </a-button>
           </a-col>
         </a-row>
-<!--        <a-row>-->
-<!--          <a-button class="add-button" type="primary" @click="createCase">-->
-<!--            新增-->
-<!--          </a-button>-->
-<!--&lt;!&ndash;          <a-button class="batch-delete-button" :style="{ marginLeft: '8px' }" @click="() => console.info('批量删除')">&ndash;&gt;-->
-<!--&lt;!&ndash;            批量删除&ndash;&gt;-->
-<!--&lt;!&ndash;          </a-button>&ndash;&gt;-->
-<!--          <a-divider type="vertical"/>-->
-<!--          <a-button class="execute-project-button" @click="executeProject">-->
-<!--            执行-->
-<!--          </a-button>-->
-<!--        </a-row>-->
       </a-form>
     </div>
     <div>
-      <a-table :columns="columns" :data-source="data" :pagination="pagination" @change="changeTable">
+      <a-table rowKey="id" :columns="columns" :data-source="data" :pagination="pagination" @change="changeTable">
         <span slot="run" slot-scope="text, record">
           <a-switch checked-children="是" un-checked-children="否" :checked="record.run" disabled/>
         </span>
@@ -139,8 +127,8 @@ const columns = [
   },
   {
     title: '所属项目',
-    key: 'project_name',
-    dataIndex: 'project_name',
+    key: 'projectName',
+    dataIndex: 'projectName',
     align: 'center'
   },
   {
@@ -159,17 +147,17 @@ const columns = [
   },
   {
     title: '请求耗时',
-    key: 'time_used',
-    dataIndex: 'time_used',
+    key: 'timeUsed',
+    dataIndex: 'timeUsed',
     align: 'center',
     customRender: (text, row, index) => `${text}ms`
   },
-  {
-    title: '创建时间',
-    key: 'created_at',
-    dataIndex: 'created_at',
-    align: 'center'
-  },
+  // {
+  //   title: '创建时间',
+  //   key: 'createdAt',
+  //   dataIndex: 'createdAt',
+  //   align: 'center'
+  // },
   {
     title: '操作',
     key: 'action',
@@ -236,9 +224,9 @@ export default {
     },
     getListPage: function (current, pageSize, recordId, name, status) {
       let params = {
-        page: current,
-        page_size: pageSize,
-        record_id: recordId,
+        current: current,
+        size: pageSize,
+        recordId: recordId,
       }
       if (name) {
         params.name = name
