@@ -4,6 +4,7 @@ module.exports = {
         devtool: 'source-map'
       },
     outputDir: 'dist',
+    publicPath: '/testing-platform/',
     devServer: {
         //logLevel:'debug',
         proxy: {

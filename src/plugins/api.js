@@ -248,6 +248,7 @@ export default {
     tempImportProject: function (params, handler, config) {
         request.post(PROJECT_TEMP_IMPORT, params, handler, config)
     },
+    // 旧版本 Excel 导出
     /*-------------- 用例 ---------------*/
     // 分页查询用例分组
     listCaseGroup: function (params, handler) {
